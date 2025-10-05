@@ -13,6 +13,6 @@ export const HashrateIcon = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    <path d="M4 12h4l2-3 4 6 2-3h4" />
+    <path d="M2 12h6l3-7 3 14 3-7h6" />
   </svg>
 );
