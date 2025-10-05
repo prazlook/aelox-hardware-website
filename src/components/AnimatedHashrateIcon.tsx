@@ -3,9 +3,10 @@ import { cn } from "@/lib/utils";
 interface AnimatedHashrateIconProps {
   isOnline: boolean;
   className?: string;
+  animationDuration: string;
 }
 
-export const AnimatedHashrateIcon = ({ isOnline, className }: AnimatedHashrateIconProps) => {
+export const AnimatedHashrateIcon = ({ isOnline, className, animationDuration }: AnimatedHashrateIconProps) => {
   const color = isOnline ? "stroke-current" : "stroke-gray-500";
 
   return (
@@ -24,6 +25,7 @@ export const AnimatedHashrateIcon = ({ isOnline, className }: AnimatedHashrateIc
           color,
           isOnline && "animate-hashrate"
         )}
+        style={{ animationDuration: isOnline ? animationDuration : '0s' }}
       />
     </svg>
   );

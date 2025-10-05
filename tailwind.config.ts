@@ -95,8 +95,8 @@ export default {
           '100%': { strokeDashoffset: '0' },
         },
         "hashrate-pulse": {
-          '0%': { strokeDashoffset: '48' },
-          '100%': { strokeDashoffset: '0' },
+          '0%': { strokeDashoffset: '0' },
+          '100%': { strokeDashoffset: '-48' },
         },
       },
       animation: {

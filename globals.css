@@ -106,7 +106,7 @@
     stroke-dashoffset: 64;
   }
   .animate-hashrate {
-    stroke-dasharray: 48;
-    stroke-dashoffset: 48;
+    stroke-dasharray: 12 36;
+    stroke-dashoffset: 0;
   }
 }
