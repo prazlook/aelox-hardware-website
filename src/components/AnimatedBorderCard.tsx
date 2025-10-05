@@ -5,6 +5,7 @@ interface AnimatedBorderCardProps {
   children: React.ReactNode;
   className?: string;
   isAnimated: boolean;
+  isOverclocked?: boolean;
   color?: string;
   animationClassName?: string;
 }
@@ -13,9 +14,20 @@ export const AnimatedBorderCard = ({
   children,
   className,
   isAnimated,
+  isOverclocked,
   color = '#00F0FF',
   animationClassName = 'animate-stroke-spin'
 }: AnimatedBorderCardProps) => {
+  if (isOverclocked) {
+    return (
+      <div className="relative rounded-2xl p-[2px] bg-rainbow-gradient animate-rainbow-spin">
+        <div className={cn(className, "w-full h-full rounded-[14px] border-0")}>
+          {children}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={cn("relative", className)}>
       {isAnimated && (
