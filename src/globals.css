@@ -73,15 +73,6 @@
   }
 }
 
-@keyframes border-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @layer components {
   .animate-ecg-draw {
     stroke-dasharray: 42;
@@ -134,13 +125,16 @@
     content: '';
     position: absolute;
     z-index: -1;
-    inset: -2px;
+    inset: -3px;
     border-radius: inherit;
-    background: repeating-conic-gradient(
-      from 0deg,
-      #00F0FF 0% 2.5%,
-      transparent 2.5% 15%
+    background: conic-gradient(
+      from 90deg at 50% 50%,
+      #1A222E 0%,
+      #00A9B7 25%,
+      #00F0FF 50%,
+      #00A9B7 75%,
+      #1A222E 100%
     );
-    animation: border-spin 4s linear infinite;
+    animation: border-spin 2s linear infinite;
   }
 }
