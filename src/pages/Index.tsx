@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC, ASICStatusCard } from '@/components/ASICStatusCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
 import { Activity, Thermometer, Zap, Server, Power, X } from 'lucide-react';
+import { useSound } from '@/context/SoundContext';
 
 const MOCK_ASICS: ASIC[] = [
   { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
@@ -10,11 +11,29 @@ const MOCK_ASICS: ASIC[] = [
   { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0, isFanOn: false, comment: "Maintenance prévue" },
 ];
 
+const playSound = (file: File | null) => {
+  if (file) {
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.play();
+  }
+};
+
 const Index = () => {
   const [asics, setAsics] = useState<ASIC[]>(MOCK_ASICS);
+  const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
+  const prevAsicsRef = useRef<ASIC[]>(asics);
   const maxTemp = 85; // Seuil de température d'alerte
 
   const handleTogglePower = (asicId: string) => {
+    const asicToToggle = asics.find(a => a.id === asicId);
+    if (!asicToToggle) return;
+
+    if (asicToToggle.status === 'online') {
+      playSound(powerOffSoundFile);
+    } else if (asicToToggle.status === 'offline') {
+      playSound(powerOnSoundFile);
+    }
+
     setAsics(prevAsics =>
       prevAsics.map(asic => {
         if (asic.id === asicId) {
@@ -35,27 +54,31 @@ const Index = () => {
   };
   
   const handleStartAll = () => {
+    const willStartAny = asics.some(asic => asic.status === 'offline');
+    if (willStartAny) playSound(powerOnSoundFile);
     setAsics(asics.map(asic => asic.status === 'offline' ? { ...asic, status: 'starting' } : asic));
   };
 
   const handleStopAll = () => {
+    const willStopAny = asics.some(asic => asic.status === 'online');
+    if (willStopAny) playSound(powerOffSoundFile);
     setAsics(asics.map(asic => asic.status === 'online' ? { ...asic, status: 'stopping' } : asic));
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const updatedAsics = asics.map(asic => {
+      const updatedAsics = asics.map((asic, index) => {
         let newAsic = { ...asic };
         
         if (!newAsic.isFanOn) {
           newAsic.fanSpeed = 0;
         } else if (newAsic.status === 'online' && newAsic.fanSpeed < 60) {
-          newAsic.fanSpeed = 75 + (Math.random() - 0.5) * 10; // Restore fan speed
+          newAsic.fanSpeed = 75 + (Math.random() - 0.5) * 10;
         }
 
         switch (asic.status) {
           case 'online':
-            newAsic.temperature += (Math.random() - 0.5) * 2; // Increased fluctuation
+            newAsic.temperature += (Math.random() - 0.5) * 2;
             newAsic.hashrate += (Math.random() - 0.5) * 0.5;
             if (newAsic.isFanOn) {
               newAsic.fanSpeed += (Math.random() - 0.5) * 2;
@@ -77,12 +100,19 @@ const Index = () => {
         newAsic.hashrate = asic.status === 'online' ? Math.max(0, newAsic.hashrate) : 0;
         newAsic.temperature = Math.max(25, newAsic.temperature);
         newAsic.fanSpeed = Math.max(0, Math.min(100, newAsic.fanSpeed));
+
+        const oldAsic = prevAsicsRef.current[index];
+        if (oldAsic && oldAsic.temperature < maxTemp && newAsic.temperature >= maxTemp) {
+          playSound(overheatSoundFile);
+        }
+
         return newAsic;
       });
+      prevAsicsRef.current = asics;
       setAsics(updatedAsics);
     }, 2000);
     return () => clearInterval(interval);
-  }, [asics]);
+  }, [asics, maxTemp, overheatSoundFile]);
 
   const summary = useMemo(() => {
     const onlineAsics = asics.filter(a => a.status === 'online');

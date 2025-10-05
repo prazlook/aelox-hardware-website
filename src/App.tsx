@@ -10,26 +10,29 @@ import WalletPage from "./pages/Wallet";
 import ConfigurationPage from "./pages/Configuration";
 import StatisticsPage from "./pages/Statistics";
 import AsicManagementPage from "./pages/AsicManagement";
+import { SoundProvider } from "./context/SoundContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/statistics" element={<StatisticsPage />} />
-            <Route path="/wallet" element={<WalletPage />} />
-            <Route path="/asic-management" element={<AsicManagementPage />} />
-            <Route path="/configuration" element={<ConfigurationPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <SoundProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/statistics" element={<StatisticsPage />} />
+              <Route path="/wallet" element={<WalletPage />} />
+              <Route path="/asic-management" element={<AsicManagementPage />} />
+              <Route path="/configuration" element={<ConfigurationPage />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </SoundProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

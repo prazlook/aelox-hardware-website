@@ -1,12 +1,17 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SoundUploader } from "@/components/SoundUploader";
+import { useSound } from "@/context/SoundContext";
 
 const ConfigurationPage = () => {
-  const [overheatSoundFile, setOverheatSoundFile] = useState<File | null>(null);
-  const [powerOnSoundFile, setPowerOnSoundFile] = useState<File | null>(null);
-  const [powerOffSoundFile, setPowerOffSoundFile] = useState<File | null>(null);
+  const {
+    overheatSoundFile,
+    setOverheatSoundFile,
+    powerOnSoundFile,
+    setPowerOnSoundFile,
+    powerOffSoundFile,
+    setPowerOffSoundFile
+  } = useSound();
 
   return (
     <div className="p-4 sm:p-8 text-white">
