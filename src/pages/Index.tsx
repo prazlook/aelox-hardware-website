@@ -2,8 +2,9 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC, ASICStatusCard } from '@/components/ASICStatusCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
-import { Activity, Thermometer, Zap, Server, Power, X } from 'lucide-react';
+import { Thermometer, Zap, Server, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
+import { HashrateIcon } from '@/components/HashrateIcon';
 
 const MOCK_ASICS: ASIC[] = [
   { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
@@ -144,7 +145,7 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SummaryCard title="Hashrate Total" value={summary.totalHashrate.toFixed(2)} unit="TH/s" icon={<Activity />} iconBgColor="bg-orange-500/20" />
+        <SummaryCard title="Hashrate Total" value={summary.totalHashrate.toFixed(2)} unit="TH/s" icon={<HashrateIcon className="text-theme-cyan" />} iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" />
         <SummaryCard title="Température Moyenne" value={summary.avgTemp.toFixed(2)} unit="°C" icon={<Thermometer />} iconBgColor="bg-green-500/20" />
         <SummaryCard title="Consommation Totale" value={summary.totalPower.toFixed(0)} unit="W" icon={<Zap />} iconBgColor="bg-blue-500/20" />
         <SummaryCard title="ASICs Actifs" value={`${summary.activeAsics} / ${asics.length}`} unit="" icon={<Server />} iconBgColor="bg-cyan-500/20" />
