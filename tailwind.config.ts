@@ -64,9 +64,6 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      backgroundImage: {
-        'rainbow-gradient': 'conic-gradient(from 180deg at 50% 50%, #FBCFE8, #BFDBFE, #A7F3D0, #FDE68A, #FBCFE8)',
-      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -80,17 +77,11 @@ export default {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
-        "rainbow-spin": {
-          '100%': {
-            transform: 'rotate(360deg)',
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "border-spin": "border-spin 4s linear infinite",
-        "rainbow-spin": "rainbow-spin 4s linear infinite",
       },
     },
   },

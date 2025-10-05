@@ -99,7 +99,6 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   return (
     <AnimatedBorderCard
       isAnimated={isOnline || isTransitioning}
-      isOverclocked={asic.isOverclocked}
       color={animationColor}
       animationClassName={animationClassName}
       className={cn(
