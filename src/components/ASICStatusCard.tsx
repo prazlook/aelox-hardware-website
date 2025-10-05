@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle, PowerOff } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle, PowerOff, Cpu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
@@ -16,6 +16,7 @@ export interface ASIC {
   power: number;
   fanSpeed: number;
   isFanOn: boolean;
+  isOverclocked: boolean;
   comment?: string;
 }
 
@@ -24,6 +25,7 @@ interface ASICStatusCardProps {
   maxTemp: number;
   onTogglePower: (asicId: string) => void;
   onToggleFan: (asicId: string) => void;
+  onToggleOverclock: (asicId: string) => void;
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
@@ -63,7 +65,7 @@ const StatItem = ({ icon, label, value, unit, className }: { icon: React.ReactNo
   </div>
 );
 
-export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: ASICStatusCardProps) => {
+export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock }: ASICStatusCardProps) => {
   const isAlerting = asic.temperature >= maxTemp;
   const isWarning = asic.temperature > maxTemp - 10;
   const currentStatus = isAlerting ? 'alert' : asic.status;
@@ -114,9 +116,21 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
           <Button
             size="icon"
             variant="ghost"
+            className={cn(
+              "w-8 h-8 rounded-full hover:bg-theme-accent/20",
+              asic.isOverclocked ? "text-theme-cyan hover:text-theme-cyan" : "text-theme-text-secondary hover:text-white"
+            )}
+            onClick={() => onToggleOverclock(asic.id)}
+            disabled={!isOnline}
+          >
+            <Cpu size={16} />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
             className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
             onClick={() => onTogglePower(asic.id)}
-            disabled={asic.status === 'starting' || asic.status === 'stopping'}
+            disabled={isTransitioning}
           >
             <PowerIcon size={16} className={powerIconClassName} />
           </Button>

@@ -10,14 +10,14 @@ import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
 
 const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
-  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71, isFanOn: true, comment: "Pool secondaire - RAS" },
-  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0, isFanOn: false, comment: "Maintenance prévue" },
+  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, isOverclocked: false, comment: "Pool principal - Performance stable" },
+  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71, isFanOn: true, isOverclocked: false, comment: "Pool secondaire - RAS" },
+  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0, isFanOn: false, isOverclocked: false, comment: "Maintenance prévue" },
 ];
 
 const playSound = (file: File | null) => {
   if (file) {
-    const audio = new Audio(URL.createObjectURL(file));
+    const audio = new Audio(URL.ObjectURL(file));
     audio.play();
   }
 };
@@ -56,6 +56,14 @@ const Index = () => {
       )
     );
   };
+
+  const handleToggleOverclock = (asicId: string) => {
+    setAsics(prevAsics =>
+      prevAsics.map(asic =>
+        asic.id === asicId ? { ...asic, isOverclocked: !asic.isOverclocked } : asic
+      )
+    );
+  };
   
   const handleStartAll = () => {
     const willStartAny = asics.some(asic => asic.status === 'offline');
@@ -82,8 +90,11 @@ const Index = () => {
 
         switch (asic.status) {
           case 'online':
-            newAsic.temperature += (Math.random() - 0.5) * 2;
-            newAsic.hashrate += (Math.random() - 0.5) * 0.5;
+            const tempIncrease = newAsic.isOverclocked ? 0.7 : 0.5;
+            const hashrateVariation = newAsic.isOverclocked ? 0.7 : 0.5;
+            newAsic.temperature += (Math.random() - (0.5 - tempIncrease / 10)) * 2;
+            newAsic.hashrate += (Math.random() - 0.5) * hashrateVariation;
+            newAsic.power = newAsic.isOverclocked ? 3600 + Math.random() * 50 : 3200 + Math.random() * 50;
             if (newAsic.isFanOn) {
               newAsic.fanSpeed += (Math.random() - 0.5) * 2;
             }
@@ -219,6 +230,7 @@ const Index = () => {
               maxTemp={maxTemp}
               onTogglePower={handleTogglePower}
               onToggleFan={handleToggleFan}
+              onToggleOverclock={handleToggleOverclock}
             />
           ))}
         </div>
