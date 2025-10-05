@@ -183,7 +183,7 @@ const Index = () => {
           value={summary.totalHashrate.toFixed(2)} 
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
-          iconBgColor="bg-gradient-to-br from-indigo-500 to-indigo-700" 
+          iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" 
         />
         <SummaryCard 
           title="Température Moyenne" 

@@ -8,7 +8,7 @@ export const AnimatedHashrateIcon = (props: React.SVGProps<SVGSVGElement>) => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="#66d9ff"
+    stroke="currentColor"
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
