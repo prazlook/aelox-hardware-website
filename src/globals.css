@@ -43,3 +43,16 @@
     @apply bg-theme-dark text-theme-text-primary;
   }
 }
+
+@keyframes ecg-pulse {
+  to {
+    stroke-dashoffset: -42;
+  }
+}
+
+@layer components {
+  .animate-ecg {
+    stroke-dasharray: 10 32;
+    animation: ecg-pulse 1s linear infinite;
+  }
+}

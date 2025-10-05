@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 export const HashrateIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -12,6 +13,7 @@ export const HashrateIcon = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
+    className={cn("animate-ecg", props.className)}
   >
     <path d="M2 12h6l3-7 3 14 3-7h6" />
   </svg>
