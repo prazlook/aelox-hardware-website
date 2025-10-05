@@ -14,6 +14,7 @@ export interface ASIC {
   power: number;
   fanSpeed: number;
   isFanOn: boolean;
+  comment?: string;
 }
 
 interface ASICStatusCardProps {
@@ -66,6 +67,10 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
   const currentStatus = isAlerting ? 'alert' : asic.status;
   const tempColor = isAlerting ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
 
+  const message = (currentStatus === 'online' || currentStatus === 'analyzing') && asic.comment 
+    ? asic.comment 
+    : getStatusMessage(currentStatus);
+
   return (
     <div className={cn(
       "bg-theme-card p-4 rounded-lg border flex flex-col space-y-3 transition-colors",
@@ -91,7 +96,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
       </div>
 
       <div className="text-center text-sm text-theme-accent border border-theme-accent/30 rounded-md py-1.5">
-        {getStatusMessage(currentStatus)}
+        {message}
       </div>
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
