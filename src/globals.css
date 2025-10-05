@@ -63,10 +63,10 @@
 
 @keyframes stroke-spin {
   from {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: 1200;
   }
   to {
-    stroke-dashoffset: 1200;
+    stroke-dashoffset: 0;
   }
 }
 

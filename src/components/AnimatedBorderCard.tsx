@@ -5,9 +5,10 @@ interface AnimatedBorderCardProps {
   children: React.ReactNode;
   className?: string;
   isAnimated: boolean;
+  color?: string;
 }
 
-export const AnimatedBorderCard = ({ children, className, isAnimated }: AnimatedBorderCardProps) => {
+export const AnimatedBorderCard = ({ children, className, isAnimated, color = '#00F0FF' }: AnimatedBorderCardProps) => {
   return (
     <div className={cn("relative", className)}>
       {isAnimated && (
@@ -24,7 +25,7 @@ export const AnimatedBorderCard = ({ children, className, isAnimated }: Animated
             height="calc(100% - 2px)"
             rx="15"
             ry="15"
-            stroke="#00F0FF"
+            stroke={color}
             strokeWidth="2"
             className="animate-stroke-spin"
           />

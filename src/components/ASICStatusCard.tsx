@@ -77,6 +77,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
   return (
     <AnimatedBorderCard
       isAnimated={isOnline}
+      color={isWarning ? "#EF4444" : "#00F0FF"}
       className={cn(
         "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card",
         isWarning ? "border-orange-500" : "border-theme-accent/30",
