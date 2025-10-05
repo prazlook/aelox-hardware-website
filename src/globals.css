@@ -125,17 +125,17 @@
     content: '';
     position: absolute;
     z-index: -1;
-    inset: -2px;
+    inset: -3px;
     border-radius: inherit;
     background: conic-gradient(
       from 180deg at 50% 50%,
       #00F0FF 0deg,
-      transparent 30deg,
+      transparent 90deg,
       transparent 180deg,
       #00F0FF 180deg,
-      transparent 210deg,
+      transparent 270deg,
       transparent 360deg
     );
-    animation: border-spin 4s linear infinite;
+    animation: border-spin 3s linear infinite;
   }
 }
