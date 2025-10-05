@@ -11,9 +11,9 @@ import { AlertTriangle, PowerOff } from 'lucide-react';
 type AlertState = 'ok' | 'alerting' | 'shutdown';
 
 const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro', hashrate: 110, temperature: 65, power: 3250, fanSpeed: 70 },
-  { id: 'A2', name: 'Whatsminer M30S++', hashrate: 112, temperature: 68, power: 3472, fanSpeed: 75 },
-  { id: 'A3', name: 'Antminer L7', hashrate: 95, temperature: 72, power: 3425, fanSpeed: 80 },
+  { id: 'A1', name: 'Antminer S19 Pro', hashrate: 110, temperature: 65, power: 3250, fanSpeed: 70, isFanOn: true },
+  { id: 'A2', name: 'Whatsminer M30S++', hashrate: 112, temperature: 68, power: 3472, fanSpeed: 75, isFanOn: true },
+  { id: 'A3', name: 'Antminer L7', hashrate: 95, temperature: 72, power: 3425, fanSpeed: 80, isFanOn: true },
 ];
 
 const Index = () => {
@@ -24,28 +24,54 @@ const Index = () => {
   const [alertState, setAlertState] = useState<AlertState>('ok');
   const [showAlertDialog, setShowAlertDialog] = useState(false);
 
+  const handleToggleFan = (asicId: string) => {
+    setAsics(prevAsics =>
+      prevAsics.map(asic => {
+        if (asic.id === asicId) {
+          const isFanNowOn = !asic.isFanOn;
+          return {
+            ...asic,
+            isFanOn: isFanNowOn,
+            fanSpeed: isFanNowOn ? 70 : 0, // Reset to a default speed or set to 0
+          };
+        }
+        return asic;
+      })
+    );
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (alertState === 'shutdown') return;
 
-      setAsics(prevAsics =>
-        prevAsics.map(asic => ({
+      const updatedAsics = asics.map(asic => {
+        // When fan is off, temperature increases more rapidly
+        const tempChange = asic.isFanOn
+          ? (Math.random() - 0.5) * 0.4
+          : (Math.random() * 0.3) + 0.2;
+
+        const fanSpeedChange = asic.isFanOn
+          ? (Math.random() - 0.5) * 2
+          : 0;
+
+        return {
           ...asic,
           hashrate: asic.hashrate + (Math.random() - 0.5) * 0.5,
-          temperature: asic.temperature + (Math.random() - 0.5) * 0.2,
-          power: asic.power + (Math.random() - 0.5) * 10,
-          fanSpeed: Math.min(100, Math.max(0, asic.fanSpeed + (Math.random() - 0.5) * 1)),
-        }))
-      );
+          temperature: asic.temperature + tempChange,
+          power: asic.isFanOn ? asic.power + (Math.random() - 0.5) * 10 : asic.power - 5, // Power consumption drops slightly if fan is off
+          fanSpeed: asic.isFanOn ? Math.min(100, Math.max(20, asic.fanSpeed + fanSpeedChange)) : 0,
+        };
+      });
+      setAsics(updatedAsics);
 
       setChartData(prevData => {
         const now = new Date();
-        const newEntry = {
-          time: `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`,
-          hashrate: asics.reduce((acc, a) => acc + a.hashrate, 0) / asics.length,
-          temperature: asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length,
-          power: asics.reduce((acc, a) => acc + a.power, 0) / 1000,
+        const newEntry: { [key: string]: any } = {
+          time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`,
         };
+        updatedAsics.forEach(asic => {
+          newEntry[`${asic.id}_hashrate`] = asic.hashrate;
+        });
         return [...prevData.slice(-29), newEntry];
       });
 
@@ -78,12 +104,12 @@ const Index = () => {
     setAlertState('ok');
     // Reset temperatures to a safe level to prevent immediate re-triggering
     setAsics(prevAsics =>
-      prevAsics.map(asic => ({ ...asic, temperature: asic.temperature - 5 }))
+      prevAsics.map(asic => ({ ...asic, temperature: asic.temperature - 10 }))
     );
   };
 
   const averages = useMemo(() => ({
-    hashrate: asics.reduce((acc, a) => acc + a.hashrate, 0) / asics.length,
+    hashrate: asics.reduce((acc, a) => acc + a.hashrate, 0),
     temperature: asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length,
     power: asics.reduce((acc, a) => acc + a.power, 0),
     fanSpeed: asics.reduce((acc, a) => acc + a.fanSpeed, 0) / asics.length,
@@ -145,11 +171,17 @@ const Index = () => {
             </div>
           </div>
 
-          <RealTimeChart data={chartData} />
+          <RealTimeChart data={chartData} asics={asics} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {asics.map(asic => (
-              <ASICStatusCard key={asic.id} asic={asic} isAlerting={asic.temperature >= maxTemp} />
+              <ASICStatusCard 
+                key={asic.id} 
+                asic={asic} 
+                isAlerting={asic.temperature >= maxTemp} 
+                maxTemp={maxTemp}
+                onToggleFan={handleToggleFan}
+              />
             ))}
           </div>
         </main>
