@@ -80,4 +80,17 @@
     background-size: 400% 400%;
     animation: blob-animation 15s ease-in-out infinite;
   }
+  .animated-border {
+    position: relative;
+    border-color: transparent;
+  }
+  .animated-border::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -2px;
+    border-radius: inherit;
+    background: conic-gradient(from 90deg at 50% 50%, transparent 0%, theme('colors.theme-cyan') 25%, transparent 50%);
+    animation: border-spin 4s linear infinite;
+  }
 }

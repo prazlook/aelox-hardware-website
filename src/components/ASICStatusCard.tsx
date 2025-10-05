@@ -77,7 +77,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
     <div className={cn(
       "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors",
       isWarning ? "border-orange-500" : "border-theme-accent/30",
-      isOnline ? "bg-animated-gradient" : "bg-theme-card"
+      isOnline ? "bg-animated-gradient animated-border" : "bg-theme-card"
     )}>
       <div className="flex justify-between items-start">
         <div>
