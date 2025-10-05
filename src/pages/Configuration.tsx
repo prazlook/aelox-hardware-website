@@ -1,27 +1,12 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { showError } from "@/utils/toast";
+import { SoundUploader } from "@/components/SoundUploader";
 
 const ConfigurationPage = () => {
   const [overheatSoundFile, setOverheatSoundFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.type.startsWith("audio/")) {
-        setOverheatSoundFile(file);
-      } else {
-        showError("Veuillez sélectionner un fichier audio valide.");
-      }
-    }
-  };
-
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  const [powerOnSoundFile, setPowerOnSoundFile] = useState<File | null>(null);
+  const [powerOffSoundFile, setPowerOffSoundFile] = useState<File | null>(null);
 
   return (
     <div className="p-4 sm:p-8 text-white">
@@ -29,28 +14,27 @@ const ConfigurationPage = () => {
       <main className="space-y-8">
         <Card className="bg-gray-900/50 border-gray-700">
           <CardHeader>
-            <CardTitle>Sons d'Alerte</CardTitle>
+            <CardTitle>Sons d'Alerte et de Statut</CardTitle>
             <CardDescription className="text-gray-400">
-              Importez des fichiers audio personnalisés pour les alertes. Les sons ne sont pas conservés après le rechargement de la page.
+              Importez des fichiers audio personnalisés. Les sons ne sont pas conservés après le rechargement de la page.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between p-4 border border-gray-700 rounded-lg">
-              <div>
-                <p className="font-medium">Alerte de Surchauffe</p>
-                <p className="text-sm text-gray-400">
-                  {overheatSoundFile ? overheatSoundFile.name : "Aucun son sélectionné"}
-                </p>
-              </div>
-              <Button onClick={handleButtonClick}>Choisir un fichier</Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                accept="audio/*"
-                className="hidden"
-              />
-            </div>
+          <CardContent className="space-y-4">
+            <SoundUploader
+              label="Alerte de Surchauffe"
+              selectedFileName={overheatSoundFile?.name || null}
+              onFileSelect={setOverheatSoundFile}
+            />
+            <SoundUploader
+              label="Allumage d'un ASIC"
+              selectedFileName={powerOnSoundFile?.name || null}
+              onFileSelect={setPowerOnSoundFile}
+            />
+            <SoundUploader
+              label="Extinction d'un ASIC"
+              selectedFileName={powerOffSoundFile?.name || null}
+              onFileSelect={setPowerOffSoundFile}
+            />
           </CardContent>
         </Card>
       </main>
