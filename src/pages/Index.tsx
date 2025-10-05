@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Activity, Thermometer, Zap, Server, Power, X } from 'lucide-react';
 
 const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85 },
-  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71 },
-  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0 },
+  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true },
+  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71, isFanOn: true },
+  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0, isFanOn: false },
 ];
 
 const Index = () => {
@@ -25,6 +25,14 @@ const Index = () => {
       })
     );
   };
+
+  const handleToggleFan = (asicId: string) => {
+    setAsics(prevAsics =>
+      prevAsics.map(asic =>
+        asic.id === asicId ? { ...asic, isFanOn: !asic.isFanOn } : asic
+      )
+    );
+  };
   
   const handleStartAll = () => {
     setAsics(asics.map(asic => asic.status === 'offline' ? { ...asic, status: 'starting' } : asic));
@@ -38,10 +46,20 @@ const Index = () => {
     const interval = setInterval(() => {
       const updatedAsics = asics.map(asic => {
         let newAsic = { ...asic };
+        
+        if (!newAsic.isFanOn) {
+          newAsic.fanSpeed = 0;
+        } else if (newAsic.status === 'online' && newAsic.fanSpeed < 60) {
+          newAsic.fanSpeed = 75 + (Math.random() - 0.5) * 10; // Restore fan speed
+        }
+
         switch (asic.status) {
           case 'online':
             newAsic.temperature += (Math.random() - 0.5) * 0.4;
             newAsic.hashrate += (Math.random() - 0.5) * 0.5;
+            if (newAsic.isFanOn) {
+              newAsic.fanSpeed += (Math.random() - 0.5) * 2;
+            }
             break;
           case 'starting':
             newAsic.power += 300;
@@ -58,6 +76,7 @@ const Index = () => {
         newAsic.power = Math.max(0, newAsic.power);
         newAsic.hashrate = asic.status === 'online' ? Math.max(0, newAsic.hashrate) : 0;
         newAsic.temperature = Math.max(25, newAsic.temperature);
+        newAsic.fanSpeed = Math.max(0, Math.min(100, newAsic.fanSpeed));
         return newAsic;
       });
       setAsics(updatedAsics);
@@ -110,6 +129,7 @@ const Index = () => {
               asic={asic} 
               maxTemp={maxTemp}
               onTogglePower={handleTogglePower}
+              onToggleFan={handleToggleFan}
             />
           ))}
         </div>

@@ -13,12 +13,14 @@ export interface ASIC {
   temperature: number;
   power: number;
   fanSpeed: number;
+  isFanOn: boolean;
 }
 
 interface ASICStatusCardProps {
   asic: ASIC;
   maxTemp: number;
   onTogglePower: (asicId: string) => void;
+  onToggleFan: (asicId: string) => void;
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
@@ -58,7 +60,7 @@ const StatItem = ({ icon, label, value, unit, className }: { icon: React.ReactNo
   </div>
 );
 
-export const ASICStatusCard = ({ asic, maxTemp, onTogglePower }: ASICStatusCardProps) => {
+export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: ASICStatusCardProps) => {
   const isAlerting = asic.temperature >= maxTemp;
   const currentStatus = isAlerting ? 'alert' : asic.status;
   const tempColor = isAlerting ? 'text-red-500' : asic.temperature > maxTemp - 10 ? 'text-orange-400' : 'text-white';
@@ -92,7 +94,27 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower }: ASICStatusCardP
         <StatItem icon={<Activity size={20} />} label="Hashrate" value={asic.hashrate.toFixed(2)} unit="TH/s" />
         <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={tempColor} />
         <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" />
-        <StatItem icon={<Fan size={20} />} label="Ventilateur" value={asic.fanSpeed.toFixed(0)} unit="%" />
+        
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => onToggleFan(asic.id)}
+            className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
+            aria-label={asic.isFanOn ? "Éteindre le ventilateur" : "Allumer le ventilateur"}
+          >
+            <Fan
+              size={20}
+              className={cn(
+                "transition-colors",
+                asic.isFanOn ? "animate-spin" : "text-gray-500"
+              )}
+              style={{ animationDuration: asic.isFanOn ? '1s' : '0ms' }}
+            />
+          </button>
+          <div>
+            <p className="text-xs text-theme-text-secondary">Ventilateur</p>
+            <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">%</span></p>
+          </div>
+        </div>
       </div>
 
       <Button className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90">
