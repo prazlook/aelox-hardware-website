@@ -67,7 +67,20 @@
     stroke-dasharray: 10 32;
     animation: ecg-pulse 1s linear infinite;
   }
-  .bg-animated-gradient {
+
+  .animated-border {
+    position: relative;
+    background: transparent;
+    border-color: transparent;
+  }
+
+  /* This pseudo-element creates the background blob effect */
+  .animated-border::before {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    border-radius: inherit;
     background-color: #1A222E;
     background-image: 
       radial-gradient(at 40% 20%, hsla(210, 30%, 20%, 1) 0px, transparent 50%),
@@ -80,17 +93,23 @@
     background-size: 400% 400%;
     animation: blob-animation 15s ease-in-out infinite;
   }
-  .animated-border {
-    position: relative;
-    border-color: transparent;
-  }
-  .animated-border::before {
+
+  /* This pseudo-element creates the spinning border effect with two lines */
+  .animated-border::after {
     content: '';
     position: absolute;
     z-index: -1;
     inset: -2px;
     border-radius: inherit;
-    background: conic-gradient(from 90deg at 50% 50%, transparent 0%, theme('colors.theme-cyan') 25%, transparent 50%);
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      #00F0FF 0deg,
+      transparent 30deg,
+      transparent 180deg,
+      #00F0FF 180deg,
+      transparent 210deg,
+      transparent 360deg
+    );
     animation: border-spin 4s linear infinite;
   }
 }
