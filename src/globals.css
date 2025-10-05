@@ -62,8 +62,8 @@
     animation: ecg-pulse 1s linear infinite;
   }
   .bg-animated-gradient {
-    background: linear-gradient(270deg, #1A222E, #1D283A, #1A222E);
+    background: linear-gradient(270deg, #1A222E, #203048, #1A222E);
     background-size: 200% 200%;
-    animation: gradient-pulse 8s ease-in-out infinite;
+    animation: gradient-pulse 6s ease-in-out infinite;
   }
 }
