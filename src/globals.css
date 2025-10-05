@@ -128,14 +128,13 @@
     inset: -3px;
     border-radius: inherit;
     background: conic-gradient(
-      from 180deg at 50% 50%,
-      #00F0FF 0deg,
-      transparent 90deg,
-      transparent 180deg,
-      #00F0FF 180deg,
-      transparent 270deg,
-      transparent 360deg
+      from 90deg at 50% 50%,
+      #1A222E 0%,
+      #00A9B7 25%,
+      #00F0FF 50%,
+      #00A9B7 75%,
+      #1A222E 100%
     );
-    animation: border-spin 3s linear infinite;
+    animation: border-spin 2s linear infinite;
   }
 }
