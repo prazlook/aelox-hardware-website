@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
@@ -70,6 +70,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
   const tempColor = isAlerting ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
   
   const isOnline = asic.status === 'online';
+  const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'starting' || asic.status === 'stopping';
 
   const message = (currentStatus === 'online' || currentStatus === 'analyzing') && asic.comment 
@@ -85,6 +86,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
     animationColor = "#A0AEC0"; // Gris (theme-text-secondary)
     animationClassName = "animate-marching-ants";
   }
+
+  const PowerIcon = isOffline ? PowerOff : Power;
+  const powerIconClassName = cn({
+    "text-gray-500": isOffline || isTransitioning,
+    "text-white animate-pulse": isOnline,
+    "text-theme-text-secondary": !isOffline && !isTransitioning && !isOnline,
+  });
 
   return (
     <AnimatedBorderCard
@@ -106,11 +114,11 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
           <Button
             size="icon"
             variant="ghost"
-            className="w-8 h-8 rounded-full text-theme-text-secondary hover:bg-theme-accent/20 hover:text-theme-accent"
+            className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
             onClick={() => onTogglePower(asic.id)}
             disabled={asic.status === 'starting' || asic.status === 'stopping'}
           >
-            <Power size={16} />
+            <PowerIcon size={16} className={powerIconClassName} />
           </Button>
         </div>
       </div>
