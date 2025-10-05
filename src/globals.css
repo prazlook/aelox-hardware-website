@@ -130,11 +130,15 @@
     background: conic-gradient(
       from 180deg at 50% 50%,
       transparent 0%,
-      white 5%,
-      transparent 45%,
+      transparent 5%,
+      white 10%,
+      white 35%,
+      transparent 40%,
       transparent 50%,
-      white 55%,
-      transparent 95%
+      transparent 55%,
+      white 60%,
+      white 85%,
+      transparent 90%
     );
     animation: border-spin 4s linear infinite;
   }
