@@ -103,13 +103,12 @@
   }
   
   .animate-stroke-spin {
-    /* Using a shorter dash and longer gap for a "comet" effect */
-    stroke-dasharray: 150 1050;
+    stroke-dasharray: 300 300; /* Un quart de ligne, un quart de vide */
     animation: stroke-spin 4s linear infinite;
   }
 
   .animate-marching-ants {
-    stroke-dasharray: 12 24; /* A 12px dash followed by a 24px gap */
+    stroke-dasharray: 12 24; /* Un pointillé de 12, un espace de 24 (le double) */
     animation: marching-ants 1s linear infinite;
   }
 }
