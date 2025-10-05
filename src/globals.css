@@ -110,15 +110,15 @@
     border-radius: inherit;
     background-color: #1A222E;
     background-image: 
-      radial-gradient(at 40% 20%, hsla(210, 30%, 20%, 1) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, hsla(200, 40%, 15%, 1) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsla(210, 35%, 25%, 1) 0px, transparent 50%),
-      radial-gradient(at 80% 50%, hsla(200, 30%, 18%, 1) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(210, 25%, 22%, 1) 0px, transparent 50%),
-      radial-gradient(at 80% 100%, hsla(200, 38%, 20%, 1) 0px, transparent 50%),
-      radial-gradient(at 0% 0%, hsla(210, 40%, 15%, 1) 0px, transparent 50%);
+      radial-gradient(at 40% 20%, hsla(185, 60%, 30%, 0.7) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(190, 70%, 25%, 0.7) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(185, 65%, 35%, 0.7) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsla(190, 60%, 28%, 0.7) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(185, 55%, 32%, 0.7) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, hsla(190, 68%, 30%, 0.7) 0px, transparent 50%),
+      radial-gradient(at 0% 0%, hsla(185, 70%, 25%, 0.7) 0px, transparent 50%);
     background-size: 400% 400%;
-    animation: blob-animation 15s ease-in-out infinite;
+    animation: blob-animation 10s ease-in-out infinite;
   }
 
   .animated-border::after {
