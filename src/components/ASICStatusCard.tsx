@@ -67,6 +67,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
   const isWarning = asic.temperature > maxTemp - 10;
   const currentStatus = isAlerting ? 'alert' : asic.status;
   const tempColor = isAlerting ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
+  const isOnline = asic.status === 'online';
 
   const message = (currentStatus === 'online' || currentStatus === 'analyzing') && asic.comment 
     ? asic.comment 
@@ -74,8 +75,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
 
   return (
     <div className={cn(
-      "bg-theme-card p-4 rounded-lg border flex flex-col space-y-3 transition-colors",
-      isWarning ? "border-orange-500" : "border-theme-accent/30"
+      "p-4 rounded-lg border flex flex-col space-y-3 transition-colors",
+      isWarning ? "border-orange-500" : "border-theme-accent/30",
+      isOnline ? "bg-animated-gradient" : "bg-theme-card"
     )}>
       <div className="flex justify-between items-start">
         <div>
@@ -102,7 +104,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
         <StatItem 
-          icon={asic.status === 'online' ? <HashrateIcon width={20} height={20} /> : <Activity size={20} />} 
+          icon={isOnline ? <HashrateIcon width={20} height={20} /> : <Activity size={20} />} 
           label="Hashrate" 
           value={asic.hashrate.toFixed(2)} 
           unit="TH/s" 
