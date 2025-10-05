@@ -55,7 +55,7 @@ const Index = () => {
 
         switch (asic.status) {
           case 'online':
-            newAsic.temperature += (Math.random() - 0.5) * 0.4;
+            newAsic.temperature += (Math.random() - 0.5) * 2; // Increased fluctuation
             newAsic.hashrate += (Math.random() - 0.5) * 0.5;
             if (newAsic.isFanOn) {
               newAsic.fanSpeed += (Math.random() - 0.5) * 2;

@@ -62,11 +62,15 @@ const StatItem = ({ icon, label, value, unit, className }: { icon: React.ReactNo
 
 export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: ASICStatusCardProps) => {
   const isAlerting = asic.temperature >= maxTemp;
+  const isWarning = asic.temperature > maxTemp - 10;
   const currentStatus = isAlerting ? 'alert' : asic.status;
-  const tempColor = isAlerting ? 'text-red-500' : asic.temperature > maxTemp - 10 ? 'text-orange-400' : 'text-white';
+  const tempColor = isAlerting ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
 
   return (
-    <div className="bg-theme-card p-4 rounded-lg border border-theme-accent/30 flex flex-col space-y-3">
+    <div className={cn(
+      "bg-theme-card p-4 rounded-lg border flex flex-col space-y-3 transition-colors",
+      isWarning ? "border-orange-500" : "border-theme-accent/30"
+    )}>
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
