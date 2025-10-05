@@ -6,9 +6,16 @@ interface AnimatedBorderCardProps {
   className?: string;
   isAnimated: boolean;
   color?: string;
+  animationClassName?: string;
 }
 
-export const AnimatedBorderCard = ({ children, className, isAnimated, color = '#00F0FF' }: AnimatedBorderCardProps) => {
+export const AnimatedBorderCard = ({
+  children,
+  className,
+  isAnimated,
+  color = '#00F0FF',
+  animationClassName = 'animate-stroke-spin'
+}: AnimatedBorderCardProps) => {
   return (
     <div className={cn("relative", className)}>
       {isAnimated && (
@@ -27,7 +34,7 @@ export const AnimatedBorderCard = ({ children, className, isAnimated, color = '#
             ry="15"
             stroke={color}
             strokeWidth="2"
-            className="animate-stroke-spin"
+            className={animationClassName}
           />
         </svg>
       )}

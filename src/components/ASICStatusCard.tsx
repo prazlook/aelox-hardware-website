@@ -68,16 +68,27 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
   const isWarning = asic.temperature > maxTemp - 10;
   const currentStatus = isAlerting ? 'alert' : asic.status;
   const tempColor = isAlerting ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
+  
   const isOnline = asic.status === 'online';
+  const isTransitioning = asic.status === 'starting' || asic.status === 'stopping';
 
   const message = (currentStatus === 'online' || currentStatus === 'analyzing') && asic.comment 
     ? asic.comment 
     : getStatusMessage(currentStatus);
 
+  let animationColor = isWarning ? "#EF4444" : "#00F0FF";
+  let animationClassName = "animate-stroke-spin";
+
+  if (isTransitioning) {
+    animationColor = "#A0AEC0"; // Gris (theme-text-secondary)
+    animationClassName = "animate-marching-ants";
+  }
+
   return (
     <AnimatedBorderCard
-      isAnimated={isOnline}
-      color={isWarning ? "#EF4444" : "#00F0FF"}
+      isAnimated={isOnline || isTransitioning}
+      color={animationColor}
+      animationClassName={animationClassName}
       className={cn(
         "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card",
         isWarning ? "border-orange-500" : "border-theme-accent/30",
