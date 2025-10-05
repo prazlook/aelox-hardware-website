@@ -94,12 +94,17 @@ export default {
           '0%': { strokeDashoffset: '64' },
           '100%': { strokeDashoffset: '0' },
         },
+        "hashrate-pulse": {
+          '0%': { strokeDashoffset: '48' },
+          '100%': { strokeDashoffset: '0' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "gradient": "animated-gradient 10s ease infinite",
         "ecg": "ecg-pulse 1.5s linear infinite",
+        "hashrate": "hashrate-pulse 1.5s linear infinite",
       },
     },
   },

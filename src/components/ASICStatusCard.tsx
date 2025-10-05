@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, Thermometer, Fan, Cpu } from "lucide-react";
+import { Zap, Thermometer, Fan } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ECGStatusIcon } from "./ECGStatusIcon";
+import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 
 export interface ASIC {
   id: string;
@@ -48,7 +49,7 @@ export const ASICStatusCard = ({ asic, isAlerting, maxTemp, onToggleFan }: ASICS
         </CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4">
-        <StatItem icon={<Cpu size={20} />} label="Hashrate" value={asic.hashrate} unit="TH/s" isAlerting={isAlerting} />
+        <StatItem icon={<AnimatedHashrateIcon isOnline={asic.isOnline} />} label="Hashrate" value={asic.hashrate} unit="TH/s" isAlerting={isAlerting} />
         <StatItem icon={<Zap size={20} />} label="Consommation" value={asic.power} unit="W" isAlerting={isAlerting} />
         <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature} unit="°C" isAlerting={isAlerting} />
         
