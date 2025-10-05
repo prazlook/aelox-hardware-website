@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
+import { AnimatedBorderCard } from "./AnimatedBorderCard";
 
 export type ASICStatus = 'online' | 'offline' | 'starting' | 'stopping' | 'analyzing' | 'alert';
 
@@ -74,11 +75,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
     : getStatusMessage(currentStatus);
 
   return (
-    <div className={cn(
-      "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors",
-      isWarning ? "border-orange-500" : "border-theme-accent/30",
-      isOnline ? "animated-border" : "bg-theme-card"
-    )}>
+    <AnimatedBorderCard
+      isAnimated={isOnline}
+      className={cn(
+        "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card",
+        isWarning ? "border-orange-500" : "border-theme-accent/30",
+      )}
+    >
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
@@ -138,6 +141,6 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
         <Eye size={16} className="mr-2" />
         Voir Détails
       </Button>
-    </div>
+    </AnimatedBorderCard>
   );
 };
