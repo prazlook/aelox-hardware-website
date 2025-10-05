@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { LayoutDashboard, Wallet } from "lucide-react";
+import { LayoutDashboard, Wallet, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Layout = () => {
@@ -32,6 +32,19 @@ const Layout = () => {
             }
           >
             <Wallet className="h-6 w-6" />
+          </NavLink>
+          <NavLink
+            to="/configuration"
+            className={({ isActive }) =>
+              cn(
+                "p-2 rounded-lg",
+                isActive
+                  ? "bg-blue-500/20 text-blue-400"
+                  : "text-gray-400 hover:bg-gray-700/50"
+              )
+            }
+          >
+            <Settings className="h-6 w-6" />
           </NavLink>
         </nav>
       </aside>
