@@ -104,7 +104,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "gradient": "animated-gradient 10s ease infinite",
         "ecg": "ecg-pulse 1.5s linear infinite",
-        "hashrate": "hashrate-pulse 1.5s linear infinite",
+        "hashrate": "hashrate-pulse 1s linear infinite",
       },
     },
   },

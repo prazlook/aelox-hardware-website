@@ -35,9 +35,6 @@ const StatItem = ({ icon, label, value, unit, isAlerting }: { icon: React.ReactN
 );
 
 export const ASICStatusCard = ({ asic, isAlerting, maxTemp, onToggleFan }: ASICStatusCardProps) => {
-  // Calcule la durée de l'animation. Plus le hashrate est élevé, plus la durée est courte (animation plus rapide).
-  const animationDuration = `${Math.max(0.5, 2.5 - (asic.hashrate / 100))}s`;
-
   return (
     <Card className={cn(
       "bg-gray-900/50 border-gray-700 text-white backdrop-blur-sm transition-colors",
@@ -52,7 +49,7 @@ export const ASICStatusCard = ({ asic, isAlerting, maxTemp, onToggleFan }: ASICS
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4">
         <StatItem 
-          icon={<AnimatedHashrateIcon isOnline={asic.isOnline} animationDuration={animationDuration} />} 
+          icon={<AnimatedHashrateIcon isOnline={asic.isOnline} />} 
           label="Hashrate" 
           value={asic.hashrate} 
           unit="TH/s" 
