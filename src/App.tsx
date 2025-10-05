@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import WalletPage from "./pages/Wallet";
 import ConfigurationPage from "./pages/Configuration";
+import StatisticsPage from "./pages/Statistics";
+import AsicManagementPage from "./pages/AsicManagement";
 
 const queryClient = new QueryClient();
 
@@ -20,10 +22,11 @@ const App = () => (
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/asic-management" element={<AsicManagementPage />} />
             <Route path="/configuration" element={<ConfigurationPage />} />
           </Route>
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

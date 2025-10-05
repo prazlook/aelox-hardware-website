@@ -1,28 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ASIC, ASICStatusCard } from '@/components/ASICStatusCard';
-import { RealTimeChart } from '@/components/RealTimeChart';
-import { MadeWithDyad } from "@/components/made-with-dyad";
-import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { cn } from '@/lib/utils';
-import { AlertTriangle, PowerOff } from 'lucide-react';
-
-type AlertState = 'ok' | 'alerting' | 'shutdown';
+import { SummaryCard } from '@/components/SummaryCard';
+import { Button } from '@/components/ui/button';
+import { Activity, Thermometer, Zap, Server, Power, X } from 'lucide-react';
 
 const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 110.5, temperature: 65, power: 3250, fanSpeed: 70 },
-  { id: 'A2', name: 'Whatsminer M30S++ #1', model: 'MicroBT Whatsminer M30S++', status: 'online', hashrate: 112.1, temperature: 68, power: 3472, fanSpeed: 75 },
-  { id: 'A3', name: 'Antminer L7 #1', model: 'Bitmain Antminer L7', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0 },
+  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85 },
+  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71 },
+  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0 },
 ];
 
 const Index = () => {
   const [asics, setAsics] = useState<ASIC[]>(MOCK_ASICS);
-  const [chartData, setChartData] = useState<any[]>([]);
-  const [maxTemp, setMaxTemp] = useState(85);
-  const [shutdownDelay, setShutdownDelay] = useState(30000);
-  const [alertState, setAlertState] = useState<AlertState>('ok');
-  const [showAlertDialog, setShowAlertDialog] = useState(false);
+  const maxTemp = 85; // Seuil de température d'alerte
 
   const handleTogglePower = (asicId: string) => {
     setAsics(prevAsics =>
@@ -35,201 +25,95 @@ const Index = () => {
       })
     );
   };
+  
+  const handleStartAll = () => {
+    setAsics(asics.map(asic => asic.status === 'offline' ? { ...asic, status: 'starting' } : asic));
+  };
+
+  const handleStopAll = () => {
+    setAsics(asics.map(asic => asic.status === 'online' ? { ...asic, status: 'stopping' } : asic));
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (alertState === 'shutdown') return;
-
       const updatedAsics = asics.map(asic => {
         let newAsic = { ...asic };
-
         switch (asic.status) {
           case 'online':
             newAsic.temperature += (Math.random() - 0.5) * 0.4;
             newAsic.hashrate += (Math.random() - 0.5) * 0.5;
-            newAsic.power += (Math.random() - 0.5) * 10;
-            newAsic.fanSpeed += (Math.random() - 0.5) * 2;
             break;
           case 'starting':
             newAsic.power += 300;
-            newAsic.fanSpeed += 10;
-            newAsic.temperature += 2;
-            if (newAsic.power >= 3000) {
-              newAsic.status = 'online';
-              newAsic.hashrate = 100 + Math.random() * 10;
-            }
+            if (newAsic.power >= 3000) newAsic.status = 'online';
             break;
           case 'stopping':
             newAsic.power -= 300;
-            newAsic.fanSpeed -= 10;
-            newAsic.hashrate = 0;
-            if (newAsic.power <= 0) {
-              newAsic.status = 'offline';
-            }
+            if (newAsic.power <= 0) newAsic.status = 'offline';
             break;
           case 'offline':
-            newAsic.hashrate = 0;
-            newAsic.power = 0;
-            newAsic.fanSpeed = 0;
             if (newAsic.temperature > 25) newAsic.temperature -= 0.5;
             break;
         }
-        
-        newAsic.fanSpeed = Math.min(100, Math.max(0, newAsic.fanSpeed));
         newAsic.power = Math.max(0, newAsic.power);
-        newAsic.hashrate = Math.max(0, newAsic.hashrate);
+        newAsic.hashrate = asic.status === 'online' ? Math.max(0, newAsic.hashrate) : 0;
         newAsic.temperature = Math.max(25, newAsic.temperature);
-
         return newAsic;
       });
       setAsics(updatedAsics);
-
-      setChartData(prevData => {
-        const now = new Date();
-        const newEntry = {
-          time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`,
-          hashrate: updatedAsics.reduce((acc, a) => acc + (a.status === 'online' ? a.hashrate : 0), 0),
-          temperature: updatedAsics.reduce((acc, a) => acc + a.temperature, 0) / updatedAsics.length,
-          power: updatedAsics.reduce((acc, a) => acc + a.power, 0) / 1000,
-        };
-        return [...prevData.slice(-29), newEntry];
-      });
-
     }, 2000);
-
     return () => clearInterval(interval);
-  }, [asics, alertState]);
-
-  useEffect(() => {
-    const hotAsic = asics.find(a => a.temperature >= maxTemp);
-    if (hotAsic && alertState === 'ok') {
-      setAlertState('alerting');
-      setShowAlertDialog(true);
-    }
-  }, [asics, maxTemp, alertState]);
-
-  useEffect(() => {
-    let shutdownTimer: NodeJS.Timeout;
-    if (alertState === 'alerting') {
-      shutdownTimer = setTimeout(() => {
-        setAlertState('shutdown');
-        setShowAlertDialog(false);
-      }, shutdownDelay);
-    }
-    return () => clearTimeout(shutdownTimer);
-  }, [alertState, shutdownDelay]);
-
-  const handleDismissAlert = () => {
-    setShowAlertDialog(false);
-    setAlertState('ok');
-    setAsics(prevAsics =>
-      prevAsics.map(asic => ({ ...asic, temperature: Math.min(asic.temperature, maxTemp - 5) }))
-    );
-  };
-
-  const averages = useMemo(() => {
-    const onlineAsics = asics.filter(a => a.status === 'online');
-    const onlineCount = onlineAsics.length || 1;
-    return {
-      hashrate: asics.reduce((acc, a) => acc + a.hashrate, 0),
-      temperature: asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length,
-      power: asics.reduce((acc, a) => acc + a.power, 0),
-      fanSpeed: asics.reduce((acc, a) => acc + a.fanSpeed, 0) / asics.length,
-    }
   }, [asics]);
 
-  const backgroundClass = {
-    'ok': 'bg-gray-900 from-gray-900 to-black',
-    'alerting': 'bg-red-900 from-red-900 to-black animate-pulse',
-    'shutdown': 'bg-black from-black to-black',
-  }[alertState];
+  const summary = useMemo(() => {
+    const onlineAsics = asics.filter(a => a.status === 'online');
+    return {
+      totalHashrate: asics.reduce((acc, a) => acc + a.hashrate, 0),
+      avgTemp: asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length,
+      totalPower: asics.reduce((acc, a) => acc + a.power, 0),
+      activeAsics: onlineAsics.length,
+    };
+  }, [asics]);
 
   return (
-    <div className={cn("min-h-screen text-white bg-gradient-to-b p-4 sm:p-8 transition-all duration-[5000ms] ease-in-out", backgroundClass)}>
-      <header className="flex flex-col sm:flex-row justify-between items-center mb-8">
-        <h1 className="text-4xl font-light tracking-wider">ASIC <span className="font-bold">COMMAND</span></h1>
-        <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-          <div className="text-center">
-            <p className="text-sm text-gray-400">Temp. Alerte</p>
-            <p className="text-lg font-bold">{maxTemp}°C</p>
-          </div>
-          <Slider defaultValue={[85]} max={100} min={50} step={1} onValueChange={(v) => setMaxTemp(v[0])} className="w-32" />
-          <Select onValueChange={(v) => setShutdownDelay(Number(v))} defaultValue={String(shutdownDelay)}>
-            <SelectTrigger className="w-[180px] bg-gray-800 border-gray-700">
-              <SelectValue placeholder="Délai d'arrêt" />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-800 text-white border-gray-700">
-              <SelectItem value="15000">15 secondes</SelectItem>
-              <SelectItem value="30000">30 secondes</SelectItem>
-              <SelectItem value="60000">1 minute</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
+          <p className="text-theme-text-secondary mt-1">Surveillance en temps réel de vos ASICs</p>
         </div>
-      </header>
-
-      {alertState === 'shutdown' ? (
-        <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-          <PowerOff className="w-24 h-24 text-red-500 mb-4" />
-          <h2 className="text-5xl font-bold text-red-500">ARRÊT D'URGENCE</h2>
-          <p className="text-xl text-gray-400 mt-2">Les systèmes ont été mis hors tension pour cause de surchauffe non résolue.</p>
+        <div className="flex space-x-3">
+          <Button onClick={handleStartAll} className="bg-green-500/20 text-green-400 hover:bg-green-500/30">
+            <Power className="w-4 h-4 mr-2" />
+            Démarrer Tout
+          </Button>
+          <Button onClick={handleStopAll} className="bg-red-500/20 text-red-400 hover:bg-red-500/30">
+            <X className="w-4 h-4 mr-2" />
+            Arrêter Tout
+          </Button>
         </div>
-      ) : (
-        <main className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-lg bg-gray-900/50 border border-gray-700">
-              <h3 className="text-gray-400 mb-2">Hashrate Total</h3>
-              <p className="text-3xl font-bold">{averages.hashrate.toFixed(2)} <span className="text-xl">TH/s</span></p>
-            </div>
-            <div className="p-6 rounded-lg bg-gray-900/50 border border-gray-700">
-              <h3 className="text-gray-400 mb-2">Conso. Totale</h3>
-              <p className="text-3xl font-bold">{(averages.power / 1000).toFixed(2)} <span className="text-xl">kW</span></p>
-            </div>
-            <div className="p-6 rounded-lg bg-gray-900/50 border border-gray-700">
-              <h3 className="text-gray-400 mb-2">Temp. Moyenne</h3>
-              <p className="text-3xl font-bold">{averages.temperature.toFixed(2)} <span className="text-xl">°C</span></p>
-            </div>
-            <div className="p-6 rounded-lg bg-gray-900/50 border border-gray-700">
-              <h3 className="text-gray-400 mb-2">Ventil. Moyen</h3>
-              <p className="text-3xl font-bold">{averages.fanSpeed.toFixed(2)} <span className="text-xl">%</span></p>
-            </div>
-          </div>
+      </div>
 
-          <RealTimeChart data={chartData} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <SummaryCard title="Hashrate Total" value={summary.totalHashrate.toFixed(2)} unit="TH/s" icon={<Activity />} iconBgColor="bg-orange-500/20" />
+        <SummaryCard title="Température Moyenne" value={summary.avgTemp.toFixed(2)} unit="°C" icon={<Thermometer />} iconBgColor="bg-green-500/20" />
+        <SummaryCard title="Consommation Totale" value={summary.totalPower.toFixed(0)} unit="W" icon={<Zap />} iconBgColor="bg-blue-500/20" />
+        <SummaryCard title="ASICs Actifs" value={`${summary.activeAsics} / ${asics.length}`} unit="" icon={<Server />} iconBgColor="bg-cyan-500/20" />
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {asics.map(asic => (
-              <ASICStatusCard 
-                key={asic.id} 
-                asic={asic} 
-                maxTemp={maxTemp}
-                onTogglePower={handleTogglePower}
-              />
-            ))}
-          </div>
-        </main>
-      )}
-
-      <AlertDialog open={showAlertDialog}>
-        <AlertDialogContent className="bg-red-900 border-red-700 text-white">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center space-x-2 text-2xl">
-              <AlertTriangle className="text-yellow-300" />
-              <span>ALERTE SURCHAUFFE !</span>
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-red-200">
-              La température d'un ASIC a dépassé le seuil de {maxTemp}°C.
-              Arrêt automatique des systèmes dans {shutdownDelay / 1000} secondes si aucune action n'est prise.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleDismissAlert} className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold">
-              Acquitter l'alerte
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <MadeWithDyad />
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Vos Machines</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {asics.map(asic => (
+            <ASICStatusCard 
+              key={asic.id} 
+              asic={asic} 
+              maxTemp={maxTemp}
+              onTogglePower={handleTogglePower}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

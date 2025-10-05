@@ -19,6 +19,12 @@ export default {
     },
     extend: {
       colors: {
+        'theme-dark': '#0A101A',
+        'theme-card': '#1A222E',
+        'theme-accent': '#00A9B7',
+        'theme-cyan': '#00F0FF',
+        'theme-text-primary': '#FFFFFF',
+        'theme-text-secondary': '#A0AEC0',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -52,16 +58,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,41 +66,17 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
-        },
-        "animated-gradient": {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
-        "ecg-pulse": {
-          '0%': { strokeDashoffset: '64' },
-          '100%': { strokeDashoffset: '0' },
-        },
-        "hashrate-pulse": {
-          '0%': { strokeDashoffset: '0' },
-          '100%': { strokeDashoffset: '-48' },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "gradient": "animated-gradient 10s ease infinite",
-        "ecg": "ecg-pulse 1.5s linear infinite",
-        "hashrate": "hashrate-pulse 1s linear infinite",
       },
     },
   },
