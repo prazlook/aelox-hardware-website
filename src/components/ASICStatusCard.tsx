@@ -76,6 +76,8 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
     ? asic.comment 
     : getStatusMessage(currentStatus);
 
+  const truncatedMessage = message.length > 26 ? message.substring(0, 23) + '...' : message;
+
   let animationColor = isWarning ? "#EF4444" : "#00F0FF";
   let animationClassName = "animate-stroke-spin";
 
@@ -114,7 +116,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
       </div>
 
       <div className="text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5">
-        {message}
+        {truncatedMessage}
       </div>
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
