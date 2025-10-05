@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HashrateIcon } from "./HashrateIcon";
+import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 
 export type ASICStatus = 'online' | 'offline' | 'starting' | 'stopping' | 'analyzing' | 'alert';
 
@@ -104,7 +104,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
         <StatItem 
-          icon={isOnline ? <HashrateIcon width={20} height={20} /> : <Activity size={20} />} 
+          icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} /> : <Activity size={20} />} 
           label="Hashrate" 
           value={asic.hashrate.toFixed(2)} 
           unit="TH/s" 

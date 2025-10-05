@@ -44,10 +44,21 @@
   }
 }
 
-@keyframes ecg-pulse {
+@keyframes ecg-draw {
   to {
-    stroke-dashoffset: -42;
+    stroke-dashoffset: 0;
   }
+}
+
+@keyframes zap-trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes server-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 @keyframes blob-animation {
@@ -63,9 +74,26 @@
 }
 
 @layer components {
-  .animate-ecg {
-    stroke-dasharray: 10 32;
-    animation: ecg-pulse 1s linear infinite;
+  .animate-ecg-draw {
+    stroke-dasharray: 42;
+    stroke-dashoffset: 42;
+    animation: ecg-draw 2s ease-in-out infinite;
+  }
+
+  .animate-zap-trace polygon {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: zap-trace 2.5s linear infinite;
+    fill: none;
+  }
+
+  .animate-server-blink .light-1 {
+    animation: server-blink 1.5s infinite;
+    stroke-width: 3;
+  }
+  .animate-server-blink .light-2 {
+    animation: server-blink 1.5s infinite 0.5s;
+    stroke-width: 3;
   }
 
   .animated-border {
@@ -74,7 +102,6 @@
     border-color: transparent;
   }
 
-  /* This pseudo-element creates the background blob effect */
   .animated-border::before {
     content: '';
     position: absolute;
@@ -94,7 +121,6 @@
     animation: blob-animation 15s ease-in-out infinite;
   }
 
-  /* This pseudo-element creates the spinning border effect with two lines */
   .animated-border::after {
     content: '';
     position: absolute;

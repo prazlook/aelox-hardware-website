@@ -2,9 +2,12 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC, ASICStatusCard } from '@/components/ASICStatusCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
-import { Thermometer, Zap, Server, Power, X } from 'lucide-react';
+import { Thermometer, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
-import { HashrateIcon } from '@/components/HashrateIcon';
+import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
+import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
+import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
+import { showError, showSuccess } from '@/utils/toast';
 
 const MOCK_ASICS: ASIC[] = [
   { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
@@ -23,7 +26,7 @@ const Index = () => {
   const [asics, setAsics] = useState<ASIC[]>(MOCK_ASICS);
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
   const prevAsicsRef = useRef<ASIC[]>(asics);
-  const maxTemp = 85; // Seuil de température d'alerte
+  const maxTemp = 85;
 
   const handleTogglePower = (asicId: string) => {
     const asicToToggle = asics.find(a => a.id === asicId);
@@ -117,13 +120,43 @@ const Index = () => {
 
   const summary = useMemo(() => {
     const onlineAsics = asics.filter(a => a.status === 'online');
+    const totalAsicsCount = asics.length;
+    const activeAsicsCount = onlineAsics.length;
+    const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
+    const totalPower = asics.reduce((acc, a) => acc + a.power, 0);
+    const avgTemp = totalAsicsCount > 0 ? asics.reduce((acc, a) => acc + a.temperature, 0) / totalAsicsCount : 0;
+
     return {
-      totalHashrate: asics.reduce((acc, a) => acc + a.hashrate, 0),
-      avgTemp: asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length,
-      totalPower: asics.reduce((acc, a) => acc + a.power, 0),
-      activeAsics: onlineAsics.length,
+      totalHashrate,
+      avgTemp,
+      totalPower,
+      activeAsics: activeAsicsCount,
+      totalAsics: totalAsicsCount,
     };
   }, [asics]);
+
+  const tempStatus = useMemo(() => {
+    const temp = summary.avgTemp;
+    if (temp > 85) return { level: 'surcharge', text: 'SURCHARGE' };
+    if (temp > 70) return { level: 'eleve', text: 'ÉLEVÉ' };
+    if (temp > 40) return { level: 'optimal', text: 'OPTIMAL' };
+    return { level: 'faible', text: 'FAIBLE' };
+  }, [summary.avgTemp]);
+
+  const surchargeAlertTriggered = useRef(false);
+  useEffect(() => {
+    if (tempStatus.level === 'surcharge' && !surchargeAlertTriggered.current) {
+      surchargeAlertTriggered.current = true;
+      showError("ALERTE SURCHARGE ! Température moyenne critique. Arrêt d'urgence dans 10 secondes.");
+      const timer = setTimeout(() => {
+        handleStopAll();
+        showSuccess("Arrêt d'urgence effectué pour cause de surchauffe.");
+      }, 10000);
+      return () => clearTimeout(timer);
+    } else if (tempStatus.level !== 'surcharge') {
+      surchargeAlertTriggered.current = false;
+    }
+  }, [tempStatus.level, handleStopAll]);
 
   return (
     <div className="space-y-8">
@@ -145,10 +178,35 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SummaryCard title="Hashrate Total" value={summary.totalHashrate.toFixed(2)} unit="TH/s" icon={<HashrateIcon className="text-theme-cyan" />} iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" />
-        <SummaryCard title="Température Moyenne" value={summary.avgTemp.toFixed(2)} unit="°C" icon={<Thermometer />} iconBgColor="bg-green-500/20" />
-        <SummaryCard title="Consommation Totale" value={summary.totalPower.toFixed(0)} unit="W" icon={<Zap />} iconBgColor="bg-blue-500/20" />
-        <SummaryCard title="ASICs Actifs" value={`${summary.activeAsics} / ${asics.length}`} unit="" icon={<Server />} iconBgColor="bg-cyan-500/20" />
+        <SummaryCard 
+          title="Hashrate Total" 
+          value={summary.totalHashrate.toFixed(2)} 
+          unit="TH/s" 
+          icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
+          iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" 
+        />
+        <SummaryCard 
+          title="Température Moyenne" 
+          value={summary.avgTemp.toFixed(2)} 
+          unit="°C" 
+          icon={<Thermometer className="w-8 h-8" />} 
+          iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
+          tempStatus={tempStatus}
+        />
+        <SummaryCard 
+          title="Consommation Totale" 
+          value={summary.totalPower.toFixed(0)} 
+          unit="W" 
+          icon={<AnimatedZapIcon className="w-8 h-8" />} 
+          iconBgColor="bg-gradient-to-br from-cyan-400 to-cyan-600" 
+        />
+        <SummaryCard 
+          title="ASICs Actifs" 
+          value={`${summary.activeAsics} / ${summary.totalAsics}`} 
+          unit="" 
+          icon={<AnimatedServerIcon className="w-8 h-8" />} 
+          iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700" 
+        />
       </div>
 
       <div>
