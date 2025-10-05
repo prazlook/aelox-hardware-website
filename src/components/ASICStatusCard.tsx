@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, Thermometer, Fan, Cpu } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ECGStatusIcon } from "./ECGStatusIcon";
 
 export interface ASIC {
   id: string;
@@ -10,6 +11,7 @@ export interface ASIC {
   power: number;
   fanSpeed: number;
   isFanOn: boolean;
+  isOnline: boolean;
 }
 
 interface ASICStatusCardProps {
@@ -33,20 +35,16 @@ const StatItem = ({ icon, label, value, unit, isAlerting }: { icon: React.ReactN
 
 export const ASICStatusCard = ({ asic, isAlerting, maxTemp, onToggleFan }: ASICStatusCardProps) => {
 
-  const getStatusColor = (temperature: number, max: number) => {
-    const percentage = temperature / max;
-    if (percentage >= 1) return "bg-red-500";
-    if (percentage > 0.95) return "bg-orange-500";
-    if (percentage > 0.9) return "bg-yellow-500";
-    return "bg-green-500";
-  };
-
   return (
-    <Card className={cn("bg-gray-900/50 border-gray-700 text-white backdrop-blur-sm", isAlerting && "border-red-500/50")}>
+    <Card className={cn(
+      "bg-gray-900/50 border-gray-700 text-white backdrop-blur-sm transition-colors",
+      isAlerting && "border-red-500/50",
+      asic.isOnline && "bg-gradient-to-r from-gray-900/50 via-blue-900/20 to-gray-900/50 animate-gradient [background-size:200%_200%]"
+    )}>
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
           <span>{asic.name}</span>
-          <div className={cn("w-3 h-3 rounded-full animate-pulse", getStatusColor(asic.temperature, maxTemp))}></div>
+          <ECGStatusIcon isOnline={asic.isOnline} isAlerting={isAlerting} />
         </CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4">

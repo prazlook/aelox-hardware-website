@@ -11,9 +11,9 @@ import { AlertTriangle, PowerOff } from 'lucide-react';
 type AlertState = 'ok' | 'alerting' | 'shutdown';
 
 const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro', hashrate: 110, temperature: 65, power: 3250, fanSpeed: 70, isFanOn: true },
-  { id: 'A2', name: 'Whatsminer M30S++', hashrate: 112, temperature: 68, power: 3472, fanSpeed: 75, isFanOn: true },
-  { id: 'A3', name: 'Antminer L7', hashrate: 95, temperature: 72, power: 3425, fanSpeed: 80, isFanOn: true },
+  { id: 'A1', name: 'Antminer S19 Pro', hashrate: 110, temperature: 65, power: 3250, fanSpeed: 70, isFanOn: true, isOnline: true },
+  { id: 'A2', name: 'Whatsminer M30S++', hashrate: 112, temperature: 68, power: 3472, fanSpeed: 75, isFanOn: true, isOnline: true },
+  { id: 'A3', name: 'Antminer L7', hashrate: 95, temperature: 72, power: 3425, fanSpeed: 80, isFanOn: true, isOnline: true },
 ];
 
 const Index = () => {
