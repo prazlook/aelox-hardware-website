@@ -75,7 +75,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
 
   return (
     <div className={cn(
-      "p-4 rounded-lg border flex flex-col space-y-3 transition-colors",
+      "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors",
       isWarning ? "border-orange-500" : "border-theme-accent/30",
       isOnline ? "bg-animated-gradient" : "bg-theme-card"
     )}>
@@ -98,7 +98,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
         </div>
       </div>
 
-      <div className="text-center text-sm text-theme-accent border border-theme-accent/30 rounded-md py-1.5">
+      <div className="text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5">
         {message}
       </div>
 
@@ -134,7 +134,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan }: AS
         </div>
       </div>
 
-      <Button className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90">
+      <Button className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl">
         <Eye size={16} className="mr-2" />
         Voir Détails
       </Button>
