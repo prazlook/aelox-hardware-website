@@ -70,6 +70,15 @@
   }
 }
 
+@keyframes marching-ants {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 36;
+  }
+}
+
 @layer components {
   .animate-ecg-draw {
     stroke-dasharray: 42;
@@ -94,7 +103,12 @@
   }
   
   .animate-stroke-spin {
-    stroke-dasharray: 600;
+    stroke-dasharray: 300 300; /* Un quart de ligne, un quart de vide */
     animation: stroke-spin 4s linear infinite;
+  }
+
+  .animate-marching-ants {
+    stroke-dasharray: 12 24; /* Un pointillé de 12, un espace de 24 (le double) */
+    animation: marching-ants 1s linear infinite;
   }
 }
