@@ -61,12 +61,12 @@
   50% { opacity: 0.3; }
 }
 
-@keyframes draw-border {
+@keyframes stroke-spin {
   from {
-    stroke-dashoffset: 1200;
+    stroke-dashoffset: 0;
   }
   to {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: 1200;
   }
 }
 
@@ -93,9 +93,8 @@
     stroke-width: 3;
   }
   
-  .animate-border-draw {
-    stroke-dasharray: 1200;
-    stroke-dashoffset: 1200;
-    animation: draw-border 3s ease-out forwards;
+  .animate-stroke-spin {
+    stroke-dasharray: 600;
+    animation: stroke-spin 4s linear infinite;
   }
 }

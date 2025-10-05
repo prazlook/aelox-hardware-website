@@ -26,7 +26,7 @@ export const AnimatedBorderCard = ({ children, className, isAnimated }: Animated
             ry="15"
             stroke="#00F0FF"
             strokeWidth="2"
-            className="animate-border-draw"
+            className="animate-stroke-spin"
           />
         </svg>
       )}
