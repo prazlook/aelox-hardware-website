@@ -14,10 +14,15 @@ const statusConfig = {
   surcharge: { color: '#ef4444' },
 };
 
-const BAR_COUNT = 72;
-const RADIUS = 40;
-const PARTICLE_COUNT = 10;
+const BAR_COUNT = 90;
+const PARTICLE_COUNT = 15;
 const WAVEFORM_COUNT = 3;
+
+const VIEWBOX_WIDTH = 800;
+const VIEWBOX_HEIGHT = 100;
+const CIRCLE_CX = VIEWBOX_WIDTH - 80;
+const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
+const RADIUS = 40;
 
 export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicatorProps) => {
   const [dynamicValues, setDynamicValues] = useState({
@@ -33,8 +38,8 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
     setDynamicValues(prev => ({
       ...prev,
       particles: Array.from({ length: PARTICLE_COUNT }, () => ({
-        x: Math.random() * 100,
-        y: Math.random() * 100,
+        x: Math.random() * VIEWBOX_WIDTH,
+        y: Math.random() * VIEWBOX_HEIGHT,
         size: Math.random() * 1.5 + 0.5,
         tx: (Math.random() - 0.5) * 100,
         ty: (Math.random() - 0.5) * 100,
@@ -47,9 +52,10 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
     const intervalId = setInterval(() => {
       const intensity = Math.min(hashrate / 150, 1);
 
-      const newBarHeights = Array.from({ length: BAR_COUNT }, () => 
-        Math.random() * (3 + 12 * intensity)
-      );
+      const newBarHeights = Array.from({ length: BAR_COUNT }, () => {
+        const baseHeight = Math.random() * (3 + 20 * intensity);
+        return Math.random() > 0.95 ? baseHeight * 2.5 : baseHeight;
+      });
 
       const newWaveformPointsArray = [];
       for (let j = 0; j < WAVEFORM_COUNT; j++) {
@@ -58,21 +64,21 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
         const points = Array.from({ length: 40 }, (_, i) => {
           const angle = (i / 39) * Math.PI * 2;
           const r = waveformRadius + (Math.random() - 0.5) * waveformAmplitude;
-          const x = 50 + Math.cos(angle) * r;
-          const y = 50 + Math.sin(angle) * r;
+          const x = CIRCLE_CX + Math.cos(angle) * r;
+          const y = CIRCLE_CY + Math.sin(angle) * r;
           return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
         }).join(' ') + ' Z';
         newWaveformPointsArray.push(points);
       }
       
-      let path = 'M -5 50';
+      let path = `M -5 ${CIRCLE_CY}`;
       const ecgAmplitude = 1 + 10 * intensity;
-      for (let i = -5; i <= 105; i += 2) {
-        let y = 50;
-        if (i % 20 > 10 && i % 20 < 14) {
-            y += (Math.random() - 0.5) * ecgAmplitude * (1 - Math.abs(12 - (i%20)) / 2);
+      for (let i = -5; i <= VIEWBOX_WIDTH + 5; i += 4) {
+        let y = CIRCLE_CY;
+        if (Math.random() > 0.97) {
+            y += (Math.random() - 0.5) * ecgAmplitude * 3;
         } else {
-            y += (Math.random() - 0.5) * ecgAmplitude * 0.2;
+            y += (Math.random() - 0.5) * ecgAmplitude * 0.4;
         }
         path += ` L ${i} ${y.toFixed(2)}`;
       }
@@ -94,11 +100,11 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       return (
         <rect
           key={i}
-          x="49.8"
-          y={50 - RADIUS - height}
-          width="0.4"
+          x={CIRCLE_CX - 0.25}
+          y={CIRCLE_CY - RADIUS - height}
+          width="0.5"
           height={height}
-          transform={`rotate(${angle} 50 50)`}
+          transform={`rotate(${angle} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={color}
           style={{ transition: 'height 0.1s ease-out' }}
         />
@@ -107,7 +113,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
   }, [dynamicValues.barHeights, color]);
 
   return (
-    <svg viewBox="0 0 100 100" width="48" height="48" className="overflow-visible">
+    <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="none">
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />

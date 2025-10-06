@@ -202,20 +202,22 @@ const Index = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
+      <div className="relative h-24 -mx-6 -mt-6 mb-4">
+        <div className="absolute inset-0 z-0 opacity-50">
           <GlobalStatusIndicator status={tempStatus.level} hashrate={summary.totalHashrate} />
         </div>
-        <div className="flex space-x-3">
-          <Button onClick={handleStartAll} className="bg-green-500/20 text-green-400 hover:bg-green-500/30">
-            <Power className="w-4 h-4 mr-2" />
-            Démarrer Tout
-          </Button>
-          <Button onClick={handleStopAll} className="bg-red-500/20 text-red-400 hover:bg-red-500/30">
-            <X className="w-4 h-4 mr-2" />
-            Arrêter Tout
-          </Button>
+        <div className="relative z-10 flex justify-between items-center h-full px-6">
+          <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
+          <div className="flex space-x-3">
+            <Button onClick={handleStartAll} className="bg-green-500/20 text-green-400 hover:bg-green-500/30">
+              <Power className="w-4 h-4 mr-2" />
+              Démarrer Tout
+            </Button>
+            <Button onClick={handleStopAll} className="bg-red-500/20 text-red-400 hover:bg-red-500/30">
+              <X className="w-4 h-4 mr-2" />
+              Arrêter Tout
+            </Button>
+          </div>
         </div>
       </div>
 
