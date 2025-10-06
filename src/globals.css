@@ -61,15 +61,6 @@
   50% { opacity: 0.3; }
 }
 
-@keyframes stroke-spin {
-  from {
-    stroke-dashoffset: 1200;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 @keyframes marching-ants {
   from {
     stroke-dashoffset: 0;
@@ -131,6 +122,24 @@
   }
 }
 
+@keyframes stroke-spin-clockwise {
+  from { stroke-dashoffset: 1200; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes stroke-spin-counter-clockwise {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 1200; }
+}
+@keyframes standby-scan {
+  0% { x: 5%; }
+  50% { x: 70%; }
+  100% { x: 5%; }
+}
+@keyframes idle-pulse {
+  from { stroke-dashoffset: 1200; }
+  to { stroke-dashoffset: 0; }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -155,13 +164,8 @@
     stroke-width: 3;
   }
   
-  .animate-stroke-spin {
-    stroke-dasharray: 300 300; /* Un quart de ligne, un quart de vide */
-    animation: stroke-spin 4s linear infinite;
-  }
-
   .animate-marching-ants {
-    stroke-dasharray: 12 24; /* Un pointillé de 12, un espace de 24 (le double) */
+    stroke-dasharray: 12 24;
     animation: marching-ants 1s linear infinite;
   }
 
@@ -197,5 +201,21 @@
   .animate-flicker-and-fade {
     animation: flicker-and-fade 1.5s forwards;
     animation-delay: inherit;
+  }
+
+  .animate-stroke-spin-1 {
+    stroke-dasharray: 300 900;
+    animation: stroke-spin-clockwise 6s linear infinite;
+  }
+  .animate-stroke-spin-2 {
+    stroke-dasharray: 300 900;
+    animation: stroke-spin-counter-clockwise 6s linear infinite .5s;
+  }
+  .animate-standby-scan {
+    animation: standby-scan 4s ease-in-out infinite;
+  }
+  .animate-idle-pulse {
+    stroke-dasharray: 50 1150;
+    animation: idle-pulse 8s linear infinite;
   }
 }

@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
-import { AnimatedBorderCard } from "./AnimatedBorderCard";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ForceStopMenuItem } from "./ForceStopMenuItem";
 import { useAnimation } from '@/context/AnimationContext';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { StatusBorderAnimation } from './StatusBorderAnimation';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -122,22 +122,15 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   const truncatedMessage = message.length > 26 ? message.substring(0, 23) + '...' : message;
 
-  let animationColor = isWarning ? "#EF4444" : "#00F0FF";
-  let animationClassName = "animate-stroke-spin";
-
-  if (isTransitioning) {
-    animationColor = "#A0AEC0";
-    animationClassName = "animate-marching-ants";
-  }
-
-  const PowerIcon = isOffline ? PowerOff : Power;
+  const PowerIcon = isOnline ? PowerOff : Power;
   const powerIconClassName = cn({
-    "text-gray-500": isOffline || isTransitioning,
-    "text-white animate-pulse": isOnline,
-    "text-theme-text-secondary": !isOffline && !isTransitioning && !isOnline,
+    "text-gray-500": isTransitioning,
+    "text-white": isOnline,
+    "text-theme-text-secondary": !isTransitioning && !isOnline,
   });
 
   const fadeOutClass = asic.isForceStopping ? "animate-flicker-and-fade" : "";
+  const fanIsSpinning = asic.isFanOn && !isOffline;
 
   const handleForceStop = (e: React.MouseEvent) => {
     if (cardRef.current) {
@@ -156,14 +149,16 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   return (
     <>
-      <AnimatedBorderCard
-        isAnimated={isOnline || isTransitioning}
-        color={animationColor}
-        animationClassName={animationClassName}
-      >
+      <div className="relative h-full">
+        <StatusBorderAnimation
+          status={asic.status}
+          isWarning={isWarning}
+          isOverheating={isOverheating}
+        />
         <div ref={cardRef} className={cn(
-          "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card h-full relative",
+          "p-4 rounded-2xl border flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full relative",
           isOverheating ? "border-red-500" : isWarning ? "border-orange-500" : "border-theme-accent/30",
+          isOffline && "grayscale opacity-70"
         )}>
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
@@ -254,14 +249,15 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
                 aria-label={asic.isFanOn ? "Éteindre le ventilateur" : "Allumer le ventilateur"}
+                disabled={isOffline}
               >
                 <Fan
                   size={20}
                   className={cn(
                     "transition-colors",
-                    asic.isFanOn ? "animate-spin" : "text-gray-500"
+                    fanIsSpinning ? "animate-spin" : "text-gray-500"
                   )}
-                  style={{ animationDuration: asic.isFanOn ? '1s' : '0ms' }}
+                  style={{ animationDuration: fanIsSpinning ? '1s' : '0ms' }}
                 />
               </button>
               <div>
@@ -272,13 +268,16 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
           </div>
 
           <div className={fadeOutClass} style={{ animationDelay: '1s' }}>
-            <Button className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl">
+            <Button 
+              className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
+              disabled={isOffline}
+            >
               <Eye size={16} className="mr-2" />
               Voir Détails
             </Button>
           </div>
         </div>
-      </AnimatedBorderCard>
+      </div>
       <AlertDialog open={isOverheatAlertOpen} onOpenChange={setIsOverheatAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
