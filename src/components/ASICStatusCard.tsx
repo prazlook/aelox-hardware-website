@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -5,6 +6,7 @@ import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ForceStopMenuItem } from "./ForceStopMenuItem";
+import { useAnimation } from '@/context/AnimationContext';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -28,7 +30,7 @@ interface ASICStatusCardProps {
   onTogglePower: (asicId: string) => void;
   onToggleFan: (asicId: string) => void;
   onToggleOverclock: (asicId: string) => void;
-  onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop') => void;
+  onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop', event?: React.MouseEvent) => void;
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
@@ -101,6 +103,8 @@ const ShutdownAnimation = () => (
 );
 
 export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction }: ASICStatusCardProps) => {
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const { triggerBurst } = useAnimation();
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
   const tempColor = isOverheating ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
@@ -132,13 +136,20 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   const fadeOutClass = asic.isForceStopping ? "animate-flicker-and-fade" : "";
 
+  const handleForceStop = (e: React.MouseEvent) => {
+    if (cardRef.current) {
+      triggerBurst(e.clientX, e.clientY, cardRef.current);
+      onPowerAction(asic.id, 'force-stop');
+    }
+  };
+
   return (
     <AnimatedBorderCard
       isAnimated={isOnline || isTransitioning}
       color={animationColor}
       animationClassName={animationClassName}
     >
-      <div className={cn(
+      <div ref={cardRef} className={cn(
         "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card h-full relative",
         isOverheating ? "border-red-500" : isWarning ? "border-orange-500" : "border-theme-accent/30",
       )}>
@@ -196,7 +207,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                     <>
                       <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '500ms' }} />
                       <ForceStopMenuItem
-                        onSelect={() => onPowerAction(asic.id, 'force-stop')}
+                        onSelect={(e) => handleForceStop(e as unknown as React.MouseEvent)}
                         style={{ animationDelay: '700ms' }}
                       >
                         <ShieldAlert className="mr-2 h-4 w-4" />
