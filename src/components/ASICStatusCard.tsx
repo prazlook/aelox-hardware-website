@@ -115,6 +115,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isOnline = asic.status === 'online' || asic.status === 'overclocked';
   const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
+  const isShuttingDown = asic.status === 'shutting down';
 
   const message = (isOnline && asic.comment) 
     ? asic.comment 
@@ -131,7 +132,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   const contentAnimationClass = asic.isForceStopping
     ? "animate-flicker-and-fade"
-    : asic.status === 'shutting down'
+    : isShuttingDown
     ? "animate-smooth-shutdown"
     : "";
   
@@ -152,6 +153,15 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
   };
 
+  const getAnimationStyles = (delayInSeconds: number) => {
+    if (isShuttingDown) {
+      // No delay for smooth shutdown
+      return {};
+    }
+    // Staggered delay for other animations like force-stop
+    return { animationDelay: `${delayInSeconds}s` };
+  };
+
   return (
     <>
       <div className="relative h-full">
@@ -164,15 +174,15 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
-            <div className={contentAnimationClass} style={{ animationDelay: '0.1s' }}>
+            <div className={contentAnimationClass} style={getAnimationStyles(0.1)}>
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <div className={contentAnimationClass} style={{ animationDelay: '0.2s' }}>
+              <div className={contentAnimationClass} style={getAnimationStyles(0.2)}>
                 <StatusBadge status={asic.status} />
               </div>
-              <div className={contentAnimationClass} style={{ animationDelay: '0.3s' }}>
+              <div className={contentAnimationClass} style={getAnimationStyles(0.3)}>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -186,7 +196,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
-              <div className={contentAnimationClass} style={{ animationDelay: '0.4s' }}>
+              <div className={contentAnimationClass} style={getAnimationStyles(0.4)}>
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
                     <Button
@@ -230,7 +240,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", contentAnimationClass)} style={{ animationDelay: '0.5s' }}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", contentAnimationClass)} style={getAnimationStyles(0.5)}>
             {truncatedMessage}
           </div>
 
@@ -241,12 +251,12 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
               className={contentAnimationClass}
-              style={{ animationDelay: '0.6s' }}
+              style={getAnimationStyles(0.6)}
             />
-            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass)} style={{ animationDelay: '0.7s' }} />
-            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={contentAnimationClass} style={{ animationDelay: '0.8s' }} />
+            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass)} style={getAnimationStyles(0.7)} />
+            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={contentAnimationClass} style={getAnimationStyles(0.8)} />
             
-            <div className={cn("flex items-center space-x-2", contentAnimationClass)} style={{ animationDelay: '0.9s' }}>
+            <div className={cn("flex items-center space-x-2", contentAnimationClass)} style={getAnimationStyles(0.9)}>
               <button
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
@@ -269,7 +279,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={contentAnimationClass} style={{ animationDelay: '1s' }}>
+          <div className={contentAnimationClass} style={getAnimationStyles(1)}>
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
               disabled={isOffline}

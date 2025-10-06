@@ -117,11 +117,15 @@
 }
 
 @keyframes smooth-shutdown {
-  0% { opacity: 1; }
-  25% { opacity: 0.7; }
-  50% { opacity: 1; }
-  75% { opacity: 0.5; color: #A0AEC0; } /* theme-text-secondary */
-  100% { opacity: 0.2; color: #A0AEC0; }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+    color: #A0AEC0; /* theme-text-secondary */
+  }
 }
 
 @keyframes ecg-border-flow {
@@ -212,8 +216,8 @@
   }
 
   .animate-smooth-shutdown {
-    animation: smooth-shutdown 1.5s ease-out forwards;
-    animation-delay: inherit;
+    animation: smooth-shutdown 1s ease-out forwards;
+    /* Delay is now handled conditionally in the component */
   }
 
   .animate-stroke-spin-1 {
