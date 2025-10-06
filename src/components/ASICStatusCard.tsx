@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -73,11 +73,11 @@ const getStatusMessage = (status: ASICStatus) => {
 };
 
 const StatItem = ({ icon, label, value, unit, className, style }: { icon: React.ReactNode, label: string, value: string, unit: string, className?: string, style?: React.CSSProperties }) => (
-  <div className="flex items-center space-x-2" style={style}>
-    <div className={cn("text-theme-cyan", className)}>{icon}</div>
+  <div className={cn("flex items-center space-x-2", className)} style={style}>
+    <div className="text-theme-cyan">{icon}</div>
     <div>
-      <p className={cn("text-xs text-theme-text-secondary", className)}>{label}</p>
-      <p className={cn("text-sm font-semibold", className)}>{value} <span className="text-xs font-normal text-theme-text-secondary">{unit}</span></p>
+      <p className="text-xs text-theme-text-secondary">{label}</p>
+      <p className="text-sm font-semibold">{value} <span className="text-xs font-normal text-theme-text-secondary">{unit}</span></p>
     </div>
   </div>
 );
@@ -107,6 +107,18 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { triggerBurst } = useAnimation();
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
+  const [isBootingUp, setIsBootingUp] = useState(false);
+  const prevStatusRef = useRef<ASICStatus>();
+
+  useEffect(() => {
+    const prevStatus = prevStatusRef.current;
+    if (prevStatus === 'offline' && asic.status === 'booting up') {
+      setIsBootingUp(true);
+    } else if (asic.status !== 'booting up') {
+      setIsBootingUp(false);
+    }
+    prevStatusRef.current = asic.status;
+  }, [asic.status]);
 
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
@@ -157,6 +169,10 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     return { animationDelay: `${delayInSeconds}s` };
   };
 
+  const getBootAnimationStyles = (delay: number) => ({
+    animationDelay: isBootingUp ? `${delay}s` : '0s',
+  });
+
   return (
     <>
       <div className="relative h-full">
@@ -164,20 +180,20 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
           ref={cardRef}
           className={cn(
             "relative z-0 p-4 rounded-2xl border border-transparent flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full",
-            isOffline && "grayscale opacity-70"
+            isOffline && !isBootingUp && "grayscale opacity-70"
           )}
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
-            <div className={contentAnimationClass} style={getAnimationStyles(0.1)}>
+            <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.1) : getAnimationStyles(0.1)}>
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <div className={contentAnimationClass} style={getAnimationStyles(0.2)}>
+              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.2) : getAnimationStyles(0.2)}>
                 <StatusBadge status={asic.status} />
               </div>
-              <div className={contentAnimationClass} style={getAnimationStyles(0.3)}>
+              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.3) : getAnimationStyles(0.3)}>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -191,7 +207,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
-              <div className={contentAnimationClass} style={getAnimationStyles(0.4)}>
+              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.4) : getAnimationStyles(0.4)}>
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
                     <Button
@@ -235,7 +251,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", contentAnimationClass)} style={getAnimationStyles(0.5)}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
             {truncatedMessage}
           </div>
 
@@ -245,13 +261,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               label="Hashrate" 
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
-              className={contentAnimationClass}
-              style={getAnimationStyles(0.6)}
+              className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })}
+              style={isBootingUp ? getBootAnimationStyles(0.6) : getAnimationStyles(0.6)}
             />
-            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass)} style={getAnimationStyles(0.7)} />
-            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={contentAnimationClass} style={getAnimationStyles(0.8)} />
+            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.7) : getAnimationStyles(0.7)} />
+            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.8) : getAnimationStyles(0.8)} />
             
-            <div className={cn("flex items-center space-x-2", contentAnimationClass)} style={getAnimationStyles(0.9)}>
+            <div className={cn("flex items-center space-x-2", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.9) : getAnimationStyles(0.9)}>
               <button
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
@@ -274,7 +290,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={contentAnimationClass} style={getAnimationStyles(1)}>
+          <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(1) : getAnimationStyles(1)}>
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
               disabled={isOffline}
