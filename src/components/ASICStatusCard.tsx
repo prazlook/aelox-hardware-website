@@ -150,15 +150,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   return (
     <>
       <div className="relative h-full">
-        <StatusBorderAnimation
-          status={asic.status}
-          isWarning={isWarning}
-          isOverheating={isOverheating}
-        />
-        <div ref={cardRef} className={cn(
-          "relative p-4 rounded-2xl border border-transparent flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full",
-          isOffline && "grayscale opacity-70"
-        )}>
+        <div
+          ref={cardRef}
+          className={cn(
+            "relative z-0 p-4 rounded-2xl border border-transparent flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full",
+            isOffline && "grayscale opacity-70"
+          )}
+        >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
             <div className={fadeOutClass} style={{ animationDelay: '0.1s' }}>
@@ -275,6 +273,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               Voir Détails
             </Button>
           </div>
+        </div>
+        <div className="absolute inset-0 z-10 pointer-events-none rounded-2xl">
+          <StatusBorderAnimation
+            status={asic.status}
+            isWarning={isWarning}
+            isOverheating={isOverheating}
+          />
         </div>
       </div>
       <AlertDialog open={isOverheatAlertOpen} onOpenChange={setIsOverheatAlertOpen}>
