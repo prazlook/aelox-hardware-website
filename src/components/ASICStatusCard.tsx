@@ -156,8 +156,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
           isOverheating={isOverheating}
         />
         <div ref={cardRef} className={cn(
-          "p-4 rounded-2xl border flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full relative",
-          isOverheating ? "border-red-500" : isWarning ? "border-orange-500" : "border-theme-accent/30",
+          "relative p-4 rounded-2xl border border-transparent flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full",
           isOffline && "grayscale opacity-70"
         )}>
           {asic.isForceStopping && <ShutdownAnimation />}
