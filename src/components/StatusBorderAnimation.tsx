@@ -10,10 +10,57 @@ const CARD_RX = 15;
 
 export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: StatusBorderAnimationProps) => {
   const isBusy = status === 'booting up' || status === 'shutting down';
-  const isActive = status === 'online' || status === 'overclocked';
+  const isActive = status === 'online'; // Overclocked is handled separately
   const isAlert = status === 'error' || isOverheating || isWarning;
 
   if (status === 'offline') return null;
+
+  if (status === 'overclocked') {
+    return (
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        width="100%"
+        height="100%"
+        fill="none"
+      >
+        <defs>
+          <linearGradient id="overclock-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10b981" />
+            <stop offset="20%" stopColor="#06b6d4" />
+            <stop offset="40%" stopColor="#6366f1" />
+            <stop offset="60%" stopColor="#ef4444" />
+            <stop offset="80%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#f59e0b" />
+            <animateTransform
+              attributeName="gradientTransform"
+              type="rotate"
+              from="0 0.5 0.5"
+              to="360 0.5 0.5"
+              dur="4s"
+              repeatCount="indefinite"
+            />
+          </linearGradient>
+          <filter id="overclock-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+          </filter>
+        </defs>
+        <rect
+          x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
+          rx={CARD_RX} ry={CARD_RX}
+          stroke="url(#overclock-gradient)"
+          strokeWidth="3"
+          className="opacity-50"
+          filter="url(#overclock-glow)"
+        />
+        <rect
+          x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
+          rx={CARD_RX} ry={CARD_RX}
+          stroke="url(#overclock-gradient)"
+          strokeWidth="2"
+        />
+      </svg>
+    );
+  }
 
   return (
     <svg
@@ -64,14 +111,14 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: Stat
           <rect
             x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
             rx={CARD_RX} ry={CARD_RX}
-            stroke={isAlert ? (isOverheating || status === 'error' ? '#EF4444' : '#F97316') : (status === 'overclocked' ? '#EC4899' : '#00F0FF')}
+            stroke={isAlert ? (isOverheating || status === 'error' ? '#EF4444' : '#F97316') : '#00F0FF'}
             strokeWidth="2"
             className="animate-stroke-spin-1"
           />
           <rect
             x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
             rx={CARD_RX} ry={CARD_RX}
-            stroke={isAlert ? (isOverheating || status === 'error' ? '#F97316' : '#F59E0B') : (status === 'overclocked' ? '#D946EF' : '#00A9B7')}
+            stroke={isAlert ? (isOverheating || status === 'error' ? '#F97316' : '#F59E0B') : '#00A9B7'}
             strokeWidth="2"
             className="animate-stroke-spin-2"
           />
