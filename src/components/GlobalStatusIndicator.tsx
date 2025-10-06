@@ -107,9 +107,9 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
         newWaveformPointsArray.push(points);
       }
       
-      let path = `M -50 ${CIRCLE_CY}`;
+      let path = `M -200 ${CIRCLE_CY}`;
       const ecgAmplitude = 2 + 15 * intensity;
-      for (let i = -50; i <= VIEWBOX_WIDTH + 50; i += 4) {
+      for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
         let y = CIRCLE_CY;
         if (Math.random() > 0.97) {
             y += (Math.random() - 0.5) * ecgAmplitude * 3;
