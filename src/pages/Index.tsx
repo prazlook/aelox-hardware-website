@@ -8,6 +8,7 @@ import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
 import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
 import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
+import { GlobalStatusIndicator } from '@/components/GlobalStatusIndicator';
 
 const MOCK_ASICS: ASIC[] = [
   { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, isOverclocked: false, comment: "Pool principal - Performance stable" },
@@ -202,9 +203,9 @@ const Index = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <div>
+        <div className="flex items-center space-x-4">
           <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
-          <p className="text-theme-text-secondary mt-1">Surveillance en temps réel de vos ASICs</p>
+          <GlobalStatusIndicator status={tempStatus.level} hashrate={summary.totalHashrate} />
         </div>
         <div className="flex space-x-3">
           <Button onClick={handleStartAll} className="bg-green-500/20 text-green-400 hover:bg-green-500/30">
