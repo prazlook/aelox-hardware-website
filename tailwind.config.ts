@@ -87,8 +87,8 @@ export default {
           "100%": { transform: "translate(var(--tx), var(--ty)) rotate(360deg)", opacity: "0" },
         },
         typewriter: {
-          from: { width: "0" },
-          to: { width: "100%" },
+          from: { "clip-path": "polygon(0 0, 0 0, 0 100%, 0 100%)" },
+          to: { "clip-path": "polygon(0 0, 100% 0, 100% 100%, 0 100%)" },
         },
         "blink-caret": {
           "from, to": { "border-color": "transparent" },

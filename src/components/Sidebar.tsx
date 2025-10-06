@@ -27,8 +27,9 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
     <span
       className={cn(
         "absolute left-full ml-4 px-3 py-2 rounded-md bg-theme-card text-white pointer-events-none z-10",
-        "font-medium w-0 overflow-hidden whitespace-nowrap border-r-2 border-r-transparent",
-        "group-hover:w-auto group-hover:animate-typewriter"
+        "font-medium whitespace-nowrap border-r-2 border-r-transparent",
+        "opacity-0 transition-opacity",
+        "group-hover:opacity-100 group-hover:animate-typewriter"
       )}
     >
       {label}
