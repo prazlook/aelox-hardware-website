@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
