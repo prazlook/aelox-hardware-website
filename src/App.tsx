@@ -1,48 +1,25 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
-import WalletPage from "./pages/Wallet";
-import ConfigurationPage from "./pages/Configuration";
-import StatisticsPage from "./pages/Statistics";
-import AsicManagementPage from "./pages/AsicManagement";
-import DevOptionsPage from "./pages/DevOptions";
-import { SoundProvider } from "./context/SoundContext";
-import { AsicProvider } from "./context/AsicContext";
-import { AnimationProvider } from "./context/AnimationContext";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import Index from './pages/Index'
+import { ThemeProvider } from './components/theme-provider'
+import { AsicProvider } from './context/AsicContext'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <SoundProvider>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <AsicProvider>
-          <AnimationProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/statistics" element={<StatisticsPage />} />
-                  <Route path="/wallet" element={<WalletPage />} />
-                  <Route path="/asic-management" element={<AsicManagementPage />} />
-                  <Route path="/configuration" element={<ConfigurationPage />} />
-                  <Route path="/dev-options" element={<DevOptionsPage />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </AnimationProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Index />} />
+            </Routes>
+          </Router>
         </AsicProvider>
-      </SoundProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+      </ThemeProvider>
+    </QueryClientProvider>
+  )
+}
 
-export default App;
+export default App
