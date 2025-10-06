@@ -24,7 +24,7 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: Stat
   const renderRotatingBorder = (gradientId: string, mutedColor: string) => (
     <>
       <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke={mutedColor} strokeOpacity="0.3" strokeWidth="2" />
-      <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke={`url(#${gradientId})`} strokeWidth="3" filter="url(#dyad-glow)" />
+      <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke={`url(#${gradientId})`} strokeWidth="3" />
     </>
   );
 
@@ -38,7 +38,7 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: Stat
   } else if (status === 'overclocked') {
     borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="url(#dyad-overclock-gradient)" strokeWidth="3" />;
   } else if (status === 'idle') {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className="animate-idle-pulse" filter="url(#dyad-glow)" />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className="animate-idle-pulse" />;
   } else if (isBusy) {
     borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A0AEC0" strokeWidth="2" className="animate-marching-ants" />;
   } else if (status === 'standby') {
@@ -53,9 +53,6 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: Stat
       fill="none"
     >
       <defs>
-        <filter id="dyad-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-        </filter>
         <linearGradient id="dyad-standby-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0" />
           <stop offset="50%" stopColor="#A78BFA" stopOpacity="1" />
