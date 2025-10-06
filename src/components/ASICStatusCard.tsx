@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle, PowerOff, Cpu } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, Eye, Activity, PlusCircle, XCircle, PowerOff, Cpu, AlertTriangle, PauseCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
 
-export type ASICStatus = 'online' | 'offline' | 'starting' | 'stopping' | 'analyzing' | 'alert';
+export type ASICStatus = 'online' | 'offline' | 'starting' | 'stopping' | 'analyzing' | 'alert' | 'idle';
 
 export interface ASIC {
   id: string;
@@ -29,16 +29,22 @@ interface ASICStatusCardProps {
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
-  const isOnline = status === 'online';
+  const statusConfig = {
+    online: { label: "En Ligne", className: "bg-green-500/10 text-green-400 border-green-500/20", icon: <PlusCircle size={12} /> },
+    offline: { label: "Hors Ligne", className: "bg-gray-500/10 text-gray-400 border-gray-500/20", icon: <XCircle size={12} /> },
+    starting: { label: "Démarrage", className: "bg-blue-500/10 text-blue-400 border-blue-500/20", icon: <Loader2 size={12} className="animate-spin" /> },
+    stopping: { label: "Arrêt", className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20", icon: <Loader2 size={12} className="animate-spin" /> },
+    idle: { label: "En Pause", className: "bg-orange-500/10 text-orange-400 border-orange-500/20", icon: <PauseCircle size={12} /> },
+    alert: { label: "ALERTE", className: "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse", icon: <AlertTriangle size={12} /> },
+    analyzing: { label: "Analyse", className: "bg-purple-500/10 text-purple-400 border-purple-500/20", icon: <Activity size={12} /> },
+  };
+
+  const config = statusConfig[status] || statusConfig.offline;
+
   return (
-    <div className={cn(
-      "flex items-center space-x-1.5 rounded-full px-2 py-0.5 text-xs font-medium border",
-      isOnline 
-        ? "bg-green-500/10 text-green-400 border-green-500/20" 
-        : "bg-gray-500/10 text-gray-400 border-gray-500/20"
-    )}>
-      {isOnline ? <PlusCircle size={12} /> : <XCircle size={12} />}
-      <span>{status}</span>
+    <div className={cn("flex items-center space-x-1.5 rounded-full px-2 py-0.5 text-xs font-medium border", config.className)}>
+      {config.icon}
+      <span>{config.label}</span>
     </div>
   );
 };
@@ -51,6 +57,7 @@ const getStatusMessage = (status: ASICStatus) => {
     case 'stopping': return 'Arrêt en cours...';
     case 'analyzing': return 'Analyse en cours...';
     case 'alert': return 'Surchauffe détectée !';
+    case 'idle': return 'Surchauffe, minage en pause';
     default: return 'Statut inconnu';
   }
 };
@@ -85,7 +92,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   let animationClassName = "animate-stroke-spin";
 
   if (isTransitioning) {
-    animationColor = "#A0AEC0"; // Gris (theme-text-secondary)
+    animationColor = "#A0AEC0";
     animationClassName = "animate-marching-ants";
   }
 
@@ -96,16 +103,10 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     "text-theme-text-secondary": !isOffline && !isTransitioning && !isOnline,
   });
 
-  return (
-    <AnimatedBorderCard
-      isAnimated={isOnline || isTransitioning}
-      color={animationColor}
-      animationClassName={animationClassName}
-      className={cn(
-        "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card",
-        isWarning ? "border-orange-500" : "border-theme-accent/30",
-      )}
-    >
+  const isOverclockedAndOnline = asic.isOverclocked && isOnline;
+
+  const cardContent = (
+    <>
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
@@ -177,6 +178,31 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
         <Eye size={16} className="mr-2" />
         Voir Détails
       </Button>
+    </>
+  );
+
+  if (isOverclockedAndOnline) {
+    return (
+      <div className="relative rounded-2xl p-0.5 bg-[linear-gradient(120deg,_#10b981,_#06b6d4,_#6366f1,_#ec4899,_#ef4444,_#f97316,_#f59e0b,_#10b981)] bg-[length:200%_200%] animate-aurora">
+        <div className="p-4 rounded-[15px] flex flex-col space-y-3 bg-theme-card h-full">
+          {cardContent}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AnimatedBorderCard
+      isAnimated={isOnline || isTransitioning}
+      color={animationColor}
+      animationClassName={animationClassName}
+    >
+      <div className={cn(
+        "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card h-full",
+        isWarning ? "border-orange-500" : "border-theme-accent/30",
+      )}>
+        {cardContent}
+      </div>
     </AnimatedBorderCard>
   );
 };
