@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
 
-export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error';
+export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
 export interface ASIC {
   id: string;
@@ -25,6 +26,7 @@ interface ASICStatusCardProps {
   onTogglePower: (asicId: string) => void;
   onToggleFan: (asicId: string) => void;
   onToggleOverclock: (asicId: string) => void;
+  onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop') => void;
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
@@ -36,6 +38,8 @@ const StatusBadge = ({ status }: { status: ASICStatus }) => {
     overclocked: { label: "Overclocked", className: "text-white border-transparent bg-[linear-gradient(120deg,_#ec4899,_#ef4444,_#f97316,_#f59e0b,_#10b981,_#06b6d4,_#6366f1)] bg-[length:200%_200%] animate-aurora", icon: <Cpu size={12} /> },
     overheat: { label: "Surchauffe", className: "text-white border-transparent bg-gradient-to-r from-red-500 to-orange-400 animate-pulse", icon: <Flame size={12} /> },
     error: { label: "Erreur", className: "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse", icon: <AlertTriangle size={12} /> },
+    idle: { label: "Inactif", className: "bg-purple-500/10 text-purple-400 border-purple-500/20", icon: <Hourglass size={12} /> },
+    standby: { label: "En Veille", className: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20", icon: <Moon size={12} /> },
   };
 
   const config = statusConfig[status] || statusConfig.offline;
@@ -57,6 +61,8 @@ const getStatusMessage = (status: ASICStatus) => {
     case 'overclocked': return 'Performance maximale activée';
     case 'overheat': return 'Surchauffe, refroidissement en cours';
     case 'error': return 'Erreur système critique';
+    case 'idle': return 'En attente de commandes';
+    case 'standby': return 'Mode basse consommation';
     default: return 'Statut inconnu';
   }
 };
@@ -71,7 +77,7 @@ const StatItem = ({ icon, label, value, unit, className }: { icon: React.ReactNo
   </div>
 );
 
-export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock }: ASICStatusCardProps) => {
+export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction }: ASICStatusCardProps) => {
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
   const tempColor = isOverheating ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
@@ -130,15 +136,37 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             >
               <Cpu size={16} />
             </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
-              onClick={() => onTogglePower(asic.id)}
-              disabled={isTransitioning}
-            >
-              <PowerIcon size={16} className={powerIconClassName} />
-            </Button>
+            <ContextMenu>
+              <ContextMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
+                  onClick={() => onTogglePower(asic.id)}
+                  disabled={isTransitioning}
+                >
+                  <PowerIcon size={16} className={powerIconClassName} />
+                </Button>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-48">
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')}>Idle</ContextMenuItem>
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')}>Standby</ContextMenuItem>
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')}>Reboot</ContextMenuItem>
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')}>Arrêt</ContextMenuItem>
+                {asic.status === 'error' && (
+                  <>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem
+                      onSelect={() => onPowerAction(asic.id, 'force-stop')}
+                      className="text-white font-bold bg-[linear-gradient(90deg,_#ef4444,_#f97316,_#ef4444)] bg-[length:200%_100%] animate-aurora focus:text-white"
+                    >
+                      <ShieldAlert className="mr-2 h-4 w-4" />
+                      Force Stop
+                    </ContextMenuItem>
+                  </>
+                )}
+              </ContextMenuContent>
+            </ContextMenu>
           </div>
         </div>
 

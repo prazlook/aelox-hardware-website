@@ -53,6 +53,30 @@ const Index = () => {
     );
   };
 
+  const handlePowerAction = (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop') => {
+    setAsics(prevAsics =>
+      prevAsics.map(asic => {
+        if (asic.id === asicId) {
+          switch (action) {
+            case 'idle':
+              return { ...asic, status: 'idle' };
+            case 'standby':
+              return { ...asic, status: 'standby' };
+            case 'stop':
+            case 'reboot':
+              return { ...asic, status: 'shutting down' };
+            case 'force-stop':
+              showSuccess(`${asic.name} a été forcé à s'arrêter.`);
+              return { ...asic, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asic.temperature - 10) };
+            default:
+              return asic;
+          }
+        }
+        return asic;
+      })
+    );
+  };
+
   const handleToggleFan = (asicId: string) => {
     setAsics(prevAsics =>
       prevAsics.map(asic =>
@@ -149,6 +173,16 @@ const Index = () => {
           case 'shutting down':
             newAsic.power -= 300;
             if (newAsic.power <= 0) newAsic.status = 'offline';
+            break;
+          case 'idle':
+            newAsic.hashrate = 0;
+            newAsic.power = Math.max(150, newAsic.power - 100);
+            if (newAsic.temperature > 35) newAsic.temperature -= 0.5;
+            break;
+          case 'standby':
+            newAsic.hashrate = 0;
+            newAsic.power = Math.max(50, newAsic.power - 100);
+            if (newAsic.temperature > 25) newAsic.temperature -= 1;
             break;
           case 'offline':
             if (newAsic.temperature > 25) newAsic.temperature -= 0.5;
@@ -292,6 +326,7 @@ const Index = () => {
               onTogglePower={handleTogglePower}
               onToggleFan={handleToggleFan}
               onToggleOverclock={handleToggleOverclock}
+              onPowerAction={handlePowerAction}
             />
           ))}
         </div>
