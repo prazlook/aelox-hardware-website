@@ -82,7 +82,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const truncatedMessage = message.length > 26 ? message.substring(0, 23) + '...' : message;
 
   let animationColor = isWarning ? "#EF4444" : "#00F0FF";
-  let animationClassName = "animate-stroke-spin";
+  let animationClassName = "animate-border-pulse";
 
   if (isTransitioning) {
     animationColor = "#A0AEC0"; // Gris (theme-text-secondary)
