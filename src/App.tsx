@@ -1,48 +1,23 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
-import WalletPage from "./pages/Wallet";
-import ConfigurationPage from "./pages/Configuration";
-import StatisticsPage from "./pages/Statistics";
-import AsicManagementPage from "./pages/AsicManagement";
-import DevOptionsPage from "./pages/DevOptions";
-import { SoundProvider } from "./context/SoundContext";
-import { AsicProvider } from "./context/AsicContext";
-import { AnimationProvider } from "./context/AnimationContext";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import IndexPage from './pages/Index';
+import StatisticsPage from './pages/Statistics';
+import { AsicProvider } from './context/AsicContext';
+import { Toaster } from "@/components/ui/toaster"
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <SoundProvider>
-        <AsicProvider>
-          <AnimationProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/statistics" element={<StatisticsPage />} />
-                  <Route path="/wallet" element={<WalletPage />} />
-                  <Route path="/asic-management" element={<AsicManagementPage />} />
-                  <Route path="/configuration" element={<ConfigurationPage />} />
-                  <Route path="/dev-options" element={<DevOptionsPage />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </AnimationProvider>
-        </AsicProvider>
-      </SoundProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <AsicProvider>
+      <Router>
+        <div className="bg-theme-bg min-h-screen text-theme-text">
+          <Routes>
+            <Route path="/" element={<IndexPage />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+          </Routes>
+        </div>
+      </Router>
+      <Toaster />
+    </AsicProvider>
+  );
+}
 
 export default App;
