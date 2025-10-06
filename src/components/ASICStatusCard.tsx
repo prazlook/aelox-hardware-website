@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { AnimatedBorderCard } from "./AnimatedBorderCard";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ForceStopMenuItem } from "./ForceStopMenuItem";
 import { useAnimation } from '@/context/AnimationContext';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -105,6 +106,8 @@ const ShutdownAnimation = () => (
 export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction }: ASICStatusCardProps) => {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { triggerBurst } = useAnimation();
+  const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
+
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
   const tempColor = isOverheating ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
@@ -143,129 +146,167 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
   };
 
+  const handlePowerClick = () => {
+    if (asic.status === 'overheat') {
+      setIsOverheatAlertOpen(true);
+    } else {
+      onTogglePower(asic.id);
+    }
+  };
+
   return (
-    <AnimatedBorderCard
-      isAnimated={isOnline || isTransitioning}
-      color={animationColor}
-      animationClassName={animationClassName}
-    >
-      <div ref={cardRef} className={cn(
-        "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card h-full relative",
-        isOverheating ? "border-red-500" : isWarning ? "border-orange-500" : "border-theme-accent/30",
-      )}>
-        {asic.isForceStopping && <ShutdownAnimation />}
-        <div className="flex justify-between items-start">
-          <div className={fadeOutClass} style={{ animationDelay: '0.1s' }}>
-            <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
-            <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className={fadeOutClass} style={{ animationDelay: '0.2s' }}>
-              <StatusBadge status={asic.status} />
+    <>
+      <AnimatedBorderCard
+        isAnimated={isOnline || isTransitioning}
+        color={animationColor}
+        animationClassName={animationClassName}
+      >
+        <div ref={cardRef} className={cn(
+          "p-4 rounded-2xl border flex flex-col space-y-3 transition-colors bg-theme-card h-full relative",
+          isOverheating ? "border-red-500" : isWarning ? "border-orange-500" : "border-theme-accent/30",
+        )}>
+          {asic.isForceStopping && <ShutdownAnimation />}
+          <div className="flex justify-between items-start">
+            <div className={fadeOutClass} style={{ animationDelay: '0.1s' }}>
+              <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
+              <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
-            <div className={fadeOutClass} style={{ animationDelay: '0.3s' }}>
-              <Button
-                size="icon"
-                variant="ghost"
-                className={cn(
-                  "w-8 h-8 rounded-full hover:bg-theme-accent/20",
-                  asic.status === 'overclocked' ? "text-theme-cyan hover:text-theme-cyan" : "text-theme-text-secondary hover:text-white"
-                )}
-                onClick={() => onToggleOverclock(asic.id)}
-                disabled={!(asic.status === 'online' || asic.status === 'overclocked')}
+            <div className="flex items-center space-x-2">
+              <div className={fadeOutClass} style={{ animationDelay: '0.2s' }}>
+                <StatusBadge status={asic.status} />
+              </div>
+              <div className={fadeOutClass} style={{ animationDelay: '0.3s' }}>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className={cn(
+                    "w-8 h-8 rounded-full hover:bg-theme-accent/20",
+                    asic.status === 'overclocked' ? "text-theme-cyan hover:text-theme-cyan" : "text-theme-text-secondary hover:text-white"
+                  )}
+                  onClick={() => onToggleOverclock(asic.id)}
+                  disabled={!(asic.status === 'online' || asic.status === 'overclocked')}
+                >
+                  <Cpu size={16} />
+                </Button>
+              </div>
+              <div className={fadeOutClass} style={{ animationDelay: '0.4s' }}>
+                <ContextMenu>
+                  <ContextMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
+                      onClick={handlePowerClick}
+                      disabled={isTransitioning}
+                    >
+                      <PowerIcon size={16} className={powerIconClassName} />
+                    </Button>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="w-48 rounded-xl p-1.5">
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
+                      <Hourglass className="mr-2 h-4 w-4" /> Idle
+                    </ContextMenuItem>
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '50ms' }}>
+                      <Moon className="mr-2 h-4 w-4" /> Standby
+                    </ContextMenuItem>
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '100ms' }}>
+                      <RefreshCw className="mr-2 h-4 w-4" /> Reboot
+                    </ContextMenuItem>
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '150ms' }}>
+                      <XCircle className="mr-2 h-4 w-4" /> Arrêt
+                    </ContextMenuItem>
+                    {asic.status === 'error' && (
+                      <>
+                        <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '500ms' }} />
+                        <ForceStopMenuItem
+                          onSelect={(e) => handleForceStop(e as unknown as React.MouseEvent)}
+                          style={{ animationDelay: '700ms' }}
+                        >
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          Force Stop
+                        </ForceStopMenuItem>
+                      </>
+                    )}
+                  </ContextMenuContent>
+                </ContextMenu>
+              </div>
+            </div>
+          </div>
+
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", fadeOutClass)} style={{ animationDelay: '0.5s' }}>
+            {truncatedMessage}
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
+            <StatItem 
+              icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} /> : <Activity size={20} />} 
+              label="Hashrate" 
+              value={asic.hashrate.toFixed(2)} 
+              unit="TH/s" 
+              className={fadeOutClass}
+              style={{ animationDelay: '0.6s' }}
+            />
+            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, fadeOutClass)} style={{ animationDelay: '0.7s' }} />
+            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={fadeOutClass} style={{ animationDelay: '0.8s' }} />
+            
+            <div className={cn("flex items-center space-x-2", fadeOutClass)} style={{ animationDelay: '0.9s' }}>
+              <button
+                onClick={() => onToggleFan(asic.id)}
+                className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
+                aria-label={asic.isFanOn ? "Éteindre le ventilateur" : "Allumer le ventilateur"}
               >
-                <Cpu size={16} />
+                <Fan
+                  size={20}
+                  className={cn(
+                    "transition-colors",
+                    asic.isFanOn ? "animate-spin" : "text-gray-500"
+                  )}
+                  style={{ animationDuration: asic.isFanOn ? '1s' : '0ms' }}
+                />
+              </button>
+              <div>
+                <p className="text-xs text-theme-text-secondary">Ventilateur</p>
+                <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">%</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div className={fadeOutClass} style={{ animationDelay: '1s' }}>
+            <Button className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl">
+              <Eye size={16} className="mr-2" />
+              Voir Détails
+            </Button>
+          </div>
+        </div>
+      </AnimatedBorderCard>
+      <AlertDialog open={isOverheatAlertOpen} onOpenChange={setIsOverheatAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Arrêt en Surchauffe</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ne préférez-vous pas passer en Idle pour ralentir le rythme ou Standby pour refroidir? Risque de choc thermique et déterioration de matériel!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-between gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="secondary" onClick={() => { onPowerAction(asic.id, 'idle'); setIsOverheatAlertOpen(false); }}>
+                Passer en Idle
+              </Button>
+              <Button onClick={() => { onPowerAction(asic.id, 'standby'); setIsOverheatAlertOpen(false); }}>
+                Passer en Veille
               </Button>
             </div>
-            <div className={fadeOutClass} style={{ animationDelay: '0.4s' }}>
-              <ContextMenu>
-                <ContextMenuTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
-                    onClick={() => onTogglePower(asic.id)}
-                    disabled={isTransitioning}
-                  >
-                    <PowerIcon size={16} className={powerIconClassName} />
-                  </Button>
-                </ContextMenuTrigger>
-                <ContextMenuContent className="w-48 rounded-xl p-1.5">
-                  <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
-                    <Hourglass className="mr-2 h-4 w-4" /> Idle
-                  </ContextMenuItem>
-                  <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '50ms' }}>
-                    <Moon className="mr-2 h-4 w-4" /> Standby
-                  </ContextMenuItem>
-                  <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '100ms' }}>
-                    <RefreshCw className="mr-2 h-4 w-4" /> Reboot
-                  </ContextMenuItem>
-                  <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '150ms' }}>
-                    <XCircle className="mr-2 h-4 w-4" /> Arrêt
-                  </ContextMenuItem>
-                  {asic.status === 'error' && (
-                    <>
-                      <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '500ms' }} />
-                      <ForceStopMenuItem
-                        onSelect={(e) => handleForceStop(e as unknown as React.MouseEvent)}
-                        style={{ animationDelay: '700ms' }}
-                      >
-                        <ShieldAlert className="mr-2 h-4 w-4" />
-                        Force Stop
-                      </ForceStopMenuItem>
-                    </>
-                  )}
-                </ContextMenuContent>
-              </ContextMenu>
+            <div className="flex gap-2 flex-wrap">
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button variant="destructive" onClick={() => onTogglePower(asic.id)}>
+                  Forcer l'Arrêt
+                </Button>
+              </AlertDialogAction>
             </div>
-          </div>
-        </div>
-
-        <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", fadeOutClass)} style={{ animationDelay: '0.5s' }}>
-          {truncatedMessage}
-        </div>
-
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
-          <StatItem 
-            icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} /> : <Activity size={20} />} 
-            label="Hashrate" 
-            value={asic.hashrate.toFixed(2)} 
-            unit="TH/s" 
-            className={fadeOutClass}
-            style={{ animationDelay: '0.6s' }}
-          />
-          <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, fadeOutClass)} style={{ animationDelay: '0.7s' }} />
-          <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={fadeOutClass} style={{ animationDelay: '0.8s' }} />
-          
-          <div className={cn("flex items-center space-x-2", fadeOutClass)} style={{ animationDelay: '0.9s' }}>
-            <button
-              onClick={() => onToggleFan(asic.id)}
-              className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
-              aria-label={asic.isFanOn ? "Éteindre le ventilateur" : "Allumer le ventilateur"}
-            >
-              <Fan
-                size={20}
-                className={cn(
-                  "transition-colors",
-                  asic.isFanOn ? "animate-spin" : "text-gray-500"
-                )}
-                style={{ animationDuration: asic.isFanOn ? '1s' : '0ms' }}
-              />
-            </button>
-            <div>
-              <p className="text-xs text-theme-text-secondary">Ventilateur</p>
-              <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">%</span></p>
-            </div>
-          </div>
-        </div>
-
-        <div className={fadeOutClass} style={{ animationDelay: '1s' }}>
-          <Button className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl">
-            <Eye size={16} className="mr-2" />
-            Voir Détails
-          </Button>
-        </div>
-      </div>
-    </AnimatedBorderCard>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
