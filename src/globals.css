@@ -109,6 +109,27 @@
   100% { opacity: 1; }
 }
 
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 3px #f97316); }
+  50% { filter: drop-shadow(0 0 8px #ef4444); }
+}
+
+@keyframes shutdown-wave {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flicker-and-fade {
+  0% { opacity: 1; color: inherit; }
+  20% { opacity: 0.5; }
+  40% { opacity: 1; }
+  60% { opacity: 0.2; }
+  80% { opacity: 0.8; }
+  90% { opacity: 1; color: #4a5568; } /* gray-700 */
+  100% { opacity: 0.3; color: #4a5568; }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -159,5 +180,20 @@
     animation: flicker-in 0.8s ease-in-out forwards;
     animation-delay: inherit;
     opacity: 0;
+  }
+
+  .group:hover .animate-glow-pulse {
+    animation: glow-pulse 1.5s ease-in-out infinite;
+  }
+
+  .animate-shutdown-wave {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: shutdown-wave 0.8s ease-out forwards;
+  }
+
+  .animate-flicker-and-fade {
+    animation: flicker-and-fade 1.5s forwards;
+    animation-delay: inherit;
   }
 }

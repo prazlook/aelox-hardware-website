@@ -62,7 +62,17 @@ const Index = () => {
               return { ...asic, status: 'shutting down' };
             case 'force-stop':
               showSuccess(`${asic.name} a été forcé à s'arrêter.`);
-              return { ...asic, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asic.temperature - 10) };
+              setTimeout(() => {
+                setAsics(currentAsics => currentAsics.map(a => a.id === asicId ? {
+                  ...a,
+                  status: 'offline',
+                  power: 0,
+                  hashrate: 0,
+                  temperature: Math.max(25, a.temperature - 10),
+                  isForceStopping: false,
+                } : a));
+              }, 1500);
+              return { ...asic, isForceStopping: true };
             default:
               return asic;
           }
@@ -109,6 +119,8 @@ const Index = () => {
       const updatedAsics = asics.map((asic, index) => {
         let newAsic = { ...asic };
         
+        if (newAsic.isForceStopping) return newAsic;
+
         if (newAsic.temperature >= shutdownTemp && newAsic.status !== 'offline' && newAsic.status !== 'shutting down') {
           newAsic.status = 'shutting down';
           playSound(powerOffSoundFile);

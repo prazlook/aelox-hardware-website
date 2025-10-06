@@ -17,7 +17,7 @@ export const ForceStopMenuItem = React.forwardRef<
       ref={ref}
       {...props}
       asChild
-      className={cn("relative !p-0 focus:!bg-transparent focus:!text-white", className)}
+      className={cn("relative !p-0 focus:!bg-transparent focus:!text-white group", className)}
       style={style}
     >
       <div className="relative w-full h-full overflow-hidden rounded-md">
@@ -43,7 +43,7 @@ export const ForceStopMenuItem = React.forwardRef<
             ry="5"
             stroke="url(#force-stop-gradient)"
             strokeWidth="2"
-            className="animate-draw-border"
+            className="animate-draw-border animate-glow-pulse"
           />
         </svg>
         <div className="flex items-center px-2 py-1.5 animate-flicker-in">
