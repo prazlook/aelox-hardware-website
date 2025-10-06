@@ -164,10 +164,10 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                 </ContextMenuItem>
                 {asic.status === 'error' && (
                   <>
-                    <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '175ms' }} />
+                    <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '500ms' }} />
                     <ForceStopMenuItem
                       onSelect={() => onPowerAction(asic.id, 'force-stop')}
-                      style={{ animationDelay: '200ms' }}
+                      style={{ animationDelay: '700ms' }}
                     >
                       <ShieldAlert className="mr-2 h-4 w-4" />
                       Force Stop
