@@ -8,11 +8,11 @@ interface GlobalStatusIndicatorProps {
 }
 
 const statusConfig = {
-  optimal: { color: '#22c55e' }, // green
-  eleve: { color: '#f97316' }, // orange
-  surcharge: { color: '#ef4444' }, // red
-  error: { color: '#ef4444' }, // red
-  offline: { color: '#6b7280' }, // gray
+  optimal: { color: '#39FF14' }, // Neon Green
+  eleve: { color: '#FFD700' }, // Gold/Yellow
+  surcharge: { color: '#FF0000' }, // Red
+  error: { color: '#FF0000' }, // Red
+  offline: { color: '#9ca3af' }, // Gray
 };
 
 const BAR_COUNT = 90;
@@ -20,10 +20,10 @@ const PARTICLE_COUNT = 15;
 const WAVEFORM_COUNT = 3;
 
 const VIEWBOX_WIDTH = 800;
-const VIEWBOX_HEIGHT = 150;
+const VIEWBOX_HEIGHT = 200;
 const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
-const RADIUS = 50;
+const RADIUS = 70;
 
 export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
