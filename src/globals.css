@@ -159,6 +159,15 @@
   }
 }
 
+@keyframes aurora {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -259,5 +268,9 @@
   .animate-boot-up-item {
     animation: boot-up-item 0.5s ease-out forwards;
     opacity: 0;
+  }
+
+  .animate-aurora {
+    animation: aurora 6s linear infinite;
   }
 }

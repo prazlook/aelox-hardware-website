@@ -40,7 +40,7 @@ const StatusBadge = ({ status }: { status: ASICStatus }) => {
     offline: { label: "Hors Ligne", className: "bg-gray-500/10 text-gray-400 border-gray-500/20", icon: <Minus size={12} /> },
     'booting up': { label: "Démarrage", className: "bg-blue-500/10 text-blue-400 border-blue-500/20", icon: <ArrowUp size={12} className="animate-bounce" /> },
     'shutting down': { label: "Arrêt", className: "bg-orange-500/10 text-yellow-400 border-yellow-500/20", icon: <ArrowDown size={12} className="animate-bounce" /> },
-    overclocked: { label: "Overclocked", className: "text-white border-transparent bg-[linear-gradient(120deg,_#ec4899,_#ef4444,_#f97316,_#f59e0b,_#10b981,_#06b6d4,_#6366f1)] bg-[length:200%_200%] animate-aurora", icon: <Cpu size={12} /> },
+    overclocked: { label: "Overclocked", className: "text-gray-800 font-semibold border-transparent bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora", icon: <Cpu size={12} /> },
     overheat: { label: "Surchauffe", className: "text-white border-transparent bg-gradient-to-r from-red-500 to-orange-400 animate-pulse", icon: <Flame size={12} /> },
     error: { label: "Erreur", className: "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse", icon: <AlertTriangle size={12} /> },
     idle: { label: "Inactif", className: "bg-purple-500/10 text-purple-400 border-purple-500/20", icon: <Hourglass size={12} /> },
