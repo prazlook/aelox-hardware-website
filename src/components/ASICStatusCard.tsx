@@ -97,7 +97,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const [isBootingUp, setIsBootingUp] = useState(false);
   const [comment, setComment] = useState(getLocalAIComment(asic));
   const prevStatusRef = useRef<ASICStatus>();
-  const [typedComment, isTypingComplete] = useTypewriter(comment || '', 30);
+  const typedComment = useTypewriter(comment || '', 30);
 
   useEffect(() => {
     const prevStatus = prevStatusRef.current;
@@ -240,11 +240,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
           </div>
 
           <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
-            {isTypingComplete ? (
-              <span className="typewriter-cursor">{typedComment}</span>
-            ) : (
-              <span>{typedComment}<span className="align-text-bottom">_</span></span>
-            )}
+            <span className="typewriter-cursor">{typedComment}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
