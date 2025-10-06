@@ -82,7 +82,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       const intensity = Math.min(hashrate / 150, 1);
 
       const newBarHeights = Array.from({ length: BAR_COUNT }, () => {
-        const baseHeight = Math.random() * (5 + 30 * intensity);
+        const baseHeight = Math.random() * (10 + 40 * intensity);
         return Math.random() > 0.95 ? baseHeight * 2.5 : baseHeight;
       });
 
@@ -100,9 +100,9 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
         newWaveformPointsArray.push(points);
       }
       
-      let path = `M -5 ${CIRCLE_CY}`;
-      const ecgAmplitude = 1 + 10 * intensity;
-      for (let i = -5; i <= VIEWBOX_WIDTH + 5; i += 4) {
+      let path = `M -50 ${CIRCLE_CY}`;
+      const ecgAmplitude = 2 + 15 * intensity;
+      for (let i = -50; i <= VIEWBOX_WIDTH + 50; i += 4) {
         let y = CIRCLE_CY;
         if (Math.random() > 0.97) {
             y += (Math.random() - 0.5) * ecgAmplitude * 3;
@@ -149,9 +149,9 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       return (
         <rect
           key={i}
-          x={CIRCLE_CX - 0.25}
+          x={CIRCLE_CX - 0.75}
           y={CIRCLE_CY - RADIUS - totalHeight}
-          width="0.5"
+          width="1.5"
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={color}
@@ -213,7 +213,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
           d={dynamicValues.ecgPath}
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="2"
           opacity="0.8"
           filter="url(#glow)"
           style={{ transition: 'd 0.1s linear' }}
