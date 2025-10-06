@@ -19,10 +19,10 @@ const PARTICLE_COUNT = 15;
 const WAVEFORM_COUNT = 3;
 
 const VIEWBOX_WIDTH = 800;
-const VIEWBOX_HEIGHT = 100;
-const CIRCLE_CX = VIEWBOX_WIDTH - 80;
+const VIEWBOX_HEIGHT = 150;
+const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
-const RADIUS = 40;
+const RADIUS = 50;
 
 export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicatorProps) => {
   const [dynamicValues, setDynamicValues] = useState({
@@ -53,7 +53,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       const intensity = Math.min(hashrate / 150, 1);
 
       const newBarHeights = Array.from({ length: BAR_COUNT }, () => {
-        const baseHeight = Math.random() * (3 + 20 * intensity);
+        const baseHeight = Math.random() * (5 + 30 * intensity);
         return Math.random() > 0.95 ? baseHeight * 2.5 : baseHeight;
       });
 
@@ -113,10 +113,10 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
   }, [dynamicValues.barHeights, color]);
 
   return (
-    <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="none">
+    <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="xMidYMid meet">
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+          <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
@@ -153,7 +153,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
                 d={points}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={i === WAVEFORM_COUNT - 1 ? "1" : "0.5"}
+                strokeWidth={i === WAVEFORM_COUNT - 1 ? "1.5" : "0.75"}
                 opacity={1 - i * 0.2}
                 filter={i === WAVEFORM_COUNT - 1 ? "url(#glow)" : "none"}
                 style={{ transition: 'd 0.1s ease-out' }}
@@ -164,7 +164,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
           d={dynamicValues.ecgPath}
           fill="none"
           stroke="currentColor"
-          strokeWidth="1"
+          strokeWidth="1.5"
           opacity="0.8"
           filter="url(#glow)"
           style={{ transition: 'd 0.1s linear' }}

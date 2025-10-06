@@ -217,7 +217,7 @@ const Index = () => {
 
   return (
     <div className="space-y-8">
-      <div className="relative h-24 -mx-6 -mt-6 mb-4">
+      <div className="relative h-36 -mx-6 -mt-6 mb-4">
         <div className="absolute inset-0 z-0 opacity-50">
           <GlobalStatusIndicator status={tempStatus.level} hashrate={summary.totalHashrate} />
         </div>
