@@ -43,7 +43,7 @@ export const ForceStopMenuItem = React.forwardRef<
             ry="5"
             stroke="url(#force-stop-gradient)"
             strokeWidth="2"
-            className="animate-draw-border animate-glow-pulse"
+            className="animate-draw-border animate-ecg-on-hover"
           />
         </svg>
         <div className="flex items-center px-2 py-1.5 animate-flicker-in">

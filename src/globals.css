@@ -109,11 +109,6 @@
   100% { opacity: 1; }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { filter: drop-shadow(0 0 3px #f97316); }
-  50% { filter: drop-shadow(0 0 8px #ef4444); }
-}
-
 @keyframes shutdown-wave {
   to {
     stroke-dashoffset: 0;
@@ -128,6 +123,12 @@
   80% { opacity: 0.8; }
   90% { opacity: 1; color: #4a5568; } /* gray-700 */
   100% { opacity: 0.3; color: #4a5568; }
+}
+
+@keyframes ecg-border-flow {
+  to {
+    stroke-dashoffset: -48;
+  }
 }
 
 
@@ -182,8 +183,9 @@
     opacity: 0;
   }
 
-  .group:hover .animate-glow-pulse {
-    animation: glow-pulse 1.5s ease-in-out infinite;
+  .group:hover .animate-ecg-on-hover {
+    stroke-dasharray: 8 4 2 4 2 4;
+    animation: ecg-border-flow 0.75s linear infinite;
   }
 
   .animate-shutdown-wave {
