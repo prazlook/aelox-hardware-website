@@ -130,14 +130,6 @@
   }
 }
 
-@keyframes stroke-spin-clockwise {
-  from { stroke-dashoffset: 1200; }
-  to { stroke-dashoffset: 0; }
-}
-@keyframes stroke-spin-counter-clockwise {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: 1200; }
-}
 @keyframes standby-scan {
   0% { x: 5%; }
   50% { x: 70%; }
@@ -236,14 +228,6 @@
     animation-delay: inherit;
   }
 
-  .animate-stroke-spin-1 {
-    stroke-dasharray: 300 900;
-    animation: stroke-spin-clockwise 6s linear infinite;
-  }
-  .animate-stroke-spin-2 {
-    stroke-dasharray: 300 900;
-    animation: stroke-spin-counter-clockwise 6s linear infinite .5s;
-  }
   .animate-standby-scan {
     animation: standby-scan 4s ease-in-out infinite;
   }
