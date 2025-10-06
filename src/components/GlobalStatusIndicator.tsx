@@ -8,6 +8,7 @@ interface GlobalStatusIndicatorProps {
   status: StatusLevel;
   hashrate: number;
   asics: ASIC[];
+  isOverclockedMajority: boolean;
 }
 
 const statusConfig = {
@@ -28,9 +29,10 @@ const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
 const RADIUS = 70;
 
-export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusIndicatorProps) => {
+export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
+  const [spikePosition, setSpikePosition] = useState(0);
   const [dynamicValues, setDynamicValues] = useState({
     barHeights: Array.from({ length: BAR_COUNT }, () => Math.random() * 5),
     waveformPointsArray: [] as string[],
@@ -85,6 +87,8 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
       return; // Stop animation updates when all ASICs are offline
     }
 
+    const animationInterval = isOverclockedMajority ? 75 : 150;
+
     const intervalId = setInterval(() => {
       const intensity = Math.min(hashrate / 150, 1);
 
@@ -108,15 +112,31 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
       }
       
       let path = `M -200 ${CIRCLE_CY}`;
-      const ecgAmplitude = 2 + 15 * intensity;
-      for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
-        let y = CIRCLE_CY;
-        if (Math.random() > 0.97) {
-            y += (Math.random() - 0.5) * ecgAmplitude * 3;
-        } else {
-            y += (Math.random() - 0.5) * ecgAmplitude * 0.4;
+      if (isOverclockedMajority) {
+        setSpikePosition(prev => (prev + 15) % (VIEWBOX_WIDTH + 400));
+        const currentSpikePos = (spikePosition + 15) % (VIEWBOX_WIDTH + 400);
+        for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
+          let y = CIRCLE_CY;
+          const distanceToSpike = Math.abs(i - (currentSpikePos - 200));
+          if (distanceToSpike < 40) {
+            const spikeFactor = 1 - (distanceToSpike / 40);
+            y += (Math.sin(distanceToSpike * 0.2) * 40 * spikeFactor);
+          } else {
+            y += (Math.random() - 0.5) * 2;
+          }
+          path += ` L ${i} ${y.toFixed(2)}`;
         }
-        path += ` L ${i} ${y.toFixed(2)}`;
+      } else {
+        const ecgAmplitude = 2 + 15 * intensity;
+        for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
+          let y = CIRCLE_CY;
+          if (Math.random() > 0.97) {
+              y += (Math.random() - 0.5) * ecgAmplitude * 3;
+          } else {
+              y += (Math.random() - 0.5) * ecgAmplitude * 0.4;
+          }
+          path += ` L ${i} ${y.toFixed(2)}`;
+        }
       }
 
       setDynamicValues(prev => ({
@@ -125,10 +145,10 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
         waveformPointsArray: newWaveformPointsArray,
         ecgPath: path,
       }));
-    }, 150);
+    }, animationInterval);
 
     return () => clearInterval(intervalId);
-  }, [hashrate, status]);
+  }, [hashrate, status, isOverclockedMajority, spikePosition]);
 
   const bars = useMemo(() => {
     const asicCount = asics.length;
@@ -139,7 +159,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
       
       const asicIndex = i % asicCount;
       const asicStatus = asics[asicIndex]?.status || 'offline';
-      const barColor = ASIC_STATUS_COLORS[asicStatus];
+      const barColor = isOverclockedMajority ? `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, 70%)` : ASIC_STATUS_COLORS[asicStatus];
 
       let interactiveHeight = 0;
       if (mousePosition) {
@@ -169,11 +189,13 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={barColor}
-          style={{ transition: 'height 0.1s ease-out, y 0.1s ease-out, fill 0.3s ease' }}
+          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear' }}
         />
       );
     });
-  }, [dynamicValues.barHeights, asics, mousePosition]);
+  }, [dynamicValues.barHeights, asics, mousePosition, isOverclockedMajority]);
+
+  const strokeColor = isOverclockedMajority ? "url(#overclock-gradient)" : "currentColor";
 
   return (
     <svg ref={svgRef} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="xMidYMid meet">
@@ -185,6 +207,16 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <linearGradient id="overclock-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#ef4444" />
+          <stop offset="20%" stopColor="#f97316" />
+          <stop offset="40%" stopColor="#f59e0b" />
+          <stop offset="60%" stopColor="#10b981" />
+          <stop offset="80%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#6366f1" />
+          <animate attributeName="x1" from="-100%" to="100%" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="x2" from="0%" to="200%" dur="4s" repeatCount="indefinite" />
+        </linearGradient>
       </defs>
       
       <g style={{ transition: 'color 0.5s ease' }} color={color} opacity={status === 'offline' ? 0.5 : 1}>
@@ -196,7 +228,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
               y={p.y}
               width={p.size}
               height={p.size}
-              fill="currentColor"
+              fill={strokeColor}
               className="animate-float-particle"
               style={{
                 '--tx': `${p.tx}px`,
@@ -215,21 +247,21 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
                 key={i}
                 d={points}
                 fill="none"
-                stroke="currentColor"
+                stroke={strokeColor}
                 strokeWidth={i === WAVEFORM_COUNT - 1 ? "1.5" : "0.75"}
                 opacity={1 - i * 0.2}
                 filter={i === WAVEFORM_COUNT - 1 ? "url(#glow)" : "none"}
-                style={{ transition: 'd 0.1s ease-out' }}
+                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear' }}
             />
         ))}
         
         <path
           d={dynamicValues.ecgPath}
           fill="none"
-          stroke="currentColor"
+          stroke={strokeColor}
           strokeWidth="2"
           filter="url(#glow)"
-          style={{ transition: 'd 0.1s linear' }}
+          style={{ transition: 'd 0.07s linear, stroke 0.3s linear' }}
           className={status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on'}
         />
       </g>

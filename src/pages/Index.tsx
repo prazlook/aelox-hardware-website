@@ -223,6 +223,8 @@ const Index = () => {
     const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
     const totalPower = asics.reduce((acc, a) => acc + a.power, 0);
     const avgTemp = totalAsicsCount > 0 ? asics.reduce((acc, a) => acc + a.temperature, 0) / totalAsicsCount : 0;
+    const overclockedCount = asics.filter(a => a.status === 'overclocked').length;
+    const isOverclockedMajority = totalAsicsCount > 0 && (overclockedCount / totalAsicsCount) >= 0.7;
 
     return {
       totalHashrate,
@@ -230,6 +232,7 @@ const Index = () => {
       totalPower,
       activeAsics: activeAsicsCount,
       totalAsics: totalAsicsCount,
+      isOverclockedMajority,
     };
   }, [asics]);
 
@@ -273,7 +276,12 @@ const Index = () => {
     <div className="space-y-8">
       <div className="relative h-48 -mx-6 -mt-6 mb-4">
         <div className="absolute inset-0 z-0 opacity-75">
-          <GlobalStatusIndicator status={globalStatus} hashrate={summary.totalHashrate} asics={asics} />
+          <GlobalStatusIndicator 
+            status={globalStatus} 
+            hashrate={summary.totalHashrate} 
+            asics={asics}
+            isOverclockedMajority={summary.isOverclockedMajority}
+          />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
