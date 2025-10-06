@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 
-export const useTypewriter = (text: string, speed: number = 50) => {
+export const useTypewriter = (text: string, speed: number = 50): [string, boolean] => {
   const [displayedText, setDisplayedText] = useState('');
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
 
   useEffect(() => {
     if (text) {
+      setIsTypingComplete(false);
       let i = 0;
       setDisplayedText('');
       const intervalId = setInterval(() => {
@@ -12,12 +14,19 @@ export const useTypewriter = (text: string, speed: number = 50) => {
         i++;
         if (i > text.length) {
           clearInterval(intervalId);
+          setIsTypingComplete(true);
         }
       }, speed);
 
-      return () => clearInterval(intervalId);
+      return () => {
+        clearInterval(intervalId);
+        setIsTypingComplete(false);
+      };
+    } else {
+      setDisplayedText('');
+      setIsTypingComplete(true);
     }
   }, [text, speed]);
 
-  return displayedText;
+  return [displayedText, isTypingComplete];
 };
