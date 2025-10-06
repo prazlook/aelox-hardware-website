@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useAsics, ASIC, ASICStatus } from "@/context/AsicContext";
+import { useAsics } from "@/context/AsicContext";
+import { ASIC, ASICStatus } from "@/components/ASICStatusCard";
 
 const ALL_STATUSES: ASICStatus[] = ['online', 'offline', 'booting up', 'shutting down', 'overclocked', 'overheat', 'error', 'idle', 'standby'];
 
