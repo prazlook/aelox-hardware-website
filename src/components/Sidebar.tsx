@@ -23,13 +23,13 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
       )
     }
   >
-    <Icon className="w-6 h-6" />
+    <Icon className="w-6 h-6 transition-transform duration-200 group-hover:scale-125" />
     <span
       className={cn(
         "absolute left-full ml-4 px-3 py-2 rounded-md bg-theme-card text-white pointer-events-none z-10",
-        "font-medium whitespace-nowrap border-r-2 border-r-transparent",
+        "font-medium whitespace-nowrap",
         "opacity-0 transition-opacity",
-        "group-hover:opacity-100 group-hover:animate-typewriter"
+        "group-hover:opacity-100 group-hover:animate-typewriter group-hover:typewriter-cursor"
       )}
     >
       {label}

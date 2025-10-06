@@ -91,8 +91,8 @@ export default {
           to: { "clip-path": "polygon(0 0, 100% 0, 100% 100%, 0 100%)" },
         },
         "blink-caret": {
-          "from, to": { "border-color": "transparent" },
-          "50%": { "border-color": "currentColor" },
+          "from, to": { opacity: "1" },
+          "50%": { opacity: "0" },
         },
       },
       animation: {
@@ -101,7 +101,7 @@ export default {
         "border-spin": "border-spin 4s linear infinite",
         "aurora": "aurora 8s linear infinite",
         "float-particle": "float-particle 6s infinite ease-in-out",
-        typewriter: "typewriter 0.8s steps(30, end) forwards, blink-caret 1s step-end infinite",
+        typewriter: "typewriter 0.5s steps(30, end) forwards",
       },
     },
   },

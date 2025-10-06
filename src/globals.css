@@ -274,3 +274,12 @@
     animation: aurora 6s linear infinite;
   }
 }
+
+@layer utilities {
+  .typewriter-cursor::after {
+    content: '_';
+    display: inline-block;
+    vertical-align: text-bottom;
+    animation: blink-caret 1s step-end infinite;
+  }
+}
