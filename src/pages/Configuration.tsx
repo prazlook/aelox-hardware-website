@@ -2,6 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SoundUploader } from "@/components/SoundUploader";
 import { useSound } from "@/context/SoundContext";
+import { useConfig } from "@/context/ConfigContext";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 const ConfigurationPage = () => {
   const {
@@ -13,10 +17,46 @@ const ConfigurationPage = () => {
     setPowerOffSoundFile
   } = useSound();
 
+  const { apiKey, setApiKey, isAiEnabled, setIsAiEnabled } = useConfig();
+
   return (
     <div className="p-4 sm:p-8 text-white">
       <h1 className="text-4xl font-light tracking-wider mb-8">CONFIGU<span className="font-bold">RATION</span></h1>
       <main className="space-y-8">
+        <Card className="bg-gray-900/50 border-gray-700">
+          <CardHeader>
+            <CardTitle>Configuration IA</CardTitle>
+            <CardDescription className="text-gray-400">
+              Gérez votre clé API Gemini et activez ou désactivez les commentaires générés par l'IA.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="api-key">Clé API Gemini</Label>
+              <Input
+                id="api-key"
+                type="password"
+                placeholder="Entrez votre clé API"
+                value={apiKey || ''}
+                onChange={(e) => setApiKey(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="ai-enabled" className="flex flex-col space-y-1">
+                <span>Activer les commentaires IA</span>
+                <span className="font-normal leading-snug text-muted-foreground text-gray-400">
+                  Affiche des commentaires de statut générés par l'IA sur les cartes ASIC.
+                </span>
+              </Label>
+              <Switch
+                id="ai-enabled"
+                checked={isAiEnabled}
+                onCheckedChange={setIsAiEnabled}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-gray-900/50 border-gray-700">
           <CardHeader>
             <CardTitle>Sons d'Alerte et de Statut</CardTitle>

@@ -9,6 +9,7 @@ import { useAnimation } from '@/context/AnimationContext';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getAIComment } from '@/lib/gemini';
+import { useConfig } from '@/context/ConfigContext';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -107,6 +108,7 @@ const ShutdownAnimation = () => (
 export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction }: ASICStatusCardProps) => {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { triggerBurst } = useAnimation();
+  const { apiKey, isAiEnabled } = useConfig();
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
   const [isBootingUp, setIsBootingUp] = useState(false);
   const [comment, setComment] = useState(getStatusMessage(asic.status));
@@ -122,11 +124,11 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
 
     if (prevStatus !== asic.status) {
-      if (['online', 'overclocked', 'overheat', 'error'].includes(asic.status)) {
+      if (isAiEnabled && apiKey && ['online', 'overclocked', 'overheat', 'error'].includes(asic.status)) {
         const fetchComment = async () => {
           setIsLoadingComment(true);
           try {
-            const newComment = await getAIComment(asic);
+            const newComment = await getAIComment(asic, apiKey);
             setComment(newComment);
           } catch (error) {
             console.error("Failed to fetch AI comment:", error);
@@ -142,7 +144,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
 
     prevStatusRef.current = asic.status;
-  }, [asic.status, asic]);
+  }, [asic.status, asic, isAiEnabled, apiKey]);
 
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
@@ -272,9 +274,11 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5 h-9 flex items-center justify-center", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
-            {truncatedMessage}
-          </div>
+          {isAiEnabled && (
+            <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5 h-9 flex items-center justify-center", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
+              {truncatedMessage}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
             <StatItem 
