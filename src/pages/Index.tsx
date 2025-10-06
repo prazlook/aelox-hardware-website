@@ -1,20 +1,15 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { ASIC, ASICStatusCard, ASICStatus } from '@/components/ASICStatusCard';
+import { ASICStatusCard } from '@/components/ASICStatusCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
 import { Thermometer, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
+import { useAsics } from '@/context/AsicContext';
 import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
 import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
 import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
 import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusIndicator';
-
-const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
-  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71, isFanOn: true, comment: "Pool secondaire - RAS" },
-  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0, isFanOn: false, comment: "Maintenance prévue" },
-];
 
 const playSound = (file: File | null) => {
   if (file) {
@@ -24,9 +19,9 @@ const playSound = (file: File | null) => {
 };
 
 const Index = () => {
-  const [asics, setAsics] = useState<ASIC[]>(MOCK_ASICS);
+  const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
-  const prevAsicsRef = useRef<ASIC[]>(asics);
+  const prevAsicsRef = useRef(asics);
   const maxTemp = 85;
   const criticalTemp = 100;
   const shutdownTemp = 115;
@@ -207,7 +202,7 @@ const Index = () => {
       setAsics(updatedAsics);
     }, 2000);
     return () => clearInterval(interval);
-  }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile]);
+  }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics]);
 
   const summary = useMemo(() => {
     const onlineAsics = asics.filter(a => a.status === 'online' || a.status === 'overclocked');
@@ -260,7 +255,7 @@ const Index = () => {
     } else if (tempStatus.level !== 'surcharge') {
       surchargeAlertTriggered.current = false;
     }
-  }, [tempStatus.level]);
+  }, [tempStatus.level, handleStopAll]);
 
   return (
     <div className="space-y-8">

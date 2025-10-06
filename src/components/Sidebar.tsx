@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity } from "lucide-react";
+import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { to: "/wallet", icon: Wallet, label: "Portefeuille" },
   { to: "/asic-management", icon: Server, label: "Gestion des ASICs" },
   { to: "/configuration", icon: Settings, label: "Configuration" },
+  { to: "/dev-options", icon: Code, label: "Options Dev" },
 ];
 
 const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
