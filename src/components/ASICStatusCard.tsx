@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
 import { AnimatedBorderCard } from "./AnimatedBorderCard";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { ForceStopMenuItem } from "./ForceStopMenuItem";
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -148,21 +149,29 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <PowerIcon size={16} className={powerIconClassName} />
                 </Button>
               </ContextMenuTrigger>
-              <ContextMenuContent className="w-48">
-                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')}>Idle</ContextMenuItem>
-                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')}>Standby</ContextMenuItem>
-                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')}>Reboot</ContextMenuItem>
-                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')}>Arrêt</ContextMenuItem>
+              <ContextMenuContent className="w-48 rounded-xl p-1.5">
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
+                  <Hourglass className="mr-2 h-4 w-4" /> Idle
+                </ContextMenuItem>
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '50ms' }}>
+                  <Moon className="mr-2 h-4 w-4" /> Standby
+                </ContextMenuItem>
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '100ms' }}>
+                  <RefreshCw className="mr-2 h-4 w-4" /> Reboot
+                </ContextMenuItem>
+                <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '150ms' }}>
+                  <XCircle className="mr-2 h-4 w-4" /> Arrêt
+                </ContextMenuItem>
                 {asic.status === 'error' && (
                   <>
-                    <ContextMenuSeparator />
-                    <ContextMenuItem
+                    <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '175ms' }} />
+                    <ForceStopMenuItem
                       onSelect={() => onPowerAction(asic.id, 'force-stop')}
-                      className="text-white font-bold bg-[linear-gradient(90deg,_#ef4444,_#f97316,_#ef4444)] bg-[length:200%_100%] animate-aurora focus:text-white"
+                      style={{ animationDelay: '200ms' }}
                     >
                       <ShieldAlert className="mr-2 h-4 w-4" />
                       Force Stop
-                    </ContextMenuItem>
+                    </ForceStopMenuItem>
                   </>
                 )}
               </ContextMenuContent>
