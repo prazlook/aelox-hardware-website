@@ -129,7 +129,12 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     "text-theme-text-secondary": !isTransitioning && !isOnline,
   });
 
-  const fadeOutClass = asic.isForceStopping ? "animate-flicker-and-fade" : "";
+  const contentAnimationClass = asic.isForceStopping
+    ? "animate-flicker-and-fade"
+    : asic.status === 'shutting down'
+    ? "animate-smooth-shutdown"
+    : "";
+  
   const fanIsSpinning = asic.isFanOn && !isOffline;
 
   const handleForceStop = (e: React.MouseEvent) => {
@@ -159,15 +164,15 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
-            <div className={fadeOutClass} style={{ animationDelay: '0.1s' }}>
+            <div className={contentAnimationClass} style={{ animationDelay: '0.1s' }}>
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <div className={fadeOutClass} style={{ animationDelay: '0.2s' }}>
+              <div className={contentAnimationClass} style={{ animationDelay: '0.2s' }}>
                 <StatusBadge status={asic.status} />
               </div>
-              <div className={fadeOutClass} style={{ animationDelay: '0.3s' }}>
+              <div className={contentAnimationClass} style={{ animationDelay: '0.3s' }}>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -181,7 +186,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
-              <div className={fadeOutClass} style={{ animationDelay: '0.4s' }}>
+              <div className={contentAnimationClass} style={{ animationDelay: '0.4s' }}>
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
                     <Button
@@ -225,7 +230,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", fadeOutClass)} style={{ animationDelay: '0.5s' }}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", contentAnimationClass)} style={{ animationDelay: '0.5s' }}>
             {truncatedMessage}
           </div>
 
@@ -235,13 +240,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               label="Hashrate" 
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
-              className={fadeOutClass}
+              className={contentAnimationClass}
               style={{ animationDelay: '0.6s' }}
             />
-            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, fadeOutClass)} style={{ animationDelay: '0.7s' }} />
-            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={fadeOutClass} style={{ animationDelay: '0.8s' }} />
+            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass)} style={{ animationDelay: '0.7s' }} />
+            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={contentAnimationClass} style={{ animationDelay: '0.8s' }} />
             
-            <div className={cn("flex items-center space-x-2", fadeOutClass)} style={{ animationDelay: '0.9s' }}>
+            <div className={cn("flex items-center space-x-2", contentAnimationClass)} style={{ animationDelay: '0.9s' }}>
               <button
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
@@ -264,7 +269,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={fadeOutClass} style={{ animationDelay: '1s' }}>
+          <div className={contentAnimationClass} style={{ animationDelay: '1s' }}>
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
               disabled={isOffline}
