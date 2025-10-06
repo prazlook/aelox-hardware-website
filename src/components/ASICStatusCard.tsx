@@ -121,7 +121,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
   const isShuttingDown = asic.status === 'shutting down';
 
-  const truncatedMessage = comment.length > 40 ? comment.substring(0, 37) + '...' : comment;
+  const truncatedMessage = comment.length > 50 ? comment.substring(0, 47) + '...' : comment;
 
   const PowerIcon = isOnline ? PowerOff : Power;
   const powerIconClassName = cn({
@@ -239,7 +239,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5 h-9 flex items-center justify-center", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
             {truncatedMessage}
           </div>
 
