@@ -19,9 +19,10 @@ const statusConfig = {
   offline: { color: '#9ca3af' }, // Gray
 };
 
-const BAR_COUNT = 90;
-const PARTICLE_COUNT = 15;
-const WAVEFORM_COUNT = 3;
+const BAR_COUNT = 100;
+const PARTICLE_COUNT = 20;
+const WAVEFORM_COUNT = 4;
+const SPOKE_COUNT = 6;
 
 const VIEWBOX_WIDTH = 800;
 const VIEWBOX_HEIGHT = 200;
@@ -32,12 +33,14 @@ const RADIUS = 70;
 export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
-  const [spikePosition, setSpikePosition] = useState(0);
+  const [rotation, setRotation] = useState(0);
   const [dynamicValues, setDynamicValues] = useState({
     barHeights: Array.from({ length: BAR_COUNT }, () => Math.random() * 5),
     waveformPointsArray: [] as string[],
     ecgPath: '',
-    particles: [] as { x: number, y: number, size: number, tx: number, ty: number, delay: number }[]
+    particles: [] as { x: number, y: number, size: number, tx: number, ty: number, delay: number }[],
+    orbRadius: 0,
+    orbOpacity: 0,
   });
 
   const { color } = statusConfig[status];
@@ -75,34 +78,35 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         x: Math.random() * VIEWBOX_WIDTH,
         y: Math.random() * VIEWBOX_HEIGHT,
         size: Math.random() * 1.5 + 0.5,
-        tx: (Math.random() - 0.5) * 100,
-        ty: (Math.random() - 0.5) * 100,
-        delay: Math.random() * -8,
+        tx: (Math.random() - 0.5) * 120,
+        ty: (Math.random() - 0.5) * 120,
+        delay: Math.random() * -10,
       }))
     }));
   }, []);
 
   useEffect(() => {
     if (status === 'offline') {
-      return; // Stop animation updates when all ASICs are offline
+      return;
     }
 
-    const animationInterval = isOverclockedMajority ? 75 : 150;
+    const animationInterval = isOverclockedMajority ? 60 : 120;
 
     const intervalId = setInterval(() => {
-      const intensity = Math.min(hashrate / 150, 1);
+      const intensity = Math.min(hashrate / 120, 1.2);
+      setRotation(prev => (prev + (isOverclockedMajority ? 1.5 : 0.5)) % 360);
 
       const newBarHeights = Array.from({ length: BAR_COUNT }, () => {
-        const baseHeight = Math.random() * (10 + 40 * intensity);
-        return Math.random() > 0.95 ? baseHeight * 2.5 : baseHeight;
+        const baseHeight = Math.random() * (15 + 50 * intensity);
+        return Math.random() > 0.92 ? baseHeight * 3 : baseHeight;
       });
 
       const newWaveformPointsArray = [];
       for (let j = 0; j < WAVEFORM_COUNT; j++) {
-        const waveformRadius = RADIUS * (0.4 + j * 0.2);
-        const waveformAmplitude = (2 + 6 * intensity) / (j + 1);
-        const points = Array.from({ length: 40 }, (_, i) => {
-          const angle = (i / 39) * Math.PI * 2;
+        const waveformRadius = RADIUS * (0.3 + j * 0.2);
+        const waveformAmplitude = (3 + 8 * intensity) / (j + 1);
+        const points = Array.from({ length: 50 }, (_, i) => {
+          const angle = (i / 49) * Math.PI * 2;
           const r = waveformRadius + (Math.random() - 0.5) * waveformAmplitude;
           const x = CIRCLE_CX + Math.cos(angle) * r;
           const y = CIRCLE_CY + Math.sin(angle) * r;
@@ -112,43 +116,33 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
       }
       
       let path = `M -200 ${CIRCLE_CY}`;
-      if (isOverclockedMajority) {
-        setSpikePosition(prev => (prev + 15) % (VIEWBOX_WIDTH + 400));
-        const currentSpikePos = (spikePosition + 15) % (VIEWBOX_WIDTH + 400);
-        for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
-          let y = CIRCLE_CY;
-          const distanceToSpike = Math.abs(i - (currentSpikePos - 200));
-          if (distanceToSpike < 40) {
-            const spikeFactor = 1 - (distanceToSpike / 40);
-            y += (Math.sin(distanceToSpike * 0.2) * 40 * spikeFactor);
-          } else {
-            y += (Math.random() - 0.5) * 2;
-          }
-          path += ` L ${i} ${y.toFixed(2)}`;
+      const ecgAmplitude = 5 + 25 * intensity;
+      for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
+        let y = CIRCLE_CY;
+        if (Math.random() > 0.96) {
+            y += (Math.random() - 0.5) * ecgAmplitude * 3.5;
+        } else {
+            y += (Math.random() - 0.5) * ecgAmplitude * 0.5;
         }
-      } else {
-        const ecgAmplitude = 2 + 15 * intensity;
-        for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
-          let y = CIRCLE_CY;
-          if (Math.random() > 0.97) {
-              y += (Math.random() - 0.5) * ecgAmplitude * 3;
-          } else {
-              y += (Math.random() - 0.5) * ecgAmplitude * 0.4;
-          }
-          path += ` L ${i} ${y.toFixed(2)}`;
-        }
+        path += ` L ${i} ${y.toFixed(2)}`;
       }
+
+      const time = Date.now() / (isOverclockedMajority ? 300 : 500);
+      const newOrbRadius = 15 + (Math.sin(time) * 5 + 5) * intensity;
+      const newOrbOpacity = 0.4 + (Math.sin(time * 0.7) * 0.2 + 0.2) * intensity;
 
       setDynamicValues(prev => ({
         ...prev,
         barHeights: newBarHeights,
         waveformPointsArray: newWaveformPointsArray,
         ecgPath: path,
+        orbRadius: newOrbRadius,
+        orbOpacity: newOrbOpacity,
       }));
     }, animationInterval);
 
     return () => clearInterval(intervalId);
-  }, [hashrate, status, isOverclockedMajority, spikePosition]);
+  }, [hashrate, status, isOverclockedMajority]);
 
   const bars = useMemo(() => {
     const asicCount = asics.length;
@@ -174,7 +168,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         const maxEffectAngle = 45;
         if (angleDiff < maxEffectAngle) {
           const proximity = 1 - (angleDiff / maxEffectAngle);
-          interactiveHeight = 30 * Math.pow(proximity, 2);
+          interactiveHeight = 40 * Math.pow(proximity, 2);
         }
       }
 
@@ -217,6 +211,11 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           <animate attributeName="x1" from="-100%" to="100%" dur="8s" repeatCount="indefinite" />
           <animate attributeName="x2" from="0%" to="200%" dur="8s" repeatCount="indefinite" />
         </linearGradient>
+        <radialGradient id="orb-gradient">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.8" />
+          <stop offset="70%" stopColor="currentColor" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </radialGradient>
       </defs>
       
       <g style={{ transition: 'color 0.5s ease' }} color={color} opacity={status === 'offline' ? 0.5 : 1}>
@@ -255,6 +254,31 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
             />
         ))}
         
+        <g transform={`rotate(${rotation} ${CIRCLE_CX} ${CIRCLE_CY})`} style={{ transition: 'transform 0.1s linear' }}>
+          {Array.from({ length: SPOKE_COUNT }).map((_, i) => (
+            <line
+              key={i}
+              x1={CIRCLE_CX}
+              y1={CIRCLE_CY}
+              x2={CIRCLE_CX}
+              y2={CIRCLE_CY - RADIUS * 1.5}
+              stroke={strokeColor}
+              strokeWidth="1"
+              opacity="0.3"
+              transform={`rotate(${(360 / SPOKE_COUNT) * i} ${CIRCLE_CX} ${CIRCLE_CY})`}
+            />
+          ))}
+        </g>
+
+        <circle
+          cx={CIRCLE_CX}
+          cy={CIRCLE_CY}
+          r={dynamicValues.orbRadius}
+          fill="url(#orb-gradient)"
+          opacity={dynamicValues.orbOpacity}
+          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out' }}
+        />
+
         <path
           d={dynamicValues.ecgPath}
           fill="none"
