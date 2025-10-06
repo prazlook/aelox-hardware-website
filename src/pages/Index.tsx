@@ -179,6 +179,7 @@ const Index = () => {
             break;
           case 'shutting down':
             newAsic.power -= 300;
+            newAsic.fanSpeed = Math.max(0, newAsic.fanSpeed - 15);
             if (newAsic.power <= 0) newAsic.status = 'offline';
             break;
           case 'idle':
@@ -193,6 +194,8 @@ const Index = () => {
             break;
           case 'offline':
             if (newAsic.temperature > 25) newAsic.temperature -= 0.5;
+            newAsic.fanSpeed = 0;
+            newAsic.isFanOn = false;
             break;
           case 'error':
             // Stays in error state

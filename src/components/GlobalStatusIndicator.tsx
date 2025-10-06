@@ -201,7 +201,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
     <svg ref={svgRef} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="xMidYMid meet">
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
@@ -248,9 +248,9 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 d={points}
                 fill="none"
                 stroke={strokeColor}
-                strokeWidth={i === WAVEFORM_COUNT - 1 ? "1.5" : "0.75"}
-                opacity={1 - i * 0.2}
-                filter={i === WAVEFORM_COUNT - 1 ? "url(#glow)" : "none"}
+                strokeWidth={i === 0 ? "2" : i === 1 ? "1" : "0.5"}
+                opacity={1 - i * 0.25}
+                filter={i === 0 ? "url(#glow)" : "none"}
                 style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear' }}
             />
         ))}
