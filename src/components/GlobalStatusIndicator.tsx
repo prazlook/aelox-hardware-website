@@ -134,12 +134,10 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
     const asicCount = asics.length;
     if (asicCount === 0) return [];
 
-    const barsPerAsic = BAR_COUNT / asicCount;
-
     return dynamicValues.barHeights.map((baseHeight, i) => {
       const angleDegrees = (i / BAR_COUNT) * 360;
       
-      const asicIndex = Math.min(Math.floor(i / barsPerAsic), asicCount - 1);
+      const asicIndex = i % asicCount;
       const asicStatus = asics[asicIndex]?.status || 'offline';
       const barColor = ASIC_STATUS_COLORS[asicStatus];
 
@@ -230,9 +228,9 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusI
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          opacity="0.8"
           filter="url(#glow)"
           style={{ transition: 'd 0.1s linear' }}
+          className={status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on'}
         />
       </g>
     </svg>

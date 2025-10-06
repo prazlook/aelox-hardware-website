@@ -116,16 +116,12 @@
   100% { opacity: 0.3; color: #4a5568; }
 }
 
-@keyframes smooth-shutdown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(4px);
-    color: #A0AEC0; /* theme-text-secondary */
-  }
+@keyframes gentle-shutdown-flicker {
+  0% { opacity: 1; }
+  25% { opacity: 0.6; }
+  50% { opacity: 0.8; }
+  75% { opacity: 0.4; color: #A0AEC0; }
+  100% { opacity: 0.2; color: #A0AEC0; }
 }
 
 @keyframes ecg-border-flow {
@@ -215,9 +211,9 @@
     animation-delay: inherit;
   }
 
-  .animate-smooth-shutdown {
-    animation: smooth-shutdown 1s ease-out forwards;
-    /* Delay is now handled conditionally in the component */
+  .animate-gentle-shutdown {
+    animation: gentle-shutdown-flicker 1.2s ease-out forwards;
+    animation-delay: inherit;
   }
 
   .animate-stroke-spin-1 {
@@ -234,5 +230,18 @@
   .animate-idle-pulse {
     stroke-dasharray: 50 1150;
     animation: idle-pulse 8s linear infinite;
+  }
+
+  .ecg-line {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform-origin: center;
+  }
+  .ecg-line-on {
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+  .ecg-line-off {
+    transform: scaleX(0);
+    opacity: 0;
   }
 }

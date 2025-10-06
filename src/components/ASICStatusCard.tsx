@@ -133,7 +133,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const contentAnimationClass = asic.isForceStopping
     ? "animate-flicker-and-fade"
     : isShuttingDown
-    ? "animate-smooth-shutdown"
+    ? "animate-gentle-shutdown"
     : "";
   
   const fanIsSpinning = asic.isFanOn && !isOffline;
@@ -154,11 +154,6 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   };
 
   const getAnimationStyles = (delayInSeconds: number) => {
-    if (isShuttingDown) {
-      // No delay for smooth shutdown
-      return {};
-    }
-    // Staggered delay for other animations like force-stop
     return { animationDelay: `${delayInSeconds}s` };
   };
 
