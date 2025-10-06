@@ -8,6 +8,7 @@ import { ForceStopMenuItem } from "./ForceStopMenuItem";
 import { useAnimation } from '@/context/AnimationContext';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { StatusBorderAnimation } from './StatusBorderAnimation';
+import { getAIComment } from '@/lib/gemini';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -108,6 +109,8 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const { triggerBurst } = useAnimation();
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
   const [isBootingUp, setIsBootingUp] = useState(false);
+  const [comment, setComment] = useState(getStatusMessage(asic.status));
+  const [isLoadingComment, setIsLoadingComment] = useState(false);
   const prevStatusRef = useRef<ASICStatus>();
 
   useEffect(() => {
@@ -117,8 +120,29 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     } else if (asic.status !== 'booting up') {
       setIsBootingUp(false);
     }
+
+    if (prevStatus !== asic.status) {
+      if (['online', 'overclocked', 'overheat', 'error'].includes(asic.status)) {
+        const fetchComment = async () => {
+          setIsLoadingComment(true);
+          try {
+            const newComment = await getAIComment(asic);
+            setComment(newComment);
+          } catch (error) {
+            console.error("Failed to fetch AI comment:", error);
+            setComment(getStatusMessage(asic.status));
+          } finally {
+            setIsLoadingComment(false);
+          }
+        };
+        fetchComment();
+      } else {
+        setComment(getStatusMessage(asic.status));
+      }
+    }
+
     prevStatusRef.current = asic.status;
-  }, [asic.status]);
+  }, [asic.status, asic]);
 
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
@@ -129,11 +153,8 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
   const isShuttingDown = asic.status === 'shutting down';
 
-  const message = (isOnline && asic.comment) 
-    ? asic.comment 
-    : getStatusMessage(asic.status);
-
-  const truncatedMessage = message.length > 26 ? message.substring(0, 23) + '...' : message;
+  const message = isLoadingComment ? "Génération du commentaire..." : comment;
+  const truncatedMessage = message.length > 40 ? message.substring(0, 37) + '...' : message;
 
   const PowerIcon = isOnline ? PowerOff : Power;
   const powerIconClassName = cn({
@@ -251,7 +272,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-lg py-1.5 h-9 flex items-center justify-center", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
             {truncatedMessage}
           </div>
 
