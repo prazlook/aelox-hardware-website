@@ -16,12 +16,13 @@ const statusConfig = {
 
 const BAR_COUNT = 72;
 const RADIUS = 40;
-const PARTICLE_COUNT = 5;
+const PARTICLE_COUNT = 10;
+const WAVEFORM_COUNT = 3;
 
 export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicatorProps) => {
   const [dynamicValues, setDynamicValues] = useState({
     barHeights: [] as number[],
-    waveformPoints: '',
+    waveformPointsArray: [] as string[],
     ecgPath: '',
     particles: [] as { x: number, y: number, size: number, tx: number, ty: number, delay: number }[]
   });
@@ -34,10 +35,10 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       particles: Array.from({ length: PARTICLE_COUNT }, () => ({
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: Math.random() * 2 + 1,
-        tx: (Math.random() - 0.5) * 80,
-        ty: (Math.random() - 0.5) * 80,
-        delay: Math.random() * -6,
+        size: Math.random() * 1.5 + 0.5,
+        tx: (Math.random() - 0.5) * 100,
+        ty: (Math.random() - 0.5) * 100,
+        delay: Math.random() * -8,
       }))
     }));
   }, []);
@@ -47,25 +48,31 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       const intensity = Math.min(hashrate / 150, 1);
 
       const newBarHeights = Array.from({ length: BAR_COUNT }, () => 
-        Math.random() * (5 + 15 * intensity)
+        Math.random() * (3 + 12 * intensity)
       );
 
-      const waveformRadius = RADIUS * 0.6;
-      const waveformAmplitude = 3 + 10 * intensity;
-      const points = Array.from({ length: 40 }, (_, i) => {
-        const angle = (i / 39) * Math.PI * 2;
-        const r = waveformRadius + (Math.random() - 0.5) * waveformAmplitude;
-        const x = 50 + Math.cos(angle) * r;
-        const y = 50 + Math.sin(angle) * r;
-        return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
-      }).join(' ') + ' Z';
+      const newWaveformPointsArray = [];
+      for (let j = 0; j < WAVEFORM_COUNT; j++) {
+        const waveformRadius = RADIUS * (0.4 + j * 0.2);
+        const waveformAmplitude = (2 + 6 * intensity) / (j + 1);
+        const points = Array.from({ length: 40 }, (_, i) => {
+          const angle = (i / 39) * Math.PI * 2;
+          const r = waveformRadius + (Math.random() - 0.5) * waveformAmplitude;
+          const x = 50 + Math.cos(angle) * r;
+          const y = 50 + Math.sin(angle) * r;
+          return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
+        }).join(' ') + ' Z';
+        newWaveformPointsArray.push(points);
+      }
       
       let path = 'M -5 50';
-      const ecgAmplitude = 2 + 8 * intensity;
-      for (let i = -5; i <= 105; i += 4) {
-        let y = 50 + (Math.random() - 0.5) * ecgAmplitude;
-        if (Math.random() > 0.95) {
-          y += (Math.random() - 0.5) * ecgAmplitude * 2;
+      const ecgAmplitude = 1 + 10 * intensity;
+      for (let i = -5; i <= 105; i += 2) {
+        let y = 50;
+        if (i % 20 > 10 && i % 20 < 14) {
+            y += (Math.random() - 0.5) * ecgAmplitude * (1 - Math.abs(12 - (i%20)) / 2);
+        } else {
+            y += (Math.random() - 0.5) * ecgAmplitude * 0.2;
         }
         path += ` L ${i} ${y.toFixed(2)}`;
       }
@@ -73,10 +80,10 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       setDynamicValues(prev => ({
         ...prev,
         barHeights: newBarHeights,
-        waveformPoints: points,
+        waveformPointsArray: newWaveformPointsArray,
         ecgPath: path,
       }));
-    }, 200);
+    }, 150);
 
     return () => clearInterval(intervalId);
   }, [hashrate]);
@@ -87,13 +94,13 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       return (
         <rect
           key={i}
-          x="49.75"
+          x="49.8"
           y={50 - RADIUS - height}
-          width="0.5"
+          width="0.4"
           height={height}
           transform={`rotate(${angle} 50 50)`}
           fill={color}
-          style={{ transition: 'height 0.15s ease-out' }}
+          style={{ transition: 'height 0.1s ease-out' }}
         />
       );
     });
@@ -103,7 +110,7 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
     <svg viewBox="0 0 100 100" width="48" height="48" className="overflow-visible">
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
@@ -112,15 +119,6 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
       </defs>
       
       <g style={{ transition: 'color 0.5s ease' }} color={color}>
-        <path
-          d={dynamicValues.ecgPath}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="0.5"
-          opacity="0.5"
-          style={{ transition: 'd 0.15s linear' }}
-        />
-
         <g>
           {dynamicValues.particles.map((p, i) => (
             <rect
@@ -136,22 +134,35 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
                 '--ty': `${p.ty}px`,
                 animationDelay: `${p.delay}s`,
               } as React.CSSProperties}
+              opacity="0.7"
             />
           ))}
         </g>
 
-        <g opacity="0.7">{bars}</g>
+        <g opacity="0.6">{bars}</g>
 
+        {dynamicValues.waveformPointsArray.map((points, i) => (
+            <path
+                key={i}
+                d={points}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={i === WAVEFORM_COUNT - 1 ? "1" : "0.5"}
+                opacity={1 - i * 0.2}
+                filter={i === WAVEFORM_COUNT - 1 ? "url(#glow)" : "none"}
+                style={{ transition: 'd 0.1s ease-out' }}
+            />
+        ))}
+        
         <path
-          d={dynamicValues.waveformPoints}
+          d={dynamicValues.ecgPath}
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.5"
+          strokeWidth="1"
+          opacity="0.8"
           filter="url(#glow)"
-          style={{ transition: 'd 0.15s ease-out' }}
+          style={{ transition: 'd 0.1s linear' }}
         />
-        
-        <circle cx="50" cy="50" r={RADIUS * 0.4} fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
       </g>
     </svg>
   );
