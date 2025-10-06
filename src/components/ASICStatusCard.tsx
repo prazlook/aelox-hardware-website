@@ -115,6 +115,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isOnline = asic.status === 'online' || asic.status === 'overclocked';
   const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
+  const isError = asic.status === 'error';
 
   const message = (isOnline && asic.comment) 
     ? asic.comment 
@@ -124,9 +125,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   const PowerIcon = isOnline ? PowerOff : Power;
   const powerIconClassName = cn({
-    "text-gray-500": isTransitioning,
+    "text-gray-500": isTransitioning || isError,
     "text-white": isOnline,
-    "text-theme-text-secondary": !isTransitioning && !isOnline,
+    "text-theme-text-secondary": !isTransitioning && !isOnline && !isError,
   });
 
   const contentAnimationClass = asic.isForceStopping
@@ -145,6 +146,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   };
 
   const handlePowerClick = () => {
+    if (isError) return;
     if (asic.status === 'overheat') {
       setIsOverheatAlertOpen(true);
     } else {
@@ -181,7 +183,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                     asic.status === 'overclocked' ? "text-theme-cyan hover:text-theme-cyan" : "text-theme-text-secondary hover:text-white"
                   )}
                   onClick={() => onToggleOverclock(asic.id)}
-                  disabled={!(asic.status === 'online' || asic.status === 'overclocked')}
+                  disabled={!(asic.status === 'online' || asic.status === 'overclocked') || isError}
                 >
                   <Cpu size={16} />
                 </Button>
@@ -194,25 +196,25 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                       variant="ghost"
                       className="w-8 h-8 rounded-full hover:bg-theme-accent/20 hover:text-theme-accent"
                       onClick={handlePowerClick}
-                      disabled={isTransitioning}
+                      disabled={isTransitioning || isError}
                     >
                       <PowerIcon size={16} className={powerIconClassName} />
                     </Button>
                   </ContextMenuTrigger>
                   <ContextMenuContent className="w-48 rounded-xl p-1.5">
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
+                    <ContextMenuItem disabled={isError} onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
                       <Hourglass className="mr-2 h-4 w-4" /> Idle
                     </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '50ms' }}>
+                    <ContextMenuItem disabled={isError} onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '50ms' }}>
                       <Moon className="mr-2 h-4 w-4" /> Standby
                     </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '100ms' }}>
+                    <ContextMenuItem disabled={isError} onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '100ms' }}>
                       <RefreshCw className="mr-2 h-4 w-4" /> Reboot
                     </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '150ms' }}>
+                    <ContextMenuItem disabled={isError} onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '150ms' }}>
                       <XCircle className="mr-2 h-4 w-4" /> Arrêt
                     </ContextMenuItem>
-                    {asic.status === 'error' && (
+                    {isError && (
                       <>
                         <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '500ms' }} />
                         <ForceStopMenuItem
@@ -251,7 +253,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
                 aria-label={asic.isFanOn ? "Éteindre le ventilateur" : "Allumer le ventilateur"}
-                disabled={isOffline}
+                disabled={isOffline || isError}
               >
                 <Fan
                   size={20}
