@@ -39,7 +39,7 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
 
 export const Sidebar = () => {
   return (
-    <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col">
+    <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
       <div className="flex items-center justify-center h-16 mb-4 flex-shrink-0">
         <Activity className="w-8 h-8 text-theme-cyan" />
       </div>
