@@ -61,18 +61,21 @@
   50% { opacity: 0.3; }
 }
 
+@keyframes stroke-spin {
+  from {
+    stroke-dashoffset: 1200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @keyframes marching-ants {
   from {
     stroke-dashoffset: 0;
   }
   to {
     stroke-dashoffset: 36;
-  }
-}
-
-@keyframes border-pulse {
-  50% {
-    stroke-opacity: 0.7;
   }
 }
 
@@ -99,12 +102,13 @@
     stroke-width: 3;
   }
   
+  .animate-stroke-spin {
+    stroke-dasharray: 300 300; /* Un quart de ligne, un quart de vide */
+    animation: stroke-spin 4s linear infinite;
+  }
+
   .animate-marching-ants {
     stroke-dasharray: 12 24; /* Un pointillé de 12, un espace de 24 (le double) */
     animation: marching-ants 1s linear infinite;
-  }
-
-  .animate-border-pulse {
-    animation: border-pulse 2s ease-in-out infinite;
   }
 }
