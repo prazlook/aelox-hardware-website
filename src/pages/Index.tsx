@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
+import { ASICStatusCard } from '@/components/ASICStatusCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
 import { Thermometer, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
-import { useAsics } from '@/context/AsicContext';
+import { useAsics, ASIC } from '@/context/AsicContext';
 import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
 import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
 import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
@@ -48,16 +48,18 @@ const Index = () => {
     );
   };
 
-  const handlePowerAction = (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop') => {
+  const handlePowerAction = (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop' | 'online' | 'shutdown') => {
     setAsics(prevAsics =>
       prevAsics.map(asic => {
         if (asic.id === asicId) {
           switch (action) {
+            case 'online':
+              return { ...asic, status: 'booting up' };
             case 'idle':
               return { ...asic, status: 'idle' };
             case 'standby':
               return { ...asic, status: 'standby' };
-            case 'stop':
+            case 'shutdown':
             case 'reboot':
               return { ...asic, status: 'shutting down' };
             case 'force-stop':
@@ -340,10 +342,6 @@ const Index = () => {
             <ASICStatusCard 
               key={asic.id} 
               asic={asic} 
-              maxTemp={maxTemp}
-              onTogglePower={handleTogglePower}
-              onToggleFan={handleToggleFan}
-              onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
             />
           ))}

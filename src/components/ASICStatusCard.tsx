@@ -22,25 +22,12 @@ import {
   Cpu,
   Fan,
   AlertTriangle,
-  Settings2,
 } from "lucide-react";
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { ASIC_STATUS_COLORS, ASIC_STATUS_ICONS } from '@/config/status-colors';
+import { ASIC, ASICStatus } from "@/context/AsicContext";
 
-export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'error' | 'standby' | 'idle' | 'overclocked';
 export type PowerAction = 'reboot' | 'shutdown' | 'online' | 'idle' | 'standby';
-
-export interface ASIC {
-  id: string;
-  name: string;
-  ip: string;
-  status: ASICStatus;
-  hashrate: number;
-  temperature: number;
-  power: number;
-  fans: { speed: number }[];
-  isOverclocked: boolean;
-}
 
 interface ASICStatusCardProps {
   asic: ASIC;
@@ -91,7 +78,7 @@ export const ASICStatusCard = ({ asic, onPowerAction }: ASICStatusCardProps) => 
                 {renderStat(Cpu, asic.hashrate.toFixed(2), "TH/s", 100)}
                 {renderStat(Thermometer, `${asic.temperature.toFixed(1)}`, "°C", 200)}
                 {renderStat(Zap, `${asic.power}`, "W", 300)}
-                {renderStat(Fan, `${asic.fans[0]?.speed || 0}`, "RPM", 400)}
+                {renderStat(Fan, `${asic.fanSpeed || 0}`, "RPM", 400)}
               </div>
             </CardContent>
           </div>

@@ -1,5 +1,20 @@
 import { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction } from 'react';
-import { ASIC } from '@/components/ASICStatusCard';
+
+export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'error' | 'standby' | 'idle' | 'overclocked' | 'overheat';
+
+export interface ASIC {
+  id: string;
+  name: string;
+  model: string;
+  status: ASICStatus;
+  hashrate: number;
+  temperature: number;
+  power: number;
+  fanSpeed: number;
+  isFanOn: boolean;
+  comment: string;
+  isForceStopping?: boolean;
+}
 
 const MOCK_ASICS: ASIC[] = [
   { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
