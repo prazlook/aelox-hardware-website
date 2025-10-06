@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+body {
+  background-color: #0D1117;
+  color: #C9D1D9;
+}
+
+.theme-background { background-color: #0D1117; }
+.theme-card { background-color: #161B22; }
+.theme-header { background-color: rgba(22, 27, 34, 0.8); }
+.theme-text-primary { color: #C9D1D9; }
+.theme-text-secondary { color: #8B949E; }
+.theme-accent { color: #58A6FF; }
+.theme-cyan { color: #39C5CF; }
+.theme-border { border-color: #30363D; }
+
+@keyframes ecg-wave {
+  0% { transform: translateX(-100%) scaleY(1); }
+  20% { transform: translateX(-50%) scaleY(1); }
+  22% { transform: translateX(-46%) scaleY(6); }
+  24% { transform: translateX(-42%) scaleY(1); }
+  100% { transform: translateX(100%) scaleY(1); }
+}
+
+.animate-ecg-wave {
+  animation: ecg-wave 5s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes shutdown-wave {
+  0% {
+    stroke-dasharray: 0 1000;
+    opacity: 1;
+  }
+  50% {
+    stroke-dasharray: 500 500;
+    opacity: 1;
+  }
+  100% {
+    stroke-dasharray: 1000 0;
+    opacity: 0;
+  }
+}
+
+.animate-shutdown-wave {
+  animation: shutdown-wave 1.5s ease-out forwards;
+}
+
+@keyframes flicker-and-fade {
+  0%, 100% { opacity: 1; }
+  10%, 30%, 50%, 70%, 90% { opacity: 0.3; }
+  20%, 40%, 60%, 80% { opacity: 0.8; }
+  95% { opacity: 0.1; }
+}
+
+.animate-flicker-and-fade {
+  animation: flicker-and-fade 1.5s linear forwards;
+}
+
+@keyframes gentle-shutdown {
+  from { opacity: 1; filter: brightness(1); }
+  to { opacity: 0.5; filter: brightness(0.7); }
+}
+
+.animate-gentle-shutdown {
+  animation: gentle-shutdown 2s ease-out forwards;
+}
+
+@keyframes slide-in-item {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-item {
+  animation: slide-in-item 0.3s ease-out forwards;
+}
+
+@keyframes boot-up-item {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-boot-up-item {
+  animation: boot-up-item 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  opacity: 0;
+}
+
+.typewriter-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { color: transparent; }
+  50% { color: #58A6FF; }
+}
+
+@keyframes aurora {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+.animate-aurora {
+  animation: aurora 5s linear infinite;
+}
+
+@keyframes rainbow-glow {
+  0% {
+    background-image: radial-gradient(ellipse at center, #ff000033 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    background-image: radial-gradient(ellipse at center, #00ffff33 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.animate-rainbow-glow {
+  animation: rainbow-glow 1s ease-out forwards;
+}
