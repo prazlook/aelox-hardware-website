@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { ASICStatusCard } from '@/components/ASICStatusCard';
+import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
 import { Thermometer, Power, X } from 'lucide-react';
@@ -273,7 +273,7 @@ const Index = () => {
     <div className="space-y-8">
       <div className="relative h-48 -mx-6 -mt-6 mb-4">
         <div className="absolute inset-0 z-0 opacity-75">
-          <GlobalStatusIndicator status={globalStatus} hashrate={summary.totalHashrate} />
+          <GlobalStatusIndicator status={globalStatus} hashrate={summary.totalHashrate} asics={asics} />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 className="text-3xl font-bold">Centre de Contrôle</h1>

@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { ASIC } from './ASICStatusCard';
+import { ASIC_STATUS_COLORS } from '@/config/status-colors';
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
 
 interface GlobalStatusIndicatorProps {
   status: StatusLevel;
   hashrate: number;
+  asics: ASIC[];
 }
 
 const statusConfig = {
@@ -25,7 +28,7 @@ const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
 const RADIUS = 70;
 
-export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicatorProps) => {
+export const GlobalStatusIndicator = ({ status, hashrate, asics }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [dynamicValues, setDynamicValues] = useState({
@@ -78,6 +81,10 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
   }, []);
 
   useEffect(() => {
+    if (status === 'offline') {
+      return; // Stop animation updates when all ASICs are offline
+    }
+
     const intervalId = setInterval(() => {
       const intensity = Math.min(hashrate / 150, 1);
 
@@ -121,13 +128,22 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
     }, 150);
 
     return () => clearInterval(intervalId);
-  }, [hashrate]);
+  }, [hashrate, status]);
 
   const bars = useMemo(() => {
+    const asicCount = asics.length;
+    if (asicCount === 0) return [];
+
+    const barsPerAsic = BAR_COUNT / asicCount;
+
     return dynamicValues.barHeights.map((baseHeight, i) => {
       const angleDegrees = (i / BAR_COUNT) * 360;
-      let interactiveHeight = 0;
+      
+      const asicIndex = Math.min(Math.floor(i / barsPerAsic), asicCount - 1);
+      const asicStatus = asics[asicIndex]?.status || 'offline';
+      const barColor = ASIC_STATUS_COLORS[asicStatus];
 
+      let interactiveHeight = 0;
       if (mousePosition) {
         const dx = mousePosition.x - CIRCLE_CX;
         const dy = mousePosition.y - CIRCLE_CY;
@@ -154,12 +170,12 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
           width="1.5"
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
-          fill={color}
-          style={{ transition: 'height 0.1s ease-out, y 0.1s ease-out' }}
+          fill={barColor}
+          style={{ transition: 'height 0.1s ease-out, y 0.1s ease-out, fill 0.3s ease' }}
         />
       );
     });
-  }, [dynamicValues.barHeights, color, mousePosition]);
+  }, [dynamicValues.barHeights, asics, mousePosition]);
 
   return (
     <svg ref={svgRef} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="xMidYMid meet">
@@ -173,9 +189,9 @@ export const GlobalStatusIndicator = ({ status, hashrate }: GlobalStatusIndicato
         </filter>
       </defs>
       
-      <g style={{ transition: 'color 0.5s ease' }} color={color}>
+      <g style={{ transition: 'color 0.5s ease' }} color={color} opacity={status === 'offline' ? 0.5 : 1}>
         <g>
-          {dynamicValues.particles.map((p, i) => (
+          {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
               key={i}
               x={p.x}
