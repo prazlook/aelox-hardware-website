@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 
-type StatusLevel = 'optimal' | 'faible' | 'eleve' | 'surcharge';
+export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
 
 interface GlobalStatusIndicatorProps {
   status: StatusLevel;
@@ -8,10 +8,11 @@ interface GlobalStatusIndicatorProps {
 }
 
 const statusConfig = {
-  faible: { color: '#3b82f6' },
-  optimal: { color: '#00F0FF' },
-  eleve: { color: '#f97316' },
-  surcharge: { color: '#ef4444' },
+  optimal: { color: '#22c55e' }, // green
+  eleve: { color: '#f97316' }, // orange
+  surcharge: { color: '#ef4444' }, // red
+  error: { color: '#ef4444' }, // red
+  offline: { color: '#6b7280' }, // gray
 };
 
 const BAR_COUNT = 90;

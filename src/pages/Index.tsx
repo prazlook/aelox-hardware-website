@@ -8,7 +8,7 @@ import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
 import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
 import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
-import { GlobalStatusIndicator } from '@/components/GlobalStatusIndicator';
+import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusIndicator';
 
 const MOCK_ASICS: ASIC[] = [
   { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
@@ -200,6 +200,19 @@ const Index = () => {
     return { level: 'faible', text: 'FAIBLE' };
   }, [summary.avgTemp]);
 
+  const globalStatus: StatusLevel = useMemo(() => {
+    const hasError = asics.some(a => a.status === 'error');
+    const hasOverheat = asics.some(a => a.status === 'overheat');
+    const allOffline = asics.every(a => a.status === 'offline');
+
+    if (hasError) return 'error';
+    if (hasOverheat || tempStatus.level === 'surcharge') return 'surcharge';
+    if (tempStatus.level === 'eleve') return 'eleve';
+    if (allOffline) return 'offline';
+    
+    return 'optimal';
+  }, [asics, tempStatus.level]);
+
   const surchargeAlertTriggered = useRef(false);
   useEffect(() => {
     if (tempStatus.level === 'surcharge' && !surchargeAlertTriggered.current) {
@@ -219,7 +232,7 @@ const Index = () => {
     <div className="space-y-8">
       <div className="relative h-36 -mx-6 -mt-6 mb-4">
         <div className="absolute inset-0 z-0 opacity-50">
-          <GlobalStatusIndicator status={tempStatus.level} hashrate={summary.totalHashrate} />
+          <GlobalStatusIndicator status={globalStatus} hashrate={summary.totalHashrate} />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
