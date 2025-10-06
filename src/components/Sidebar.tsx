@@ -17,8 +17,10 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
     end
     className={({ isActive }) =>
       cn(
-        "flex items-center w-full p-3 rounded-lg text-theme-text-secondary hover:bg-theme-card",
-        isActive && "bg-theme-accent/20 text-theme-accent"
+        "flex items-center w-full p-3 rounded-lg text-theme-text-secondary transition-all duration-300 ease-in-out whitespace-nowrap",
+        "group-hover:w-[95%] group-hover:pl-2", // Au survol du groupe, tous les items rétrécissent
+        "hover:!w-full hover:!pl-3 hover:bg-theme-card", // L'item survolé reprend sa taille
+        isActive && "bg-theme-accent/20 text-theme-accent !w-full !pl-3"
       )
     }
   >
@@ -34,7 +36,7 @@ export const Sidebar = () => {
         <Activity className="w-8 h-8 text-theme-cyan" />
         <h1 className="text-xl font-bold ml-2">ASIC Monitor</h1>
       </div>
-      <nav className="flex flex-col space-y-2">
+      <nav className="flex flex-col space-y-2 group">
         {navItems.map((item) => (
           <NavItem key={item.to} {...item} />
         ))}
