@@ -153,9 +153,9 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
       
       const asicIndex = i % asicCount;
       const asicStatus = asics[asicIndex]?.status || 'offline';
-      const barColor = isOverclockedMajority ? `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, 70%)` : ASIC_STATUS_COLORS[asicStatus];
+      let barColor = isOverclockedMajority ? `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, 70%)` : ASIC_STATUS_COLORS[asicStatus];
+      let totalHeight = baseHeight;
 
-      let interactiveHeight = 0;
       if (mousePosition) {
         const dx = mousePosition.x - CIRCLE_CX;
         const dy = mousePosition.y - CIRCLE_CY;
@@ -168,11 +168,14 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         const maxEffectAngle = 45;
         if (angleDiff < maxEffectAngle) {
           const proximity = 1 - (angleDiff / maxEffectAngle);
-          interactiveHeight = 40 * Math.pow(proximity, 2);
+          totalHeight += 40 * Math.pow(proximity, 2);
+          if (isOverclockedMajority) {
+            barColor = `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, ${70 + 20 * proximity}%)`;
+          } else {
+            barColor = color; // Use the main status color for highlighting
+          }
         }
       }
-
-      const totalHeight = baseHeight + interactiveHeight;
 
       return (
         <rect
@@ -187,7 +190,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         />
       );
     });
-  }, [dynamicValues.barHeights, asics, mousePosition, isOverclockedMajority]);
+  }, [dynamicValues.barHeights, asics, mousePosition, isOverclockedMajority, color]);
 
   const strokeColor = isOverclockedMajority ? "url(#overclock-gradient)" : "currentColor";
 
@@ -218,7 +221,12 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         </radialGradient>
       </defs>
       
-      <g style={{ transition: 'color 0.5s ease' }} color={color} opacity={status === 'offline' ? 0.5 : 1}>
+      <g 
+        style={{ transition: 'color 0.5s ease, filter 0.3s ease-out' }} 
+        color={color} 
+        opacity={status === 'offline' ? 0.5 : 1}
+        filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
+      >
         <g>
           {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
