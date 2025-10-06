@@ -101,7 +101,7 @@ export default {
         "border-spin": "border-spin 4s linear infinite",
         "aurora": "aurora 8s linear infinite",
         "float-particle": "float-particle 6s infinite ease-in-out",
-        typewriter: "typewriter 0.4s steps(25, end) forwards, blink-caret .75s step-end infinite",
+        typewriter: "typewriter 0.8s steps(30, end) forwards, blink-caret 1s step-end infinite",
       },
     },
   },
