@@ -86,6 +86,14 @@ export default {
           "25%, 75%": { opacity: "1" },
           "100%": { transform: "translate(var(--tx), var(--ty)) rotate(360deg)", opacity: "0" },
         },
+        typewriter: {
+          from: { width: "0" },
+          to: { width: "100%" },
+        },
+        "blink-caret": {
+          "from, to": { "border-color": "transparent" },
+          "50%": { "border-color": "currentColor" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -93,6 +101,7 @@ export default {
         "border-spin": "border-spin 4s linear infinite",
         "aurora": "aurora 8s linear infinite",
         "float-particle": "float-particle 6s infinite ease-in-out",
+        typewriter: "typewriter 0.4s steps(25, end) forwards, blink-caret .75s step-end infinite",
       },
     },
   },
