@@ -57,7 +57,7 @@ export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeCol
           </ToggleGroup>
         </div>
         <div className="flex items-center justify-between">
-          <div className="w-full h-48 mr-8">
+          <div className="w-full h-48 mr-8 chart-line-draw chart-area-draw" key={timeRange}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={displayedHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                 <defs>
@@ -79,7 +79,7 @@ export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeCol
                 />
                 <XAxis dataKey="time" stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} width={40} domain={['dataMin - 10', 'dataMax + 10']} />
-                <Area type="monotone" dataKey={dataKey} stroke={gaugeColor} strokeWidth={2} fillOpacity={1} fill={`url(#color-${dataKey})`} />
+                <Area type="monotone" dataKey={dataKey} stroke={gaugeColor} strokeWidth={2} fillOpacity={1} fill={`url(#color-${dataKey})`} isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
