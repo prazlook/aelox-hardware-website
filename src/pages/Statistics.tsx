@@ -9,9 +9,26 @@ interface HistoryData {
   power: number;
 }
 
+const createInitialHistory = (length: number): HistoryData[] => {
+  const now = Date.now();
+  return Array.from({ length }, (_, i) => {
+    const time = new Date(now - (length - 1 - i) * 500);
+    return {
+      time: time.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }),
+      hashrate: 0,
+      temperature: 25,
+      power: 0,
+    };
+  });
+};
+
 const StatisticsPage = () => {
   const { asics } = useAsics();
-  const [history, setHistory] = useState<HistoryData[]>([]);
+  const [history, setHistory] = useState<HistoryData[]>(createInitialHistory(120));
 
   useEffect(() => {
     const now = new Date();
