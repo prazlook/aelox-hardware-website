@@ -1,9 +1,45 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAsics } from '@/context/AsicContext';
 import { StatCard } from '@/components/StatCard';
 
+interface HistoryData {
+  time: string;
+  hashrate: number;
+  temperature: number;
+  power: number;
+}
+
 const StatisticsPage = () => {
   const { asics } = useAsics();
+  const [history, setHistory] = useState<HistoryData[]>([]);
+
+  useEffect(() => {
+    const now = new Date();
+    const time = now.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+
+    const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
+    const totalPower = asics.reduce((acc, a) => acc + a.power, 0);
+    const avgTemp = asics.length > 0 ? asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length : 0;
+
+    const newHistoryEntry: HistoryData = {
+      time,
+      hashrate: totalHashrate,
+      temperature: avgTemp,
+      power: totalPower,
+    };
+
+    setHistory(prevHistory => {
+      const updatedHistory = [...prevHistory, newHistoryEntry];
+      if (updatedHistory.length > 30) {
+        return updatedHistory.slice(updatedHistory.length - 30);
+      }
+      return updatedHistory;
+    });
+  }, [asics]);
 
   const summary = useMemo(() => {
     const totalAsicsCount = asics.length > 0 ? asics.length : 1;
@@ -30,6 +66,8 @@ const StatisticsPage = () => {
           gaugeMaxValue={400}
           gaugeUnit="TH/s"
           gaugeColor="#f97316"
+          history={history}
+          dataKey="hashrate"
         />
         <StatCard 
           title="Température Moyenne"
@@ -37,6 +75,8 @@ const StatisticsPage = () => {
           gaugeMaxValue={120}
           gaugeUnit="°C"
           gaugeColor="#f59e0b"
+          history={history}
+          dataKey="temperature"
         />
         <StatCard 
           title="Consommation Totale"
@@ -44,6 +84,8 @@ const StatisticsPage = () => {
           gaugeMaxValue={12000}
           gaugeUnit="W"
           gaugeColor="#ef4444"
+          history={history}
+          dataKey="power"
         />
       </div>
     </div>

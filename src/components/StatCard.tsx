@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { VerticalGauge } from './VerticalGauge';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const timeRanges = ["30s", "1min", "5min", "10min", "1h"];
 const dayRanges = ["Journée"];
@@ -12,9 +13,11 @@ interface StatCardProps {
   gaugeMaxValue: number;
   gaugeUnit: string;
   gaugeColor: string;
+  history: { time: string; [key: string]: any }[];
+  dataKey: string;
 }
 
-export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeColor }: StatCardProps) => {
+export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeColor, history, dataKey }: StatCardProps) => {
   const [timeRange, setTimeRange] = useState("5min");
 
   const handleTimeChange = (value: string) => {
@@ -56,8 +59,31 @@ export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeCol
           </ToggleGroup>
         </div>
         <div className="flex items-center justify-between">
-          <div className="w-full h-48 border-2 border-dashed border-gray-700/50 rounded-lg mr-8 flex items-center justify-center">
-            <p className="text-gray-600 text-sm">Graphique à venir</p>
+          <div className="w-full h-48 mr-8">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={history} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                <defs>
+                  <linearGradient id={`color-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={gaugeColor} stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor={gaugeColor} stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(20, 20, 20, 0.8)',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '0.5rem',
+                  }}
+                  labelStyle={{ color: '#A0AEC0' }}
+                  itemStyle={{ color: gaugeColor, fontWeight: 'bold' }}
+                  formatter={(value: number) => [`${value.toFixed(2)} ${gaugeUnit}`, null]}
+                  labelFormatter={(label) => `Heure: ${label}`}
+                />
+                <XAxis dataKey="time" stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} width={40} domain={['dataMin - 10', 'dataMax + 10']} />
+                <Area type="monotone" dataKey={dataKey} stroke={gaugeColor} strokeWidth={2} fillOpacity={1} fill={`url(#color-${dataKey})`} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
           <VerticalGauge
             value={gaugeValue}
