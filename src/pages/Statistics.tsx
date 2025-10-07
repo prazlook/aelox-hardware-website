@@ -85,6 +85,7 @@ const StatisticsPage = () => {
           gaugeColor="#f97316"
           history={history}
           dataKey="hashrate"
+          enforceZeroMin={true}
         />
         <StatCard 
           title="Température Moyenne"
@@ -103,6 +104,7 @@ const StatisticsPage = () => {
           gaugeColor="#ef4444"
           history={history}
           dataKey="power"
+          enforceZeroMin={true}
         />
       </div>
     </div>

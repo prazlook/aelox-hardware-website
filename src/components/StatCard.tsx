@@ -14,9 +14,10 @@ interface StatCardProps {
   gaugeColor: string;
   history: { time: string; [key: string]: any }[];
   dataKey: string;
+  enforceZeroMin?: boolean;
 }
 
-export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeColor, history, dataKey }: StatCardProps) => {
+export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeColor, history, dataKey, enforceZeroMin = false }: StatCardProps) => {
   const [timeRange, setTimeRange] = useState("1min");
 
   const handleTimeChange = (value: string) => {
@@ -27,14 +28,42 @@ export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeCol
 
   const displayedHistory = useMemo(() => {
     const pointsToShow: { [key: string]: number } = {
-      "30s": 60,    // 30s * 2 points/sec
-      "1min": 120,   // 60s * 2 points/sec
-      "5min": 600,   // 300s * 2 points/sec
-      "10min": 1200, // 600s * 2 points/sec
+      "30s": 60,
+      "1min": 120,
+      "5min": 600,
+      "10min": 1200,
     };
     const numPoints = pointsToShow[timeRange] || history.length;
     return history.slice(-numPoints);
   }, [history, timeRange]);
+
+  const yAxisDomain = useMemo(() => {
+    const values = displayedHistory.map(item => item[dataKey] as number).filter(v => typeof v === 'number' && isFinite(v));
+    if (values.length < 1) {
+      return enforceZeroMin ? [0, 100] : [-50, 50];
+    }
+
+    const minVal = Math.min(...values);
+    const maxVal = Math.max(...values);
+
+    if (minVal === maxVal) {
+        const buffer = Math.abs(minVal * 0.2) || 10;
+        const lower = enforceZeroMin ? Math.max(0, minVal - buffer) : minVal - buffer;
+        return [lower, maxVal + buffer];
+    }
+
+    const range = maxVal - minVal;
+    const buffer = range * 0.1;
+
+    let lowerBound = minVal - buffer;
+    const upperBound = maxVal + buffer;
+
+    if (enforceZeroMin) {
+      lowerBound = Math.max(0, lowerBound);
+    }
+
+    return [lowerBound, upperBound];
+  }, [displayedHistory, dataKey, enforceZeroMin]);
 
   return (
     <Card className="bg-theme-card border-gray-700/50 p-4">
@@ -78,7 +107,7 @@ export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeCol
                   labelFormatter={(label) => `Heure: ${label}`}
                 />
                 <XAxis dataKey="time" stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} width={40} domain={['dataMin - 10', 'dataMax + 10']} />
+                <YAxis stroke="#A0AEC0" fontSize={12} tickLine={false} axisLine={false} width={40} domain={yAxisDomain} allowDataOverflow={false} />
                 <Area type="monotone" dataKey={dataKey} stroke={gaugeColor} strokeWidth={2} fillOpacity={1} fill={`url(#color-${dataKey})`} isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
