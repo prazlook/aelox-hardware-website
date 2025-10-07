@@ -215,7 +215,7 @@ const Index = () => {
       });
       prevAsicsRef.current = asics;
       setAsics(updatedAsics);
-    }, 2000);
+    }, 500);
     return () => clearInterval(interval);
   }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics]);
 

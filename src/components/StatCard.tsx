@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { VerticalGauge } from './VerticalGauge';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const timeRanges = ["30s", "1min", "5min", "10min", "1h"];
-const dayRanges = ["Journée"];
+const timeRanges = ["30s", "1min", "5min", "10min"];
 
 interface StatCardProps {
   title: string;
@@ -18,13 +17,24 @@ interface StatCardProps {
 }
 
 export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeColor, history, dataKey }: StatCardProps) => {
-  const [timeRange, setTimeRange] = useState("5min");
+  const [timeRange, setTimeRange] = useState("1min");
 
   const handleTimeChange = (value: string) => {
     if (value) {
       setTimeRange(value);
     }
   };
+
+  const displayedHistory = useMemo(() => {
+    const pointsToShow: { [key: string]: number } = {
+      "30s": 60,    // 30s * 2 points/sec
+      "1min": 120,   // 60s * 2 points/sec
+      "5min": 600,   // 300s * 2 points/sec
+      "10min": 1200, // 600s * 2 points/sec
+    };
+    const numPoints = pointsToShow[timeRange] || history.length;
+    return history.slice(-numPoints);
+  }, [history, timeRange]);
 
   return (
     <Card className="bg-theme-card border-gray-700/50 p-4">
@@ -45,23 +55,11 @@ export const StatCard = ({ title, gaugeValue, gaugeMaxValue, gaugeUnit, gaugeCol
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
-          <ToggleGroup type="single" value={timeRange} onValueChange={handleTimeChange}>
-            {dayRanges.map((range) => (
-              <ToggleGroupItem 
-                key={range} 
-                value={range} 
-                aria-label={`Select ${range}`}
-                className="data-[state=on]:bg-blue-600 data-[state=on]:text-white hover:bg-gray-700/50"
-              >
-                {range}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
         </div>
         <div className="flex items-center justify-between">
           <div className="w-full h-48 mr-8">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={history} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+              <AreaChart data={displayedHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                 <defs>
                   <linearGradient id={`color-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={gaugeColor} stopOpacity={0.8}/>

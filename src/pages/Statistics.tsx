@@ -34,8 +34,8 @@ const StatisticsPage = () => {
 
     setHistory(prevHistory => {
       const updatedHistory = [...prevHistory, newHistoryEntry];
-      if (updatedHistory.length > 30) {
-        return updatedHistory.slice(updatedHistory.length - 30);
+      if (updatedHistory.length > 1200) {
+        return updatedHistory.slice(updatedHistory.length - 1200);
       }
       return updatedHistory;
     });
