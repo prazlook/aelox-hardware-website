@@ -192,7 +192,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={barColor}
-          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${0.6 + i * 0.005}s` : '0s' }}
+          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${0.6 + i * 0.015}s` : '0s' }}
           className={cn(triggerStartupAnimation && "animate-global-indicator-bars-grow")}
         />
       );
