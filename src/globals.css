@@ -168,7 +168,7 @@
 
 @keyframes chart-wipe-animation {
     to {
-        clip-path: inset(0 100% 0 0);
+        clip-path: inset(0 0 0 0);
     }
 }
 
@@ -228,41 +228,6 @@
     transform: scale(1);
     filter: blur(0px);
   }
-}
-
-/* New spectacular animations */
-@keyframes pulse-core {
-  0%, 100% { r: 10; opacity: 0.7; }
-  50% { r: 15; opacity: 1; }
-}
-
-@keyframes concentric-expand {
-  0% { r: 0; opacity: 1; }
-  100% { r: 100; opacity: 0; }
-}
-
-@keyframes grid-fade-in {
-  0% { stroke-dashoffset: 1000; opacity: 0; }
-  50% { opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 1; }
-}
-
-@keyframes data-line-flow {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes scan-line-sweep {
-  0% { transform: translateX(-100%); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateX(100%); opacity: 0; }
-}
-
-@keyframes horizontal-bar-expand {
-  0% { width: 0; transform: translateX(0); opacity: 0; }
-  1% { opacity: 1; }
-  100% { width: 800px; transform: translateX(-400px); opacity: 1; } /* VIEWBOX_WIDTH */
 }
 
 
@@ -398,36 +363,6 @@
   .animate-startup-fade-in-from-center {
     animation: startup-fade-in-from-center 1s ease-out forwards;
     opacity: 0; /* Start hidden */
-  }
-
-  /* New spectacular animation utility classes */
-  .animate-pulse-core {
-    animation: pulse-core 2s ease-in-out infinite alternate;
-  }
-
-  .animate-concentric-expand {
-    animation: concentric-expand 2s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-grid-fade-in {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: grid-fade-in 1.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-data-line-flow {
-    animation: data-line-flow 3s linear infinite;
-  }
-
-  .animate-scan-line-sweep {
-    animation: scan-line-sweep 4s linear infinite;
-  }
-
-  .animate-horizontal-bar-expand {
-    animation: horizontal-bar-expand 1s ease-out forwards;
-    opacity: 0;
   }
 }
 

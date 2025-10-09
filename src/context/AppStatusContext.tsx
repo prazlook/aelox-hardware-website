@@ -44,7 +44,7 @@ export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
       }
       animationTimeoutRef.current = setTimeout(() => {
         setTriggerStartupAnimation(false);
-      }, 4000); // Reduced duration to match new faster animations
+      }, 2500); // Adjust this duration based on your longest animation + delay
     }
   };
 
