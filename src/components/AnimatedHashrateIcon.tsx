@@ -1,7 +1,11 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export const AnimatedHashrateIcon = (props: React.SVGProps<SVGSVGElement>) => (
+interface AnimatedHashrateIconProps extends React.SVGProps<SVGSVGElement> {
+  animationDuration?: number;
+}
+
+export const AnimatedHashrateIcon = ({ animationDuration = 2, ...props }: AnimatedHashrateIconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -14,6 +18,7 @@ export const AnimatedHashrateIcon = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
     className={cn("animate-ecg-draw", props.className)}
+    style={{ ...props.style, animationDuration: `${animationDuration}s` }}
   >
     <path d="M2 12h6l3-7 3 14 3-7h6" />
   </svg>
