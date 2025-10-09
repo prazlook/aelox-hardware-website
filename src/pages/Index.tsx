@@ -26,7 +26,7 @@ const playSound = (file: File | null) => {
 const Index = () => {
   const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
-  const { preventOverheat, preventErrors } = useDevOptions();
+  const { preventOverheat, preventErrors, startupDelay, shutdownDelay } = useDevOptions();
   const prevAsicsRef = useRef(asics);
   const maxTemp = 85;
   const criticalTemp = 100;
@@ -39,19 +39,33 @@ const Index = () => {
     const isRunning = asicToToggle.status === 'online' || asicToToggle.status === 'overclocked' || asicToToggle.status === 'overheat';
     if (isRunning) {
       playSound(powerOffSoundFile);
+      setAsics(prevAsics =>
+        prevAsics.map(asic =>
+          asic.id === asicId ? { ...asic, status: 'shutting down' } : asic
+        )
+      );
+      setTimeout(() => {
+        setAsics(prevAsics =>
+          prevAsics.map(asic =>
+            asic.id === asicId ? { ...asic, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asic.temperature - 10) } : asic
+          )
+        );
+      }, shutdownDelay * 1000);
     } else if (asicToToggle.status === 'offline') {
       playSound(powerOnSoundFile);
+      setAsics(prevAsics =>
+        prevAsics.map(asic =>
+          asic.id === asicId ? { ...asic, status: 'booting up' } : asic
+        )
+      );
+      setTimeout(() => {
+        setAsics(prevAsics =>
+          prevAsics.map(asic =>
+            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asic.temperature + 5) } : asic
+          )
+        );
+      }, startupDelay * 1000);
     }
-
-    setAsics(prevAsics =>
-      prevAsics.map(asic => {
-        if (asic.id === asicId) {
-          if (isRunning) return { ...asic, status: 'shutting down' };
-          if (asic.status === 'offline') return { ...asic, status: 'booting up' };
-        }
-        return asic;
-      })
-    );
   };
 
   const handlePowerAction = (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop' | 'start-mining') => {
@@ -61,6 +75,9 @@ const Index = () => {
           switch (action) {
             case 'start-mining':
               playSound(powerOnSoundFile);
+              setTimeout(() => {
+                setAsics(currentAsics => currentAsics.map(a => a.id === asicId ? { ...a, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, a.temperature + 5) } : a));
+              }, startupDelay * 1000);
               return { ...asic, status: 'booting up' };
             case 'idle':
               return { ...asic, status: 'idle' };
@@ -68,6 +85,10 @@ const Index = () => {
               return { ...asic, status: 'standby' };
             case 'stop':
             case 'reboot':
+              playSound(powerOffSoundFile);
+              setTimeout(() => {
+                setAsics(currentAsics => currentAsics.map(a => a.id === asicId ? { ...a, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, a.temperature - 10) } : a));
+              }, shutdownDelay * 1000);
               return { ...asic, status: 'shutting down' };
             case 'force-stop':
               showSuccess(`${asic.name} a été forcé à s'arrêter.`);
@@ -114,13 +135,29 @@ const Index = () => {
   const handleStartAll = () => {
     const willStartAny = asics.some(asic => asic.status === 'offline');
     if (willStartAny) playSound(powerOnSoundFile);
-    setAsics(asics.map(asic => asic.status === 'offline' ? { ...asic, status: 'booting up' } : asic));
+    setAsics(asics.map(asic => {
+      if (asic.status === 'offline') {
+        setTimeout(() => {
+          setAsics(currentAsics => currentAsics.map(a => a.id === asic.id ? { ...a, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, a.temperature + 5) } : a));
+        }, startupDelay * 1000);
+        return { ...asic, status: 'booting up' };
+      }
+      return asic;
+    }));
   };
 
   const handleStopAll = () => {
     const willStopAny = asics.some(asic => ['online', 'overclocked', 'overheat'].includes(asic.status));
     if (willStopAny) playSound(powerOffSoundFile);
-    setAsics(asics.map(asic => ['online', 'overclocked', 'overheat'].includes(asic.status) ? { ...asic, status: 'shutting down' } : asic));
+    setAsics(asics.map(asic => {
+      if (['online', 'overclocked', 'overheat'].includes(asic.status)) {
+        setTimeout(() => {
+          setAsics(currentAsics => currentAsics.map(a => a.id === asic.id ? { ...a, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, a.temperature - 10) } : a));
+        }, shutdownDelay * 1000);
+        return { ...asic, status: 'shutting down' };
+      }
+      return asic;
+    }));
   };
 
   useEffect(() => {
@@ -135,6 +172,9 @@ const Index = () => {
             newAsic.status = 'shutting down';
             playSound(powerOffSoundFile);
             showError(`ARRÊT D'URGENCE: ${newAsic.name} a dépassé ${shutdownTemp}°C.`);
+            setTimeout(() => {
+              setAsics(currentAsics => currentAsics.map(a => a.id === newAsic.id ? { ...a, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, a.temperature - 10) } : a));
+            }, shutdownDelay * 1000);
           } else if (newAsic.temperature >= criticalTemp && (newAsic.status === 'online' || newAsic.status === 'overclocked')) {
             newAsic.status = 'overheat';
             showError(`${newAsic.name} est en surchauffe critique. Minage suspendu.`);
@@ -185,13 +225,15 @@ const Index = () => {
             }
             break;
           case 'booting up':
-            newAsic.power += 300;
-            if (newAsic.power >= 3000) newAsic.status = 'online';
+            // The actual transition to 'online' is handled by a setTimeout in handleTogglePower/handlePowerAction
+            // For now, just simulate power ramp-up
+            newAsic.power = Math.min(3000, newAsic.power + 300);
             break;
           case 'shutting down':
-            newAsic.power -= 300;
+            // The actual transition to 'offline' is handled by a setTimeout in handleTogglePower/handlePowerAction
+            // For now, just simulate power ramp-down
+            newAsic.power = Math.max(0, newAsic.power - 300);
             newAsic.fanSpeed = Math.max(0, newAsic.fanSpeed - 15);
-            if (newAsic.power <= 0) newAsic.status = 'offline';
             break;
           case 'idle':
             newAsic.hashrate = 10 + (Math.random() - 0.5) * 2; // Low hashrate around 10 TH/s
@@ -244,7 +286,7 @@ const Index = () => {
       setAsics(updatedAsics);
     }, 500);
     return () => clearInterval(interval);
-  }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics, preventOverheat, preventErrors]);
+  }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics, preventOverheat, preventErrors, startupDelay, shutdownDelay]);
 
   const summary = useMemo(() => {
     const onlineAsics = asics.filter(a => a.status === 'online' || a.status === 'overclocked');
