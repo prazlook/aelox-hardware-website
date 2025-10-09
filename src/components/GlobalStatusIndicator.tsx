@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC } from './ASICStatusCard';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
-import { cn } => '@/lib/utils';
+import { cn } from '@/lib/utils'; // Correction ici : '=>' remplacé par 'from'
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
