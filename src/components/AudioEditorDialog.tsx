@@ -12,6 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { showError, showSuccess } from "@/utils/toast";
+import { cn } from '@/lib/utils'; // Import cn for conditional classNames
 
 interface AudioEditorDialogProps {
   isOpen: boolean;
@@ -395,7 +396,7 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] bg-theme-card text-white border-gray-700">
-        <DialogHeader>
+        <DialogHeader className={cn("animate-fade-in-slide-up")} style={{ animationDelay: '0.1s' }}>
           <DialogTitle>Éditer l'Audio</DialogTitle>
           <DialogDescription className="text-gray-400">
             Ajustez les effets de fondu et découpez votre fichier audio.
@@ -403,13 +404,13 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
         </DialogHeader>
         <div className="grid gap-4 py-4">
           {audioFile && (
-            <p className="text-sm text-gray-300">Fichier: {audioFile.name}</p>
+            <p className={cn("text-sm text-gray-300 animate-fade-in-slide-up")} style={{ animationDelay: '0.2s' }}>Fichier: {audioFile.name}</p>
           )}
           {duration > 0 && (
-            <p className="text-sm text-gray-300">Durée originale: {duration.toFixed(2)}s</p>
+            <p className={cn("text-sm text-gray-300 animate-fade-in-slide-up")} style={{ animationDelay: '0.3s' }}>Durée originale: {duration.toFixed(2)}s</p>
           )}
 
-          <div className="grid gap-2">
+          <div className={cn("grid gap-2 animate-fade-in-slide-up")} style={{ animationDelay: '0.4s' }}>
             <Label htmlFor="fade-in">Fondu d'entrée (Fade In)</Label>
             <Slider
               id="fade-in"
@@ -432,7 +433,7 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
             <span className="text-xs text-gray-400">{fadeInDuration.toFixed(1)} secondes</span>
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-2 animate-fade-in-slide-up" style={{ animationDelay: '0.5s' }}>
             <Label htmlFor="fade-out">Fondu de sortie (Fade Out)</Label>
             <Slider
               id="fade-out"
@@ -455,7 +456,7 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
             <span className="text-xs text-gray-400">{fadeOutDuration.toFixed(1)} secondes</span>
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-2 animate-fade-in-slide-up" style={{ animationDelay: '0.6s' }}>
             <Label>Découpe Audio (Crop)</Label>
             <div className="relative w-full h-32 bg-gray-800 rounded-md overflow-hidden">
               <canvas
@@ -475,7 +476,7 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
             </div>
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className={cn("animate-fade-in-slide-up")} style={{ animationDelay: '0.7s' }}>
           <Button variant="outline" onClick={playPreview}>
             Prévisualiser
           </Button>
