@@ -1,4 +1,5 @@
-import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
+import { addAudioFile, getAudioFile, deleteAudioFile } from '@/lib/indexedDb';
 
 interface SoundContextType {
   overheatSoundFile: File | null;
@@ -11,7 +12,7 @@ interface SoundContextType {
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
-const getSoundFileName = (key: string): string | null => {
+const getSoundFileNameFromLocalStorage = (key: string): string | null => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem(key);
   }
@@ -19,60 +20,62 @@ const getSoundFileName = (key: string): string | null => {
 };
 
 export const SoundProvider = ({ children }: { children: ReactNode }) => {
-  const [overheatSoundFile, setOverheatSoundFile] = useState<File | null>(null);
-  const [powerOnSoundFile, setPowerOnSoundFile] = useState<File | null>(null);
-  const [powerOffSoundFile, setPowerOffSoundFile] = useState<File | null>(null);
+  const [overheatSoundFile, setOverheatSoundFileState] = useState<File | null>(null);
+  const [powerOnSoundFile, setPowerOnSoundFileState] = useState<File | null>(null);
+  const [powerOffSoundFile, setPowerOffSoundFileState] = useState<File | null>(null);
 
-  // Load file names from localStorage on initial mount
-  useEffect(() => {
-    const storedOverheatName = getSoundFileName('sound_overheatFileName');
-    if (storedOverheatName) {
-      // We can't recreate the File object, but we can set a dummy one for display
-      setOverheatSoundFile(new File([], storedOverheatName, { type: 'audio/mpeg' }));
-    }
-    const storedPowerOnName = getSoundFileName('sound_powerOnFileName');
-    if (storedPowerOnName) {
-      setPowerOnSoundFile(new File([], storedPowerOnName, { type: 'audio/mpeg' }));
-    }
-    const storedPowerOffName = getSoundFileName('sound_powerOffFileName');
-    if (storedPowerOffName) {
-      setPowerOffSoundFile(new File([], storedPowerOffName, { type: 'audio/mpeg' }));
+  // Function to handle setting a sound file, including IndexedDB operations
+  const setSoundFile = useCallback(async (
+    file: File | null,
+    currentFile: File | null,
+    setFileState: (file: File | null) => void,
+    localStorageKey: string
+  ) => {
+    if (file) {
+      await addAudioFile(file);
+      localStorage.setItem(localStorageKey, file.name);
+      setFileState(file);
+    } else {
+      if (currentFile) {
+        await deleteAudioFile(currentFile.name);
+      }
+      localStorage.removeItem(localStorageKey);
+      setFileState(null);
     }
   }, []);
 
-  // Save file names to localStorage when files change
+  // Initial load from localStorage and IndexedDB
   useEffect(() => {
-    if (overheatSoundFile) {
-      localStorage.setItem('sound_overheatFileName', overheatSoundFile.name);
-    } else {
-      localStorage.removeItem('sound_overheatFileName');
-    }
-  }, [overheatSoundFile]);
+    const loadSounds = async () => {
+      const overheatName = getSoundFileNameFromLocalStorage('sound_overheatFileName');
+      if (overheatName) {
+        const file = await getAudioFile(overheatName);
+        setOverheatSoundFileState(file);
+      }
 
-  useEffect(() => {
-    if (powerOnSoundFile) {
-      localStorage.setItem('sound_powerOnFileName', powerOnSoundFile.name);
-    } else {
-      localStorage.removeItem('sound_powerOnFileName');
-    }
-  }, [powerOnSoundFile]);
+      const powerOnName = getSoundFileNameFromLocalStorage('sound_powerOnFileName');
+      if (powerOnName) {
+        const file = await getAudioFile(powerOnName);
+        setPowerOnSoundFileState(file);
+      }
 
-  useEffect(() => {
-    if (powerOffSoundFile) {
-      localStorage.setItem('sound_powerOffFileName', powerOffSoundFile.name);
-    } else {
-      localStorage.removeItem('sound_powerOffFileName');
-    }
-  }, [powerOffSoundFile]);
+      const powerOffName = getSoundFileNameFromLocalStorage('sound_powerOffFileName');
+      if (powerOffName) {
+        const file = await getAudioFile(powerOffName);
+        setPowerOffSoundFileState(file);
+      }
+    };
+    loadSounds();
+  }, []);
 
   return (
     <SoundContext.Provider value={{
       overheatSoundFile,
-      setOverheatSoundFile,
+      setOverheatSoundFile: (file) => setSoundFile(file, overheatSoundFile, setOverheatSoundFileState, 'sound_overheatFileName'),
       powerOnSoundFile,
-      setPowerOnSoundFile,
+      setPowerOnSoundFile: (file) => setSoundFile(file, powerOnSoundFile, setPowerOnSoundFileState, 'sound_powerOnFileName'),
       powerOffSoundFile,
-      setPowerOffSoundFile
+      setPowerOffSoundFile: (file) => setSoundFile(file, powerOffSoundFile, setPowerOffSoundFileState, 'sound_powerOffFileName')
     }}>
       {children}
     </SoundContext.Provider>
