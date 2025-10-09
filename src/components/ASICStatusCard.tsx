@@ -286,7 +286,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               </button>
               <div>
                 <p className="text-xs text-theme-text-secondary">Ventilateur</p>
-                <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">{unit}</span></p>
+                <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">%</span></p>
               </div>
             </div>
           </div>
