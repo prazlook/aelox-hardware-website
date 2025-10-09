@@ -1,3 +1,4 @@
+import React from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
