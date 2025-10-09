@@ -186,9 +186,19 @@ const Index = () => {
             if (newAsic.power <= 0) newAsic.status = 'offline';
             break;
           case 'idle':
-            newAsic.hashrate = 0;
-            newAsic.power = Math.max(150, newAsic.power - 100);
-            if (newAsic.temperature > 35) newAsic.temperature -= 0.5;
+            newAsic.hashrate = 10 + (Math.random() - 0.5) * 2; // Low hashrate around 10 TH/s
+            newAsic.power = 500 + (Math.random() - 0.5) * 50; // Low power around 500W
+            
+            // Temperature should stabilize around a low value
+            const idleTempTarget = 45;
+            if (newAsic.temperature > idleTempTarget) {
+              newAsic.temperature = Math.max(idleTempTarget, newAsic.temperature - 0.5);
+            } else {
+              newAsic.temperature = Math.min(idleTempTarget, newAsic.temperature + 0.5);
+            }
+            
+            newAsic.isFanOn = true;
+            newAsic.fanSpeed = 30; // Low fan speed
             break;
           case 'standby':
             newAsic.hashrate = 0;
@@ -205,7 +215,7 @@ const Index = () => {
             break;
         }
         newAsic.power = Math.max(0, newAsic.power);
-        newAsic.hashrate = (newAsic.status === 'online' || newAsic.status === 'overclocked') ? Math.max(0, newAsic.hashrate) : 0;
+        newAsic.hashrate = (newAsic.status === 'online' || newAsic.status === 'overclocked' || newAsic.status === 'idle') ? Math.max(0, newAsic.hashrate) : 0;
         newAsic.temperature = Math.max(25, newAsic.temperature);
         newAsic.fanSpeed = Math.max(0, Math.min(100, newAsic.fanSpeed));
 
