@@ -24,6 +24,8 @@ const playSound = (file: File | null) => {
   }
 };
 
+const STARTUP_OFFSET_DELAY = 2.0; // seconds, to allow GlobalStatusIndicator to complete its intro
+
 const Index = () => {
   const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
@@ -356,13 +358,13 @@ const Index = () => {
             asics={asics}
             isOverclockedMajority={summary.isOverclockedMajority}
             className={triggerStartupAnimation ? "animate-startup-fade-in-from-center" : ""}
-            style={triggerStartupAnimation ? { animationDelay: '0.2s' } : {}}
+            style={triggerStartupAnimation ? { animationDelay: '0s' } : {}} {/* Start immediately */}
           />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 
             className={`text-3xl font-bold ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
-            style={triggerStartupAnimation ? { animationDelay: '0.4s' } : {}}
+            style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0.4}s` } : {}}
           >
             Centre de Contrôle
           </h1>
@@ -370,7 +372,7 @@ const Index = () => {
             <Button 
               onClick={handleStartAll} 
               className={`bg-green-500/20 text-green-400 hover:bg-green-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
-              style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
+              style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0.5}s` } : {}}
             >
               <Power className="w-4 h-4 mr-2" />
               Démarrer Tout
@@ -378,7 +380,7 @@ const Index = () => {
             <Button 
               onClick={handleStopAll} 
               className={`bg-red-500/20 text-red-400 hover:bg-red-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
-              style={triggerStartupAnimation ? { animationDelay: '0.6s' } : {}}
+              style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0.6}s` } : {}}
             >
               <X className="w-4 h-4 mr-2" />
               Arrêter Tout
@@ -395,7 +397,7 @@ const Index = () => {
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
           iconBgColor={summary.isOverclockedMajority ? "bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora" : "bg-gradient-to-br from-orange-500 to-orange-700"} 
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.7s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0.7}s` } : {}}
         />
         <SummaryCard 
           title="Température Moyenne" 
@@ -405,7 +407,7 @@ const Index = () => {
           iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
           tempStatus={tempStatus}
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.8s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0.8}s` } : {}}
         />
         <SummaryCard 
           title="Consommation Totale" 
@@ -414,7 +416,7 @@ const Index = () => {
           icon={<AnimatedZapIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-cyan-400 to-cyan-600" 
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.9s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0.9}s` } : {}}
         />
         <SummaryCard 
           title="ASICs Actifs" 
@@ -423,14 +425,14 @@ const Index = () => {
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700" 
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '1.0s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 1.0}s` } : {}}
         />
       </div>
 
       <div>
         <h2 
           className={`text-2xl font-bold mb-4 ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
-          style={triggerStartupAnimation ? { animationDelay: '1.1s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 1.1}s` } : {}}
         >
           Vos Machines
         </h2>
@@ -445,7 +447,7 @@ const Index = () => {
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
               className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
+              style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 1.2 + index * 0.1}s` } : {}}
             />
           ))}
         </div>

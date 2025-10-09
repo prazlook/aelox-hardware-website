@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC } from './ASICStatusCard';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
-import { cn } from '@/lib/utils';
+import { cn } => '@/lib/utils';
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
@@ -247,7 +247,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
               style={{
                 '--tx': `${p.tx}px`,
                 '--ty': `${p.ty}px`,
-                animationDelay: `${p.delay}s`,
+                animationDelay: triggerStartupAnimation ? `${0.2 + i * 0.02}s` : `${p.delay}s`,
               } as React.CSSProperties}
               opacity="0.7"
             />

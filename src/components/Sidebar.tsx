@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppStatus } from "@/context/AppStatusContext"; // Import useAppStatus
 
+const STARTUP_OFFSET_DELAY = 2.0; // seconds, to allow GlobalStatusIndicator to complete its intro
+
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },
   { to: "/statistics", icon: BarChart2, label: "Statistiques" },
@@ -26,7 +28,7 @@ const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay:
         "animate-startup-slide-in-left"
       )
     }
-    style={{ animationDelay: `${delay}s` }}
+    style={{ animationDelay: `${STARTUP_OFFSET_DELAY + delay}s` }}
   >
     <Icon className="w-6 h-6 transition-transform duration-200 group-hover:scale-125" />
     <span
@@ -53,7 +55,7 @@ export const Sidebar = () => {
           "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
           triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
         )}
-        style={triggerStartupAnimation ? { animationDelay: '0s' } : {}}
+        style={triggerStartupAnimation ? { animationDelay: `${STARTUP_OFFSET_DELAY + 0}s` } : {}}
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
@@ -63,7 +65,7 @@ export const Sidebar = () => {
             size="icon"
             variant="destructive"
             className="absolute -right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full opacity-0 animate-fade-in-slide-up"
-            style={{ animationDelay: '0.1s' }}
+            style={{ animationDelay: `${STARTUP_OFFSET_DELAY + 0.1}s` }}
             onClick={stopApp}
             aria-label="Arrêter l'application"
           >
