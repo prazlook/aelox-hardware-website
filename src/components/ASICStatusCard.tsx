@@ -172,14 +172,17 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
+            {/* ASIC Name and Model */}
             <div className={cn(contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.1)}>
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
+              {/* Status Badge */}
               <div className={cn(contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.2)}>
                 <StatusBadge status={asic.status} />
               </div>
+              {/* Overclock Button */}
               <div className={cn(contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.3)}>
                 <Button
                   size="icon"
@@ -194,6 +197,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
+              {/* Power Button (and Context Menu) */}
               <div className={cn(contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.4)}>
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
@@ -246,11 +250,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
+          {/* Comment/AI text */}
           <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.5)}>
             <span className="typewriter-cursor">{typedComment}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
+            {/* Stat Items */}
             <StatItem 
               icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} /> : <Activity size={20} />} 
               label="Hashrate" 
@@ -262,6 +268,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.7)} />
             <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={cn(contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.8)} />
             
+            {/* Fan Control */}
             <div className={cn("flex items-center space-x-2", contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.9)}>
               <button
                 onClick={() => onToggleFan(asic.id)}
@@ -285,6 +292,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
+          {/* "Voir Détails" Button */}
           <div className={cn(contentAnimationClass, triggerMainUiAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(1.0)}>
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
