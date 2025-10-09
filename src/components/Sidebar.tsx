@@ -14,7 +14,7 @@ const navItems = [
   { to: "/dev-options", icon: Code, label: "Options Dev" },
 ];
 
-const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
+const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay: number }) => (
   <NavLink
     to={to}
     end
@@ -22,9 +22,11 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
       cn(
         "group relative flex items-center h-12 p-3 rounded-lg text-theme-text-secondary transition-colors duration-200 ease-in-out",
         "hover:bg-theme-card hover:text-white",
-        isActive && "bg-theme-accent/20 text-theme-accent"
+        isActive && "bg-theme-accent/20 text-theme-accent",
+        "animate-startup-slide-in-left"
       )
     }
+    style={{ animationDelay: `${delay}s` }}
   >
     <Icon className="w-6 h-6 transition-transform duration-200 group-hover:scale-125" />
     <span
@@ -42,12 +44,16 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
 
 export const Sidebar = () => {
   const [showStopButton, setShowStopButton] = useState(false);
-  const { stopApp } = useAppStatus();
+  const { stopApp, triggerStartupAnimation } = useAppStatus(); // Get animation trigger
 
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
       <div
-        className="relative flex items-center justify-center h-16 mb-4 flex-shrink-0"
+        className={cn(
+          "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
+          triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
+        )}
+        style={triggerStartupAnimation ? { animationDelay: '0s' } : {}}
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
@@ -66,8 +72,8 @@ export const Sidebar = () => {
         )}
       </div>
       <nav className="flex flex-col space-y-2">
-        {navItems.map((item) => (
-          <NavItem key={item.to} {...item} />
+        {navItems.map((item, index) => (
+          <NavItem key={item.to} {...item} delay={0.2 + index * 0.1} />
         ))}
       </nav>
     </aside>

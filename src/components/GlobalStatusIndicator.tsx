@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC } from './ASICStatusCard';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
+import { cn } from '@/lib/utils'; // Import cn
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
 
@@ -9,6 +10,8 @@ interface GlobalStatusIndicatorProps {
   hashrate: number;
   asics: ASIC[];
   isOverclockedMajority: boolean;
+  className?: string; // Add className prop
+  style?: React.CSSProperties; // Add style prop
 }
 
 const statusConfig = {
@@ -30,7 +33,7 @@ const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
 const RADIUS = 70;
 
-export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority }: GlobalStatusIndicatorProps) => {
+export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority, className, style }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [rotation, setRotation] = useState(0);
@@ -195,7 +198,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
   const strokeColor = isOverclockedMajority ? "url(#overclock-gradient)" : "currentColor";
 
   return (
-    <svg ref={svgRef} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className="overflow-visible" preserveAspectRatio="xMidYMid meet">
+    <svg ref={svgRef} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className={cn("overflow-visible", className)} style={style} preserveAspectRatio="xMidYMid meet">
       <defs>
         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="3" result="coloredBlur" />

@@ -12,6 +12,8 @@ interface SummaryCardProps {
     level: TempStatusLevel;
     text: string;
   };
+  className?: string; // Add className prop
+  style?: React.CSSProperties; // Add style prop
 }
 
 const statusStyles: Record<TempStatusLevel, string> = {
@@ -21,9 +23,9 @@ const statusStyles: Record<TempStatusLevel, string> = {
   surcharge: 'bg-red-500 text-red-200',
 };
 
-export const SummaryCard = ({ title, value, unit, icon, iconBgColor, tempStatus }: SummaryCardProps) => {
+export const SummaryCard = ({ title, value, unit, icon, iconBgColor, tempStatus, className, style }: SummaryCardProps) => {
   return (
-    <div className="bg-theme-card p-5 rounded-2xl flex justify-between items-center relative overflow-hidden">
+    <div className={cn("bg-theme-card p-5 rounded-2xl flex justify-between items-center relative overflow-hidden", className)} style={style}>
       <div className={cn("absolute -right-12 -top-12 w-32 h-32 rounded-full opacity-10", iconBgColor)} />
       
       <div>

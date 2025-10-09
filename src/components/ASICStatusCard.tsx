@@ -34,6 +34,8 @@ interface ASICStatusCardProps {
   onToggleFan: (asicId: string) => void;
   onToggleOverclock: (asicId: string) => void;
   onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop' | 'start-mining', event?: React.MouseEvent) => void;
+  className?: string; // Add className prop
+  style?: React.CSSProperties; // Add style prop
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
@@ -90,7 +92,7 @@ const ShutdownAnimation = () => (
   </div>
 );
 
-export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction }: ASICStatusCardProps) => {
+export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction, className, style }: ASICStatusCardProps) => {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { triggerBurst } = useAnimation();
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
@@ -166,7 +168,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   return (
     <>
-      <div className="relative h-full">
+      <div className={cn("relative h-full", className)} style={style}>
         <div
           ref={cardRef}
           className={cn(
@@ -284,7 +286,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               </button>
               <div>
                 <p className="text-xs text-theme-text-secondary">Ventilateur</p>
-                <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">%</span></p>
+                <p className="text-sm font-semibold">{asic.fanSpeed.toFixed(0)} <span className="text-xs font-normal text-theme-text-secondary">{unit}</span></p>
               </div>
             </div>
           </div>
