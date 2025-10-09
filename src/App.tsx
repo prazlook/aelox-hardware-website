@@ -13,21 +13,20 @@ import AsicManagementPage from "./pages/AsicManagement";
 import DevOptionsPage from "./pages/DevOptions";
 import AppStoppedScreen from "./pages/AppStoppedScreen";
 import { SoundProvider } from "./context/SoundContext";
-import { AsicProvider, useAsics } from "./context/AsicContext"; // Import useAsics
+import { AsicProvider, useAsics } from "./context/AsicContext";
 import { AnimationProvider } from "./context/AnimationContext";
 import { DevOptionsProvider } from "./context/DevOptionsContext";
 import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
-import { StartupIntro } from "./components/StartupIntro"; // Import the new StartupIntro component
-import { useMemo } from "react"; // Import useMemo
-import { StatusLevel } from "./components/GlobalStatusIndicator"; // Import StatusLevel
+import { StartupIntro } from "./components/StartupIntro";
+import { useMemo } from "react";
+import { StatusLevel } from "./components/GlobalStatusIndicator";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { appPhase } = useAppStatus();
-  const { asics } = useAsics(); // Need asics for GlobalStatusIndicator props
+  const { asics } = useAsics();
   
-  // Memoize summary for GlobalStatusIndicator props
   const summary = useMemo(() => {
     const totalAsicsCount = asics.length;
     const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
@@ -40,7 +39,6 @@ const AppContent = () => {
     };
   }, [asics]);
 
-  // Determine global status for StartupIntro
   const globalStatus: StatusLevel = useMemo(() => {
     const hasError = asics.some(a => a.status === 'error');
     const hasOverheat = asics.some(a => a.status === 'overheat');
@@ -66,31 +64,32 @@ const AppContent = () => {
     return <AppStoppedScreen />;
   }
 
-  if (appPhase === 'intro') {
-    return (
-      <StartupIntro
-        status={globalStatus}
-        hashrate={summary.totalHashrate}
-        asics={asics}
-        isOverclockedMajority={summary.isOverclockedMajority}
-      />
-    );
-  }
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/statistics" element={<StatisticsPage />} />
-          <Route path="/wallet" element={<WalletPage />} />
-          <Route path="/asic-management" element={<AsicManagementPage />} />
-          <Route path="/configuration" element={<ConfigurationPage />} />
-          <Route path="/dev-options" element={<DevOptionsPage />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      {(appPhase === 'intro' || appPhase === 'main_ui_loading') && (
+        <StartupIntro
+          status={globalStatus}
+          hashrate={summary.totalHashrate}
+          asics={asics}
+          isOverclockedMajority={summary.isOverclockedMajority}
+        />
+      )}
+
+      {/* The condition appPhase !== 'stopped' is redundant here as it's handled by the early return above */}
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+            <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/asic-management" element={<AsicManagementPage />} />
+            <Route path="/configuration" element={<ConfigurationPage />} />
+            <Route path="/dev-options" element={<DevOptionsPage />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 };
 

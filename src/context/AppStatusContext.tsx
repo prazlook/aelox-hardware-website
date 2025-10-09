@@ -10,8 +10,8 @@ interface AppStatusContextType {
 
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
 
-const INTRO_DURATION = 3500; // Duration for the full-screen GlobalStatusIndicator animation
-const MAIN_UI_LOADING_DURATION = 1500; // Duration for the staggered main UI elements animation
+const INTRO_DURATION = 4000; // Duration for the full-screen GlobalStatusIndicator animation + text + progress
+const MAIN_UI_LOADING_DURATION = 1000; // Duration for the staggered main UI elements animation
 
 const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   if (typeof window !== 'undefined') {

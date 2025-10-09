@@ -269,6 +269,43 @@
   }
 }
 
+/* New animations for StartupIntro */
+@keyframes startup-text-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    letter-spacing: 0.5em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: normal;
+  }
+}
+
+@keyframes startup-progress-bar {
+  from {
+    width: 0%;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* Animation for GlobalStatusIndicator when appearing in header */
+@keyframes global-indicator-header-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5); /* Start smaller */
+  }
+  100% {
+    opacity: 0.75; /* Match parent opacity */
+    transform: scale(1); /* Normal size */
+  }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -433,6 +470,25 @@
     stroke-dashoffset: 500;
     animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
     opacity: 0;
+  }
+
+  /* New startup intro animations */
+  .animate-startup-text-reveal {
+    animation: startup-text-reveal 1s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-startup-progress-bar {
+    animation: startup-progress-bar 3.5s ease-out forwards;
+    width: 0%; /* Start at 0 width */
+    opacity: 0;
+  }
+
+  /* Animation for GlobalStatusIndicator when appearing in header */
+  .animate-global-indicator-header-appear {
+    animation: global-indicator-header-appear 1s ease-out forwards;
+    opacity: 0; /* Start hidden */
+    transform: scale(0.5); /* Start smaller */
   }
 }
 

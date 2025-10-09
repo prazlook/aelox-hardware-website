@@ -12,7 +12,8 @@ interface GlobalStatusIndicatorProps {
   isOverclockedMajority: boolean;
   className?: string;
   style?: React.CSSProperties;
-  triggerStartupAnimation: boolean; // New prop to explicitly trigger startup animation
+  triggerStartupAnimation: boolean; // Prop to explicitly trigger internal startup animation
+  isMainUiLoading: boolean; // New prop to trigger header appearance animation
 }
 
 const statusConfig = {
@@ -34,7 +35,7 @@ const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
 const RADIUS = 70;
 
-export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority, className, style, triggerStartupAnimation }: GlobalStatusIndicatorProps) => {
+export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority, className, style, triggerStartupAnimation, isMainUiLoading }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [rotation, setRotation] = useState(0);

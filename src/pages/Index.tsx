@@ -359,9 +359,10 @@ const Index = () => {
             hashrate={summary.totalHashrate} 
             asics={asics}
             isOverclockedMajority={summary.isOverclockedMajority}
-            className={cn(triggerMainUiAnimation && "animate-startup-fade-in-from-center")} // Apply animation if main UI is loading
+            className={cn(triggerMainUiAnimation && "animate-global-indicator-header-appear")} // Apply animation if main UI is loading
             style={triggerMainUiAnimation ? { animationDelay: '0.2s' } : {}}
             triggerStartupAnimation={false} // This is not the intro animation
+            isMainUiLoading={triggerMainUiAnimation} // Pass this prop to control its specific animation
           />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
