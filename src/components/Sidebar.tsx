@@ -53,7 +53,7 @@ export const Sidebar = () => {
           "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
           triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
         )}
-        style={triggerStartupAnimation ? { animationDelay: '5.0s' } : {}}
+        style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}} // Reduced delay
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
@@ -73,7 +73,7 @@ export const Sidebar = () => {
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item, index) => (
-          <NavItem key={item.to} {...item} delay={5.5 + index * 0.15} />
+          <NavItem key={item.to} {...item} delay={0.8 + index * 0.1} /> {/* Reduced delay and staggered */}
         ))}
       </nav>
     </aside>

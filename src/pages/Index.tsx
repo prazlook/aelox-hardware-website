@@ -350,19 +350,19 @@ const Index = () => {
     <div className="space-y-8">
       <div className="relative h-48 -mx-6 -mt-6 mb-4">
         <div className="absolute inset-0 z-0 opacity-75">
+          {/* GlobalStatusIndicator will now manage its own internal staggered animations */}
           <GlobalStatusIndicator 
             status={globalStatus} 
             hashrate={summary.totalHashrate} 
             asics={asics}
             isOverclockedMajority={summary.isOverclockedMajority}
-            className={triggerStartupAnimation ? "animate-startup-fade-in-from-center" : ""}
-            style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
+            // Remove startup animation from here, let its children handle it
           />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 
             className={`text-3xl font-bold ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
-            style={triggerStartupAnimation ? { animationDelay: '6.0s' } : {}}
+            style={triggerStartupAnimation ? { animationDelay: '1.0s' } : {}} {/* Reduced delay */}
           >
             Centre de Contrôle
           </h1>
@@ -370,7 +370,7 @@ const Index = () => {
             <Button 
               onClick={handleStartAll} 
               className={`bg-green-500/20 text-green-400 hover:bg-green-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
-              style={triggerStartupAnimation ? { animationDelay: '6.5s' } : {}}
+              style={triggerStartupAnimation ? { animationDelay: '1.2s' } : {}} {/* Reduced delay */}
             >
               <Power className="w-4 h-4 mr-2" />
               Démarrer Tout
@@ -378,7 +378,7 @@ const Index = () => {
             <Button 
               onClick={handleStopAll} 
               className={`bg-red-500/20 text-red-400 hover:bg-red-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
-              style={triggerStartupAnimation ? { animationDelay: '6.7s' } : {}}
+              style={triggerStartupAnimation ? { animationDelay: '1.4s' } : {}} {/* Reduced delay */}
             >
               <X className="w-4 h-4 mr-2" />
               Arrêter Tout
@@ -395,7 +395,7 @@ const Index = () => {
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
           iconBgColor={summary.isOverclockedMajority ? "bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora" : "bg-gradient-to-br from-orange-500 to-orange-700"} 
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '7.0s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '1.6s' } : {}} {/* Reduced delay */}
         />
         <SummaryCard 
           title="Température Moyenne" 
@@ -405,7 +405,7 @@ const Index = () => {
           iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
           tempStatus={tempStatus}
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '7.2s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '1.8s' } : {}} {/* Reduced delay */}
         />
         <SummaryCard 
           title="Consommation Totale" 
@@ -414,7 +414,7 @@ const Index = () => {
           icon={<AnimatedZapIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-cyan-400 to-cyan-600" 
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '7.4s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '2.0s' } : {}} {/* Reduced delay */}
         />
         <SummaryCard 
           title="ASICs Actifs" 
@@ -423,14 +423,14 @@ const Index = () => {
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700" 
           className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '7.6s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '2.2s' } : {}} {/* Reduced delay */}
         />
       </div>
 
       <div>
         <h2 
           className={`text-2xl font-bold mb-4 ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
-          style={triggerStartupAnimation ? { animationDelay: '8.0s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '2.4s' } : {}} {/* Reduced delay */}
         >
           Vos Machines
         </h2>
@@ -444,8 +444,9 @@ const Index = () => {
               onToggleFan={handleToggleFan}
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
+              // Remove startup animation from here, let its children handle it
               className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-              style={triggerStartupAnimation ? { animationDelay: `${8.2 + index * 0.2}s` } : {}}
+              style={triggerStartupAnimation ? { animationDelay: `${2.6 + index * 0.15}s` } : {}} // Reduced delay and staggered
             />
           ))}
         </div>

@@ -24,7 +24,7 @@ export const Header = () => {
           value="↓ 8.5 / ↑ 2.4" 
           unit="MB/s" 
           className={triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '5.8s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '0.8s' } : {}} {/* Reduced delay */}
         />
         <Stat 
           icon={Zap} 
@@ -32,14 +32,14 @@ export const Header = () => {
           value="10000" 
           unit="W max" 
           className={triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '6.0s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '1.0s' } : {}} {/* Reduced delay */}
         />
       </div>
       <div className="flex items-center space-x-4">
         <Badge 
           variant="outline" 
           className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerStartupAnimation ? "animate-startup-fade-in-scale" : "")}
-          style={triggerStartupAnimation ? { animationDelay: '6.2s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '1.2s' } : {}} {/* Reduced delay */}
         >
           <Cloud className="w-4 h-4 mr-2" />
           Cloud Connecté
@@ -47,7 +47,7 @@ export const Header = () => {
         <Badge 
           variant="outline" 
           className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerStartupAnimation ? "animate-startup-fade-in-scale" : "")}
-          style={triggerStartupAnimation ? { animationDelay: '6.4s' } : {}}
+          style={triggerStartupAnimation ? { animationDelay: '1.4s' } : {}} {/* Reduced delay */}
         >
           <Layers className="w-4 h-4 mr-2" />
           Pool Actif
