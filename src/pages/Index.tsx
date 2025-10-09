@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
-import { SummaryCard, TempStatusLevel } from '@/components/SummaryCard';
+import { SummaryCard, TempStatusLevel } from '@/components/SummaryCard'; // Import TempStatusLevel
 import { Button } from '@/components/ui/button';
 import { Thermometer, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
@@ -9,10 +9,9 @@ import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
 import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
 import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
-import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusCard';
+import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusIndicator';
 import { useDevOptions } from '@/context/DevOptionsContext';
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
-import { cn } from '@/lib/utils'; // Import cn
 
 const playSound = (file: File | null) => {
   if (file) {
@@ -29,7 +28,7 @@ const Index = () => {
   const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
   const { preventOverheat, preventErrors, startupDelay, shutdownDelay } = useDevOptions();
-  const { appPhase } = useAppStatus(); // Get appPhase
+  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
   const prevAsicsRef = useRef(asics);
   const maxTemp = 85;
   const criticalTemp = 100;
@@ -64,8 +63,10 @@ const Index = () => {
       setTimeout(() => {
         setAsics(prevAsics =>
           prevAsics.map(asic =>
-            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asic.temperature + 5) } : asic));
-        }, startupDelay * 1000);
+            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asic.temperature + 5) } : asic
+          )
+        );
+      }, startupDelay * 1000);
     }
   };
 
@@ -345,9 +346,6 @@ const Index = () => {
     }
   }, [tempStatus.level, handleStopAll, preventOverheat]);
 
-  // Determine if main UI elements should animate
-  const triggerMainUiAnimation = appPhase === 'running';
-
   return (
     <div className="space-y-8">
       <div className="relative h-48 -mx-6 -mt-6 mb-4">
@@ -357,32 +355,30 @@ const Index = () => {
             hashrate={summary.totalHashrate} 
             asics={asics}
             isOverclockedMajority={summary.isOverclockedMajority}
-            className={cn(triggerMainUiAnimation && "animate-global-indicator-header-appear")} // Apply animation if main UI is loading
-            style={triggerMainUiAnimation ? { animationDelay: '0.2s' } : {}}
-            triggerStartupAnimation={false} // This is not the intro animation
-            isMainUiLoading={triggerMainUiAnimation} // Pass this prop to control its specific animation
+            className={triggerStartupAnimation ? "animate-startup-fade-in-from-center" : ""}
+            style={triggerStartupAnimation ? { animationDelay: '0.2s' } : {}}
           />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 
-            className={cn("text-3xl font-bold initial-slide-in-left", triggerMainUiAnimation && "animate-startup-slide-in-left")}
-            style={triggerMainUiAnimation ? { animationDelay: '0.4s' } : {}}
+            className={`text-3xl font-bold ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
+            style={triggerStartupAnimation ? { animationDelay: '0.4s' } : {}}
           >
             Centre de Contrôle
           </h1>
           <div className="flex space-x-3">
             <Button 
               onClick={handleStartAll} 
-              className={cn("bg-green-500/20 text-green-400 hover:bg-green-500/30 initial-slide-in-right", triggerMainUiAnimation && "animate-startup-slide-in-right")}
-              style={triggerMainUiAnimation ? { animationDelay: '0.5s' } : {}}
+              className={`bg-green-500/20 text-green-400 hover:bg-green-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
+              style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
             >
               <Power className="w-4 h-4 mr-2" />
               Démarrer Tout
             </Button>
             <Button 
               onClick={handleStopAll} 
-              className={cn("bg-red-500/20 text-red-400 hover:bg-red-500/30 initial-slide-in-right", triggerMainUiAnimation && "animate-startup-slide-in-right")}
-              style={triggerMainUiAnimation ? { animationDelay: '0.6s' } : {}}
+              className={`bg-red-500/20 text-red-400 hover:bg-red-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
+              style={triggerStartupAnimation ? { animationDelay: '0.6s' } : {}}
             >
               <X className="w-4 h-4 mr-2" />
               Arrêter Tout
@@ -398,8 +394,8 @@ const Index = () => {
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
           iconBgColor={summary.isOverclockedMajority ? "bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora" : "bg-gradient-to-br from-orange-500 to-orange-700"} 
-          className={cn("initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
-          style={triggerMainUiAnimation ? { animationDelay: '0.7s' } : {}}
+          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
+          style={triggerStartupAnimation ? { animationDelay: '0.7s' } : {}}
         />
         <SummaryCard 
           title="Température Moyenne" 
@@ -408,8 +404,8 @@ const Index = () => {
           icon={<Thermometer className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
           tempStatus={tempStatus}
-          className={cn("initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
-          style={triggerMainUiAnimation ? { animationDelay: '0.8s' } : {}}
+          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
+          style={triggerStartupAnimation ? { animationDelay: '0.8s' } : {}}
         />
         <SummaryCard 
           title="Consommation Totale" 
@@ -417,8 +413,8 @@ const Index = () => {
           unit="W" 
           icon={<AnimatedZapIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-cyan-400 to-cyan-600" 
-          className={cn("initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
-          style={triggerMainUiAnimation ? { animationDelay: '0.9s' } : {}}
+          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
+          style={triggerStartupAnimation ? { animationDelay: '0.9s' } : {}}
         />
         <SummaryCard 
           title="ASICs Actifs" 
@@ -426,15 +422,15 @@ const Index = () => {
           unit="" 
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700" 
-          className={cn("initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
-          style={triggerMainUiAnimation ? { animationDelay: '1.0s' } : {}}
+          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
+          style={triggerStartupAnimation ? { animationDelay: '1.0s' } : {}}
         />
       </div>
 
       <div>
         <h2 
-          className={cn("text-2xl font-bold mb-4 initial-slide-in-left", triggerMainUiAnimation && "animate-startup-slide-in-left")}
-          style={triggerMainUiAnimation ? { animationDelay: '1.1s' } : {}}
+          className={`text-2xl font-bold mb-4 ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
+          style={triggerStartupAnimation ? { animationDelay: '1.1s' } : {}}
         >
           Vos Machines
         </h2>
@@ -448,8 +444,8 @@ const Index = () => {
               onToggleFan={handleToggleFan}
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
-              className={cn("initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
-              style={triggerMainUiAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
+              className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
+              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
             />
           ))}
         </div>

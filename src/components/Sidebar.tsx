@@ -14,7 +14,7 @@ const navItems = [
   { to: "/dev-options", icon: Code, label: "Options Dev" },
 ];
 
-const NavItem = ({ to, icon: Icon, label, delay, triggerAnimation }: typeof navItems[0] & { delay: number, triggerAnimation: boolean }) => (
+const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay: number }) => (
   <NavLink
     to={to}
     end
@@ -23,11 +23,10 @@ const NavItem = ({ to, icon: Icon, label, delay, triggerAnimation }: typeof navI
         "group relative flex items-center h-12 p-3 rounded-lg text-theme-text-secondary transition-colors duration-200 ease-in-out",
         "hover:bg-theme-card hover:text-white",
         isActive && "bg-theme-accent/20 text-theme-accent",
-        "initial-slide-in-left", // Apply initial hidden state
-        triggerAnimation && "animate-startup-slide-in-left"
+        "animate-startup-slide-in-left"
       )
     }
-    style={triggerAnimation ? { animationDelay: `${delay}s` } : {}}
+    style={{ animationDelay: `${delay}s` }}
   >
     <Icon className="w-6 h-6 transition-transform duration-200 group-hover:scale-125" />
     <span
@@ -45,18 +44,16 @@ const NavItem = ({ to, icon: Icon, label, delay, triggerAnimation }: typeof navI
 
 export const Sidebar = () => {
   const [showStopButton, setShowStopButton] = useState(false);
-  const { stopApp, appPhase } = useAppStatus(); // Get appPhase
-
-  const triggerMainUiAnimation = appPhase === 'running';
+  const { stopApp, triggerStartupAnimation } = useAppStatus(); // Get animation trigger
 
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
       <div
         className={cn(
-          "relative flex items-center justify-center h-16 mb-4 flex-shrink-0 initial-fade-in-scale", // Apply initial hidden state
-          triggerMainUiAnimation && "animate-startup-fade-in-scale"
+          "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
+          triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
         )}
-        style={triggerMainUiAnimation ? { animationDelay: '0s' } : {}}
+        style={triggerStartupAnimation ? { animationDelay: '0s' } : {}}
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
@@ -76,7 +73,7 @@ export const Sidebar = () => {
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item, index) => (
-          <NavItem key={item.to} {...item} delay={0.2 + index * 0.1} triggerAnimation={triggerMainUiAnimation} />
+          <NavItem key={item.to} {...item} delay={0.2 + index * 0.1} />
         ))}
       </nav>
     </aside>

@@ -11,84 +11,36 @@ import ConfigurationPage from "./pages/Configuration";
 import StatisticsPage from "./pages/Statistics";
 import AsicManagementPage from "./pages/AsicManagement";
 import DevOptionsPage from "./pages/DevOptions";
-import AppStoppedScreen from "./pages/AppStoppedScreen";
+import AppStoppedScreen from "./pages/AppStoppedScreen"; // Import the new component
 import { SoundProvider } from "./context/SoundContext";
-import { AsicProvider, useAsics } from "./context/AsicContext";
+import { AsicProvider } from "./context/AsicContext";
 import { AnimationProvider } from "./context/AnimationContext";
 import { DevOptionsProvider } from "./context/DevOptionsContext";
-import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
-import { StartupIntro } from "./components/StartupIntro";
-import { useMemo } from "react";
-import { StatusLevel } from "./components/GlobalStatusCard"; // Corrected import
+import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext"; // Import AppStatusProvider and useAppStatus
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { appPhase } = useAppStatus();
-  const { asics } = useAsics();
-  
-  const summary = useMemo(() => {
-    const totalAsicsCount = asics.length;
-    const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
-    const overclockedCount = asics.filter(a => a.status === 'overclocked').length;
-    const isOverclockedMajority = totalAsicsCount > 0 && (overclockedCount / totalAsicsCount) >= 0.7;
+  const { isAppRunning } = useAppStatus();
 
-    return {
-      totalHashrate,
-      isOverclockedMajority,
-    };
-  }, [asics]);
-
-  const globalStatus: StatusLevel = useMemo(() => {
-    const hasError = asics.some(a => a.status === 'error');
-    const hasOverheat = asics.some(a => a.status === 'overheat');
-    const allOffline = asics.every(a => a.status === 'offline');
-    const avgTemp = asics.length > 0 ? asics.reduce((acc, a) => acc + a.temperature, 0) / asics.length : 0;
-
-    let tempStatusLevel: 'optimal' | 'faible' | 'eleve' | 'surcharge';
-    if (avgTemp > 85) tempStatusLevel = 'surcharge';
-    else if (avgTemp > 70) tempStatusLevel = 'eleve';
-    else if (avgTemp > 40) tempStatusLevel = 'optimal';
-    else tempStatusLevel = 'faible';
-
-    if (hasError) return 'error';
-    if (hasOverheat || tempStatusLevel === 'surcharge') return 'surcharge';
-    if (tempStatusLevel === 'eleve') return 'eleve';
-    if (allOffline) return 'offline';
-    
-    return 'optimal';
-  }, [asics]);
-
-
-  if (appPhase === 'stopped') {
+  if (!isAppRunning) {
     return <AppStoppedScreen />;
   }
 
   return (
-    <>
-      {(appPhase === 'intro' || appPhase === 'main_ui_loading') && (
-        <StartupIntro
-          status={globalStatus}
-          hashrate={summary.totalHashrate}
-          asics={asics}
-          isOverclockedMajority={summary.isOverclockedMajority}
-        />
-      )}
-
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/statistics" element={<StatisticsPage />} />
-            <Route path="/wallet" element={<WalletPage />} />
-            <Route path="/asic-management" element={<AsicManagementPage />} />
-            <Route path="/configuration" element={<ConfigurationPage />} />
-            <Route path="/dev-options" element={<DevOptionsPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Index />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/asic-management" element={<AsicManagementPage />} />
+          <Route path="/configuration" element={<ConfigurationPage />} />
+          <Route path="/dev-options" element={<DevOptionsPage />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
@@ -99,7 +51,7 @@ const App = () => (
         <AsicProvider>
           <AnimationProvider>
             <DevOptionsProvider>
-              <AppStatusProvider>
+              <AppStatusProvider> {/* Wrap the entire app content with AppStatusProvider */}
                 <Toaster />
                 <Sonner />
                 <AppContent />
