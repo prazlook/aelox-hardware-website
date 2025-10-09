@@ -11,12 +11,38 @@ import ConfigurationPage from "./pages/Configuration";
 import StatisticsPage from "./pages/Statistics";
 import AsicManagementPage from "./pages/AsicManagement";
 import DevOptionsPage from "./pages/DevOptions";
+import AppStoppedScreen from "./pages/AppStoppedScreen"; // Import the new component
 import { SoundProvider } from "./context/SoundContext";
 import { AsicProvider } from "./context/AsicContext";
 import { AnimationProvider } from "./context/AnimationContext";
 import { DevOptionsProvider } from "./context/DevOptionsContext";
+import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext"; // Import AppStatusProvider and useAppStatus
 
 const queryClient = new QueryClient();
+
+const AppContent = () => {
+  const { isAppRunning } = useAppStatus();
+
+  if (!isAppRunning) {
+    return <AppStoppedScreen />;
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Index />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/asic-management" element={<AsicManagementPage />} />
+          <Route path="/configuration" element={<ConfigurationPage />} />
+          <Route path="/dev-options" element={<DevOptionsPage />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -25,21 +51,11 @@ const App = () => (
         <AsicProvider>
           <AnimationProvider>
             <DevOptionsProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route element={<Layout />}>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/statistics" element={<StatisticsPage />} />
-                    <Route path="/wallet" element={<WalletPage />} />
-                    <Route path="/asic-management" element={<AsicManagementPage />} />
-                    <Route path="/configuration" element={<ConfigurationPage />} />
-                    <Route path="/dev-options" element={<DevOptionsPage />} />
-                  </Route>
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
+              <AppStatusProvider> {/* Wrap the entire app content with AppStatusProvider */}
+                <Toaster />
+                <Sonner />
+                <AppContent />
+              </AppStatusProvider>
             </DevOptionsProvider>
           </AnimationProvider>
         </AsicProvider>

@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code } from "lucide-react";
+import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useAppStatus } from "@/context/AppStatusContext"; // Import useAppStatus
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },
@@ -38,10 +41,29 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
 );
 
 export const Sidebar = () => {
+  const [showStopButton, setShowStopButton] = useState(false);
+  const { stopApp } = useAppStatus();
+
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
-      <div className="flex items-center justify-center h-16 mb-4 flex-shrink-0">
+      <div
+        className="relative flex items-center justify-center h-16 mb-4 flex-shrink-0"
+        onMouseEnter={() => setShowStopButton(true)}
+        onMouseLeave={() => setShowStopButton(false)}
+      >
         <Activity className="w-8 h-8 text-theme-cyan" />
+        {showStopButton && (
+          <Button
+            size="icon"
+            variant="destructive"
+            className="absolute -right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full opacity-0 animate-fade-in-slide-up"
+            style={{ animationDelay: '0.1s' }}
+            onClick={stopApp}
+            aria-label="Arrêter l'application"
+          >
+            <PowerOff className="w-4 h-4" />
+          </Button>
+        )}
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item) => (
