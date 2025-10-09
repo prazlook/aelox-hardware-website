@@ -6,11 +6,13 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsics } from "@/context/AsicContext";
 import { ASIC, ASICStatus } from "@/components/ASICStatusCard";
+import { useDevOptions } from "@/context/DevOptionsContext";
 
 const ALL_STATUSES: ASICStatus[] = ['online', 'offline', 'booting up', 'shutting down', 'overclocked', 'overheat', 'error', 'idle', 'standby'];
 
 const DevOptionsPage = () => {
   const { asics, setAsics } = useAsics();
+  const { preventOverheat, setPreventOverheat, preventErrors, setPreventErrors } = useDevOptions();
 
   const handleUpdate = (id: string, field: keyof ASIC, value: any) => {
     setAsics(prev =>
@@ -27,6 +29,41 @@ const DevOptionsPage = () => {
   return (
     <div className="p-4 sm:p-8 text-white">
       <h1 className="text-4xl font-light tracking-wider mb-8">OPTIONS <span className="font-bold">DÉVELOPPEUR</span></h1>
+      
+      <Card className="bg-gray-900/50 border-gray-700 mb-6">
+        <CardHeader>
+          <CardTitle>Paramètres de Simulation Globaux</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between p-4 border border-gray-700 rounded-lg">
+            <Label htmlFor="prevent-overheat" className="flex flex-col space-y-1 cursor-pointer">
+              <span>Interdire les surchauffes</span>
+              <span className="font-normal leading-snug text-gray-400 text-sm">
+                Empêche les ASICs de surchauffer et régule leur température.
+              </span>
+            </Label>
+            <Switch
+              id="prevent-overheat"
+              checked={preventOverheat}
+              onCheckedChange={setPreventOverheat}
+            />
+          </div>
+          <div className="flex items-center justify-between p-4 border border-gray-700 rounded-lg">
+            <Label htmlFor="prevent-errors" className="flex flex-col space-y-1 cursor-pointer">
+              <span>Interdire les erreurs</span>
+              <span className="font-normal leading-snug text-gray-400 text-sm">
+                Empêche les ASICs de passer en état d'erreur critique.
+              </span>
+            </Label>
+            <Switch
+              id="prevent-errors"
+              checked={preventErrors}
+              onCheckedChange={setPreventErrors}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {asics.map(asic => (
           <Card key={asic.id} className="bg-gray-900/50 border-gray-700">

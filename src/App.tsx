@@ -14,6 +14,7 @@ import DevOptionsPage from "./pages/DevOptions";
 import { SoundProvider } from "./context/SoundContext";
 import { AsicProvider } from "./context/AsicContext";
 import { AnimationProvider } from "./context/AnimationContext";
+import { DevOptionsProvider } from "./context/DevOptionsContext";
 
 const queryClient = new QueryClient();
 
@@ -23,21 +24,23 @@ const App = () => (
       <SoundProvider>
         <AsicProvider>
           <AnimationProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/statistics" element={<StatisticsPage />} />
-                  <Route path="/wallet" element={<WalletPage />} />
-                  <Route path="/asic-management" element={<AsicManagementPage />} />
-                  <Route path="/configuration" element={<ConfigurationPage />} />
-                  <Route path="/dev-options" element={<DevOptionsPage />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+            <DevOptionsProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route element={<Layout />}>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/statistics" element={<StatisticsPage />} />
+                    <Route path="/wallet" element={<WalletPage />} />
+                    <Route path="/asic-management" element={<AsicManagementPage />} />
+                    <Route path="/configuration" element={<ConfigurationPage />} />
+                    <Route path="/dev-options" element={<DevOptionsPage />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </DevOptionsProvider>
           </AnimationProvider>
         </AsicProvider>
       </SoundProvider>
