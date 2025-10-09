@@ -11,57 +11,61 @@ import ConfigurationPage from "./pages/Configuration";
 import StatisticsPage from "./pages/Statistics";
 import AsicManagementPage from "./pages/AsicManagement";
 import DevOptionsPage from "./pages/DevOptions";
-import AppStoppedScreen from "./pages/AppStoppedScreen"; // Import the new component
+import AppStoppedScreen from "./pages/AppStoppedScreen";
 import { SoundProvider } from "./context/SoundContext";
 import { AsicProvider } from "./context/AsicContext";
 import { AnimationProvider } from "./context/AnimationContext";
 import { DevOptionsProvider } from "./context/DevOptionsContext";
-import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext"; // Import AppStatusProvider and useAppStatus
+import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  const { isAppRunning } = useAppStatus();
+const App = () => {
+  // Déplacer la définition de AppContent à l'intérieur de App
+  // pour s'assurer qu'elle est toujours rendue dans le contexte de AppStatusProvider.
+  const AppContent = () => {
+    const { isAppRunning } = useAppStatus();
 
-  if (!isAppRunning) {
-    return <AppStoppedScreen />;
-  }
+    if (!isAppRunning) {
+      return <AppStoppedScreen />;
+    }
+
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+            <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/asic-management" element={<AsicManagementPage />} />
+            <Route path="/configuration" element={<ConfigurationPage />} />
+            <Route path="/dev-options" element={<DevOptionsPage />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    );
+  };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/statistics" element={<StatisticsPage />} />
-          <Route path="/wallet" element={<WalletPage />} />
-          <Route path="/asic-management" element={<AsicManagementPage />} />
-          <Route path="/configuration" element={<ConfigurationPage />} />
-          <Route path="/dev-options" element={<DevOptionsPage />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <SoundProvider>
+          <AsicProvider>
+            <AnimationProvider>
+              <DevOptionsProvider>
+                <AppStatusProvider>
+                  <Toaster />
+                  <Sonner />
+                  <AppContent />
+                </AppStatusProvider>
+              </DevOptionsProvider>
+            </AnimationProvider>
+          </AsicProvider>
+        </SoundProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <SoundProvider>
-        <AsicProvider>
-          <AnimationProvider>
-            <DevOptionsProvider>
-              <AppStatusProvider> {/* Wrap the entire app content with AppStatusProvider */}
-                <Toaster />
-                <Sonner />
-                <AppContent />
-              </AppStatusProvider>
-            </DevOptionsProvider>
-          </AnimationProvider>
-        </AsicProvider>
-      </SoundProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
 
 export default App;
