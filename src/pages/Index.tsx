@@ -14,8 +14,12 @@ import { useDevOptions } from '@/context/DevOptionsContext';
 
 const playSound = (file: File | null) => {
   if (file) {
-    const audio = new Audio(URL.ObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    const audio = new Audio(objectUrl);
     audio.play();
+    audio.onended = () => {
+      URL.revokeObjectURL(objectUrl); // Libère la mémoire après la lecture
+    };
   }
 };
 
