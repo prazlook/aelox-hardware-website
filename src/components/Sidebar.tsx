@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useAppStatus } from "@/context/AppStatusContext"; // Import useAppStatus
+import { useAppStatus } from "@/context/AppStatusContext";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },
@@ -15,7 +14,14 @@ const navItems = [
   { to: "/dev-options", icon: Code, label: "Options Dev" },
 ];
 
-const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay: number }) => (
+interface NavItemProps {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  delay: number;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, label, delay }) => (
   <NavLink
     to={to}
     end
@@ -43,9 +49,9 @@ const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay:
   </NavLink>
 );
 
-export const Sidebar = () => {
+export const Sidebar: React.FC = () => {
   const [showStopButton, setShowStopButton] = useState(false);
-  const { stopApp, triggerStartupAnimation } = useAppStatus(); // Get animation trigger
+  const { stopApp, triggerStartupAnimation } = useAppStatus();
 
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
@@ -54,7 +60,7 @@ export const Sidebar = () => {
           "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
           triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
         )}
-        style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}} // Reduced delay
+        style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
@@ -74,7 +80,7 @@ export const Sidebar = () => {
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item, index) => (
-          <NavItem key={item.to} {...item} delay={0.8 + index * 0.1} /> {/* Reduced delay and staggered */}
+          <NavItem key={item.to} {...item} delay={0.8 + index * 0.1} />
         ))}
       </nav>
     </aside>
