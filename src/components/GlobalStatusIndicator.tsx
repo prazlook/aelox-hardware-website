@@ -230,6 +230,73 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         opacity={status === 'offline' ? 0.5 : 1}
         filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
       >
+        {/* New: Central Pulsating Core */}
+        <circle
+          cx={CIRCLE_CX}
+          cy={CIRCLE_CY}
+          r="10"
+          fill="currentColor"
+          className="animate-pulse-core"
+          style={{ animationDelay: '0.5s' }}
+        />
+
+        {/* New: Expanding Concentric Rings */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <circle
+            key={`concentric-${i}`}
+            cx={CIRCLE_CX}
+            cy={CIRCLE_CY}
+            r="0"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            className="animate-concentric-expand"
+            style={{ animationDelay: `${0.8 + i * 0.3}s`, opacity: 0.5 - i * 0.15 }}
+          />
+        ))}
+
+        {/* New: Subtle Grid Overlay */}
+        <g stroke="currentColor" strokeOpacity="0.1" strokeWidth="0.5" className="animate-grid-fade-in" style={{ animationDelay: '1.5s' }}>
+          {Array.from({ length: VIEWBOX_WIDTH / 20 }).map((_, i) => (
+            <line key={`grid-v-${i}`} x1={i * 20} y1="0" x2={i * 20} y2={VIEWBOX_HEIGHT} />
+          ))}
+          {Array.from({ length: VIEWBOX_HEIGHT / 20 }).map((_, i) => (
+            <line key={`grid-h-${i}`} x1="0" y1={i * 20} x2={VIEWBOX_WIDTH} y2={i * 20} />
+          ))}
+        </g>
+
+        {/* New: Data Stream Lines */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <line
+            key={`data-line-${i}`}
+            x1="0"
+            y1={20 + i * 30}
+            x2={VIEWBOX_WIDTH}
+            y2={20 + i * 30}
+            stroke="currentColor"
+            strokeOpacity="0.15"
+            strokeWidth="1"
+            className="animate-data-line-flow"
+            style={{ animationDelay: `${2.0 + i * 0.2}s`, animationDuration: `${3 + i * 0.5}s` }}
+          />
+        ))}
+
+        {/* New: Scan Line Effect */}
+        <rect
+          x="0"
+          y="0"
+          width="10"
+          height={VIEWBOX_HEIGHT}
+          fill="url(#scan-gradient)"
+          className="animate-scan-line-sweep"
+          style={{ animationDelay: '2.5s', animationDuration: '5s' }}
+        />
+        <linearGradient id="scan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0" />
+          <stop offset="50%" stopColor="currentColor" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+
         <g>
           {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
