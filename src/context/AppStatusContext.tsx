@@ -10,8 +10,9 @@ interface AppStatusContextType {
 
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
 
-const INTRO_DURATION = 4000; // Duration for the full-screen GlobalStatusIndicator animation + text + progress
-const MAIN_UI_LOADING_DURATION = 1000; // Duration for the staggered main UI elements animation
+const INTRO_ANIMATION_DURATION = 4000; // Duration for the full-screen GlobalStatusIndicator animation + text + progress
+const STARTUP_INTRO_FADE_OUT_DURATION = 500; // Duration for StartupIntro to fade out
+const MAIN_UI_ANIMATION_DELAY = 200; // Small delay before main UI elements start animating after intro fades out
 
 const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   if (typeof window !== 'undefined') {
@@ -48,14 +49,15 @@ export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
     if (introTimeoutRef.current) clearTimeout(introTimeoutRef.current);
     if (mainUiTimeoutRef.current) clearTimeout(mainUiTimeoutRef.current);
 
-    // Transition from intro to main_ui_loading
+    // After intro animation, start fading out StartupIntro
     introTimeoutRef.current = setTimeout(() => {
-      setAppPhase('main_ui_loading');
-      // Transition from main_ui_loading to running
+      setAppPhase('main_ui_loading'); 
+
+      // After StartupIntro fades out, transition to running and start main UI animations
       mainUiTimeoutRef.current = setTimeout(() => {
-        setAppPhase('running');
-      }, MAIN_UI_LOADING_DURATION);
-    }, INTRO_DURATION);
+        setAppPhase('running'); 
+      }, STARTUP_INTRO_FADE_OUT_DURATION + MAIN_UI_ANIMATION_DELAY); // Add a small delay before main UI starts
+    }, INTRO_ANIMATION_DURATION);
   };
 
   const stopApp = () => {

@@ -19,7 +19,7 @@ import { DevOptionsProvider } from "./context/DevOptionsContext";
 import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
 import { StartupIntro } from "./components/StartupIntro";
 import { useMemo } from "react";
-import { StatusLevel } from "./components/GlobalStatusIndicator";
+import { StatusLevel } from "./components/GlobalStatusCard"; // Corrected import
 
 const queryClient = new QueryClient();
 
@@ -75,7 +75,6 @@ const AppContent = () => {
         />
       )}
 
-      {/* The condition appPhase !== 'stopped' is redundant here as it's handled by the early return above */}
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>

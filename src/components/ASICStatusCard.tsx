@@ -102,7 +102,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const typedComment = useTypewriter(comment || '', 30);
   const { appPhase } = useAppStatus(); // Get appPhase
 
-  const triggerMainUiAnimation = appPhase === 'main_ui_loading';
+  const triggerMainUiAnimation = appPhase === 'running';
 
   useEffect(() => {
     const prevStatus = prevStatusRef.current;

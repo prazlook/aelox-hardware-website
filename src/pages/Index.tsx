@@ -9,7 +9,7 @@ import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
 import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
 import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
-import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusIndicator';
+import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusCard'; // Corrected import
 import { useDevOptions } from '@/context/DevOptionsContext';
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 import { cn } from '@/lib/utils'; // Import cn
@@ -348,7 +348,7 @@ const Index = () => {
   }, [tempStatus.level, handleStopAll, preventOverheat]);
 
   // Determine if main UI elements should animate
-  const triggerMainUiAnimation = appPhase === 'main_ui_loading';
+  const triggerMainUiAnimation = appPhase === 'running';
 
   return (
     <div className="space-y-8">

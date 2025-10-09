@@ -46,7 +46,7 @@ export const Sidebar = () => {
   const [showStopButton, setShowStopButton] = useState(false);
   const { stopApp, appPhase } = useAppStatus(); // Get appPhase
 
-  const triggerMainUiAnimation = appPhase === 'main_ui_loading';
+  const triggerMainUiAnimation = appPhase === 'running';
 
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">

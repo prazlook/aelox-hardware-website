@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GlobalStatusIndicator, StatusLevel } from './GlobalStatusIndicator';
+import { GlobalStatusIndicator, StatusLevel } from './GlobalStatusCard'; // Corrected import
 import { ASIC } from './ASICStatusCard';
 import { cn } from '@/lib/utils';
 import { useAppStatus } from '@/context/AppStatusContext';

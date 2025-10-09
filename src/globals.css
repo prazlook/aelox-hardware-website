@@ -183,7 +183,7 @@
   }
 }
 
-/* New startup animations */
+/* New startup animation utility classes */
 @keyframes startup-fade-in-scale {
   from {
     opacity: 0;
@@ -298,11 +298,11 @@
 @keyframes global-indicator-header-appear {
   0% {
     opacity: 0;
-    transform: scale(0.5); /* Start smaller */
+    transform: translateY(-20px) scale(0.8); /* Start slightly above and smaller */
   }
   100% {
     opacity: 0.75; /* Match parent opacity */
-    transform: scale(1); /* Normal size */
+    transform: translateY(0) scale(1); /* Normal size and position */
   }
 }
 
@@ -488,7 +488,7 @@
   .animate-global-indicator-header-appear {
     animation: global-indicator-header-appear 1s ease-out forwards;
     opacity: 0; /* Start hidden */
-    transform: scale(0.5); /* Start smaller */
+    transform: translateY(-20px) scale(0.8); /* Start slightly above and smaller */
   }
 }
 

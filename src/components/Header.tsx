@@ -14,7 +14,7 @@ const Stat = ({ icon: Icon, label, value, unit, className, style }: { icon: Reac
 
 export const Header = () => {
   const { appPhase } = useAppStatus(); // Get appPhase
-  const triggerMainUiAnimation = appPhase === 'main_ui_loading';
+  const triggerMainUiAnimation = appPhase === 'running';
 
   return (
     <header className="bg-theme-card h-16 flex items-center justify-between px-6">
