@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppStatus } from "@/context/AppStatusContext"; // Import useAppStatus
 
-const STARTUP_OFFSET_DELAY = 2.0; // seconds, to allow GlobalStatusIndicator to complete its intro
+const STARTUP_OFFSET_DELAY = 2.5; // seconds, to allow GlobalStatusIndicator to complete its intro
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },

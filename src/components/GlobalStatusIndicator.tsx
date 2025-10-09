@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC } from './ASICStatusCard';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
-import { cn } from '@/lib/utils'; // Correction ici : '=>' remplacé par 'from'
+import { cn } from '@/lib/utils';
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
@@ -192,7 +192,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={barColor}
-          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${0.6 + i * 0.015}s` : '0s' }}
+          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${0.8 + i * 0.01}s` : '0s' }}
           className={cn(triggerStartupAnimation && "animate-global-indicator-bars-grow")}
         />
       );
@@ -234,7 +234,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         opacity={status === 'offline' ? 0.5 : 1}
         filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
       >
-        <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}>
+        <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.2s' } : {}}>
           {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
               key={i}
@@ -265,7 +265,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 strokeWidth={i === 0 ? "2" : i === 1 ? "1" : "0.5"}
                 opacity={1 - i * 0.25}
                 filter={i === 0 ? "url(#glow)" : "none"}
-                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? `${0.8 + i * 0.1}s` : '0s' }}
+                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? `${1.0 + i * 0.1}s` : '0s' }}
                 className={cn(triggerStartupAnimation && "animate-global-indicator-waveform-draw")}
             />
         ))}
@@ -284,7 +284,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
               transform={`rotate(${(360 / SPOKE_COUNT) * i} ${CIRCLE_CX} ${CIRCLE_CY})`}
               style={{ 
                 '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
-                animationDelay: triggerStartupAnimation ? `${1.2 + i * 0.05}s` : '0s'
+                animationDelay: triggerStartupAnimation ? `${1.4 + i * 0.05}s` : '0s'
               } as React.CSSProperties}
               className={cn(triggerStartupAnimation && "animate-global-indicator-spokes-rotate-in")}
             />
@@ -297,7 +297,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           r={dynamicValues.orbRadius}
           fill="url(#orb-gradient)"
           opacity={dynamicValues.orbOpacity}
-          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out', animationDelay: triggerStartupAnimation ? '1.5s' : '0s' }}
+          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out', animationDelay: triggerStartupAnimation ? '0.4s' : '0s' }}
           className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")}
         />
 
@@ -307,7 +307,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           stroke={strokeColor}
           strokeWidth="2"
           filter="url(#glow)"
-          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '1.8s' : '0s' }}
+          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '0s' : '0s' }}
           className={cn(status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on', triggerStartupAnimation && "animate-global-indicator-ecg-center-expand")}
         />
       </g>

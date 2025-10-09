@@ -24,7 +24,7 @@ const playSound = (file: File | null) => {
   }
 };
 
-const STARTUP_OFFSET_DELAY = 2.0; // seconds, to allow GlobalStatusIndicator to complete its intro
+const STARTUP_OFFSET_DELAY = 2.5; // seconds, to allow GlobalStatusIndicator to complete its intro
 
 const Index = () => {
   const { asics, setAsics } = useAsics();

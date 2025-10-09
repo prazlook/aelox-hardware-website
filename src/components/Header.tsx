@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 import { cn } from '@/lib/utils'; // Import cn
 
-const STARTUP_OFFSET_DELAY = 2.0; // seconds, to allow GlobalStatusIndicator to complete its intro
+const STARTUP_OFFSET_DELAY = 2.5; // seconds, to allow GlobalStatusIndicator to complete its intro
 
 const Stat = ({ icon: Icon, label, value, unit, className, style }: { icon: React.ElementType, label: string, value: string, unit: string, className?: string, style?: React.CSSProperties }) => (
   <div className={cn("flex items-center space-x-2 text-sm", className)} style={style}>
