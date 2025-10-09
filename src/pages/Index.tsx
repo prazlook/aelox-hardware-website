@@ -330,7 +330,7 @@ const Index = () => {
           value={summary.totalHashrate.toFixed(2)} 
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
-          iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" 
+          iconBgColor={summary.isOverclockedMajority ? "bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora" : "bg-gradient-to-br from-orange-500 to-orange-700"} 
         />
         <SummaryCard 
           title="Température Moyenne" 
