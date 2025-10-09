@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getLocalAIComment } from '@/lib/localAiComments';
 import { useTypewriter } from '@/hooks/useTypewriter';
+import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -100,6 +101,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const [comment, setComment] = useState(getLocalAIComment(asic));
   const prevStatusRef = useRef<ASICStatus>();
   const typedComment = useTypewriter(comment || '', 30);
+  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger here
 
   useEffect(() => {
     const prevStatus = prevStatusRef.current;
@@ -124,7 +126,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
   const isShuttingDown = asic.status === 'shutting down';
-  const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby' || asic.status === 'offline'; // Define this variable
+  const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby' || isOffline; // Define this variable
   const delayOffset = isIdleOrStandby ? 0 : 200; // Adjust delay based on context
 
   const PowerIcon = isOnline ? PowerOff : Power;
