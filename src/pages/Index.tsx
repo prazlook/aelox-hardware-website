@@ -48,11 +48,14 @@ const Index = () => {
     );
   };
 
-  const handlePowerAction = (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop') => {
+  const handlePowerAction = (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop' | 'start-mining') => {
     setAsics(prevAsics =>
       prevAsics.map(asic => {
         if (asic.id === asicId) {
           switch (action) {
+            case 'start-mining':
+              playSound(powerOnSoundFile);
+              return { ...asic, status: 'booting up' };
             case 'idle':
               return { ...asic, status: 'idle' };
             case 'standby':

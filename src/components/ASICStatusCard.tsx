@@ -33,7 +33,7 @@ interface ASICStatusCardProps {
   onTogglePower: (asicId: string) => void;
   onToggleFan: (asicId: string) => void;
   onToggleOverclock: (asicId: string) => void;
-  onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop', event?: React.MouseEvent) => void;
+  onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop' | 'start-mining', event?: React.MouseEvent) => void;
 }
 
 const StatusBadge = ({ status }: { status: ASICStatus }) => {
@@ -161,6 +161,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     animationDelay: isBootingUp ? `${delay}s` : '0s',
   });
 
+  const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
+  const delayOffset = isIdleOrStandby ? 100 : 0;
+
   return (
     <>
       <div className="relative h-full">
@@ -209,16 +212,24 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                     </Button>
                   </ContextMenuTrigger>
                   <ContextMenuContent className="w-48 rounded-xl p-1.5">
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
+                    {isIdleOrStandby && (
+                      <>
+                        <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'start-mining')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '0ms' }}>
+                          <Activity className="mr-2 h-4 w-4" /> Extraction
+                        </ContextMenuItem>
+                        <ContextMenuSeparator className="my-1.5 animate-slide-in-item" style={{ animationDelay: '50ms' }} />
+                      </>
+                    )}
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'idle')} className="flex items-center animate-slide-in-item" style={{ animationDelay: `${delayOffset}ms` }}>
                       <Hourglass className="mr-2 h-4 w-4" /> Idle
                     </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '50ms' }}>
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'standby')} className="flex items-center animate-slide-in-item" style={{ animationDelay: `${delayOffset + 50}ms` }}>
                       <Moon className="mr-2 h-4 w-4" /> Standby
                     </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '100ms' }}>
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'reboot')} className="flex items-center animate-slide-in-item" style={{ animationDelay: `${delayOffset + 100}ms` }}>
                       <RefreshCw className="mr-2 h-4 w-4" /> Reboot
                     </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: '150ms' }}>
+                    <ContextMenuItem onSelect={() => onPowerAction(asic.id, 'stop')} className="flex items-center animate-slide-in-item" style={{ animationDelay: `${delayOffset + 150}ms` }}>
                       <XCircle className="mr-2 h-4 w-4" /> Arrêt
                     </ContextMenuItem>
                     {asic.status === 'error' && (
