@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getLocalAIComment } from '@/lib/localAiComments';
 import { useTypewriter } from '@/hooks/useTypewriter';
+import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -96,23 +97,17 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { triggerBurst } = useAnimation();
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
-  const [isBootingUp, setIsBootingUp] = useState(false);
   const [comment, setComment] = useState(getLocalAIComment(asic));
   const prevStatusRef = useRef<ASICStatus>();
   const typedComment = useTypewriter(comment || '', 30);
+  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
 
   useEffect(() => {
     const prevStatus = prevStatusRef.current;
-    if (prevStatus === 'offline' && asic.status === 'booting up') {
-      setIsBootingUp(true);
-    } else if (asic.status !== 'booting up') {
-      setIsBootingUp(false);
-    }
-
+    // Removed isBootingUp state and logic here, will rely on status directly for visual cues
     if (prevStatus !== asic.status) {
       setComment(getLocalAIComment(asic));
     }
-
     prevStatusRef.current = asic.status;
   }, [asic]);
 
@@ -155,13 +150,10 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
   };
 
-  const getAnimationStyles = (delayInSeconds: number) => {
-    return { animationDelay: `${delayInSeconds}s` };
+  // New function for staggered startup animation delays
+  const getStartupDelay = (baseDelay: number) => {
+    return triggerStartupAnimation ? { animationDelay: `${baseDelay}s` } : {};
   };
-
-  const getBootAnimationStyles = (delay: number) => ({
-    animationDelay: isBootingUp ? `${delay}s` : '0s',
-  });
 
   const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
   const delayOffset = isIdleOrStandby ? 100 : 0;
@@ -173,20 +165,20 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
           ref={cardRef}
           className={cn(
             "relative z-0 p-4 rounded-2xl border border-transparent flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full",
-            isOffline && !isBootingUp && "grayscale opacity-70"
+            isOffline && !isTransitioning && "grayscale opacity-70" // Only grayscale if truly offline and not transitioning
           )}
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
-            <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.1) : getAnimationStyles(0.1)}>
+            <div className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.1)}>
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.2) : getAnimationStyles(0.2)}>
+              <div className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.2)}>
                 <StatusBadge status={asic.status} />
               </div>
-              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.3) : getAnimationStyles(0.3)}>
+              <div className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.3)}>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -200,7 +192,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
-              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.4) : getAnimationStyles(0.4)}>
+              <div className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.4)}>
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
                     <Button
@@ -252,7 +244,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.5)}>
             <span className="typewriter-cursor">{typedComment}</span>
           </div>
 
@@ -262,13 +254,13 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               label="Hashrate" 
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
-              className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })}
-              style={isBootingUp ? getBootAnimationStyles(0.6) : getAnimationStyles(0.6)}
+              className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")}
+              style={getStartupDelay(0.6)}
             />
-            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.7) : getAnimationStyles(0.7)} />
-            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.8) : getAnimationStyles(0.8)} />
+            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.7)} />
+            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.8)} />
             
-            <div className={cn("flex items-center space-x-2", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.9) : getAnimationStyles(0.9)}>
+            <div className={cn("flex items-center space-x-2", contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(0.9)}>
               <button
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
@@ -291,7 +283,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(1) : getAnimationStyles(1)}>
+          <div className={cn(contentAnimationClass, triggerStartupAnimation && "animate-startup-fade-in-scale")} style={getStartupDelay(1.0)}>
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
               disabled={isOffline}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC } from './ASICStatusCard';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
-import { cn } from '@/lib/utils'; // Import cn
+import { cn } from '@/lib/utils';
+import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
 
@@ -10,8 +11,8 @@ interface GlobalStatusIndicatorProps {
   hashrate: number;
   asics: ASIC[];
   isOverclockedMajority: boolean;
-  className?: string; // Add className prop
-  style?: React.CSSProperties; // Add style prop
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const statusConfig = {
@@ -37,6 +38,8 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [rotation, setRotation] = useState(0);
+  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
+
   const [dynamicValues, setDynamicValues] = useState({
     barHeights: Array.from({ length: BAR_COUNT }, () => Math.random() * 5),
     waveformPointsArray: [] as string[],
@@ -189,11 +192,12 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={barColor}
-          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear' }}
+          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${0.6 + i * 0.005}s` : '0s' }}
+          className={cn(triggerStartupAnimation && "animate-global-indicator-bars-grow")}
         />
       );
     });
-  }, [dynamicValues.barHeights, asics, mousePosition, isOverclockedMajority, color]);
+  }, [dynamicValues.barHeights, asics, mousePosition, isOverclockedMajority, color, triggerStartupAnimation]);
 
   const strokeColor = isOverclockedMajority ? "url(#overclock-gradient)" : "currentColor";
 
@@ -230,7 +234,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         opacity={status === 'offline' ? 0.5 : 1}
         filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
       >
-        <g>
+        <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}>
           {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
               key={i}
@@ -250,7 +254,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           ))}
         </g>
 
-        <g opacity="0.6">{bars}</g>
+        <g opacity="0.6">{bars}</g> {/* Bars already have their own animation class */}
 
         {dynamicValues.waveformPointsArray.map((points, i) => (
             <path
@@ -261,11 +265,12 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 strokeWidth={i === 0 ? "2" : i === 1 ? "1" : "0.5"}
                 opacity={1 - i * 0.25}
                 filter={i === 0 ? "url(#glow)" : "none"}
-                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear' }}
+                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? `${0.8 + i * 0.1}s` : '0s' }}
+                className={cn(triggerStartupAnimation && "animate-global-indicator-waveform-draw")}
             />
         ))}
         
-        <g transform={`rotate(${rotation} ${CIRCLE_CX} ${CIRCLE_CY})`} style={{ transition: 'transform 0.1s linear' }}>
+        <g style={{ transition: 'transform 0.1s linear' }}> {/* Removed animation class from here */}
           {Array.from({ length: SPOKE_COUNT }).map((_, i) => (
             <line
               key={i}
@@ -277,6 +282,11 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
               strokeWidth="1"
               opacity="0.3"
               transform={`rotate(${(360 / SPOKE_COUNT) * i} ${CIRCLE_CX} ${CIRCLE_CY})`}
+              style={{ 
+                '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
+                animationDelay: triggerStartupAnimation ? `${1.2 + i * 0.05}s` : '0s'
+              } as React.CSSProperties}
+              className={cn(triggerStartupAnimation && "animate-global-indicator-spokes-rotate-in")}
             />
           ))}
         </g>
@@ -287,7 +297,8 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           r={dynamicValues.orbRadius}
           fill="url(#orb-gradient)"
           opacity={dynamicValues.orbOpacity}
-          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out' }}
+          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out', animationDelay: triggerStartupAnimation ? '1.5s' : '0s' }}
+          className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")}
         />
 
         <path
@@ -296,8 +307,8 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           stroke={strokeColor}
           strokeWidth="2"
           filter="url(#glow)"
-          style={{ transition: 'd 0.07s linear, stroke 0.3s linear' }}
-          className={status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on'}
+          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '1.8s' : '0s' }}
+          className={cn(status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on', triggerStartupAnimation && "animate-global-indicator-ecg-center-expand")}
         />
       </g>
     </svg>

@@ -38,13 +38,13 @@ export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
     // Trigger animation only if it's not already running
     if (!triggerStartupAnimation) {
       setTriggerStartupAnimation(true);
-      // Reset trigger after a duration longer than the longest animation delay
+      // Reset trigger after a duration longer than the longest animation + delay
       if (animationTimeoutRef.current) {
         clearTimeout(animationTimeoutRef.current);
       }
       animationTimeoutRef.current = setTimeout(() => {
         setTriggerStartupAnimation(false);
-      }, 2500); // Adjust this duration based on your longest animation + delay
+      }, 3500); // Increased duration to accommodate new animations
     }
   };
 
