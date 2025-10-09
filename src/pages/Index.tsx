@@ -321,6 +321,7 @@ const Index = () => {
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" 
+          isGlobalOverclock={summary.isOverclockedMajority}
         />
         <SummaryCard 
           title="Température Moyenne" 
