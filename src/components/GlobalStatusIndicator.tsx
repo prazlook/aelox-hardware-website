@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ASIC } from './ASICStatusCard';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
 import { cn } from '@/lib/utils';
-import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
 
@@ -13,6 +12,7 @@ interface GlobalStatusIndicatorProps {
   isOverclockedMajority: boolean;
   className?: string;
   style?: React.CSSProperties;
+  triggerStartupAnimation: boolean; // New prop to explicitly trigger startup animation
 }
 
 const statusConfig = {
@@ -34,11 +34,10 @@ const CIRCLE_CX = VIEWBOX_WIDTH / 2;
 const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
 const RADIUS = 70;
 
-export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority, className, style }: GlobalStatusIndicatorProps) => {
+export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority, className, style, triggerStartupAnimation }: GlobalStatusIndicatorProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [rotation, setRotation] = useState(0);
-  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
 
   const [dynamicValues, setDynamicValues] = useState({
     barHeights: Array.from({ length: BAR_COUNT }, () => Math.random() * 5),

@@ -1,13 +1,17 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect, useRef } from 'react';
 
+type AppPhase = 'stopped' | 'intro' | 'main_ui_loading' | 'running';
+
 interface AppStatusContextType {
-  isAppRunning: boolean;
+  appPhase: AppPhase;
   startApp: () => void;
   stopApp: () => void;
-  triggerStartupAnimation: boolean; // New state to trigger animation
 }
 
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
+
+const INTRO_DURATION = 3500; // Duration for the full-screen GlobalStatusIndicator animation
+const MAIN_UI_LOADING_DURATION = 1500; // Duration for the staggered main UI elements animation
 
 const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   if (typeof window !== 'undefined') {
@@ -25,45 +29,48 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 };
 
 export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
-  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem<boolean>('isAppRunning', true));
-  const [triggerStartupAnimation, setTriggerStartupAnimation] = useState(false);
-  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [appPhase, setAppPhase] = useState<AppPhase>(() => {
+    const isRunning = getLocalStorageItem<boolean>('isAppRunning', true); // Use old key for initial load
+    return isRunning ? 'running' : 'stopped';
+  });
+  const introTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mainUiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    localStorage.setItem('isAppRunning', JSON.stringify(isAppRunning));
-  }, [isAppRunning]);
+    // Keep old localStorage key for compatibility, but manage phase internally
+    localStorage.setItem('isAppRunning', JSON.stringify(appPhase === 'running' || appPhase === 'main_ui_loading' || appPhase === 'intro'));
+  }, [appPhase]);
 
   const startApp = () => {
-    setIsAppRunning(true);
-    // Trigger animation only if it's not already running
-    if (!triggerStartupAnimation) {
-      setTriggerStartupAnimation(true);
-      // Reset trigger after a duration longer than the longest animation + delay
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
-      }
-      animationTimeoutRef.current = setTimeout(() => {
-        setTriggerStartupAnimation(false);
-      }, 3500); // Increased duration to accommodate new animations
-    }
+    setAppPhase('intro');
+
+    // Clear any existing timeouts
+    if (introTimeoutRef.current) clearTimeout(introTimeoutRef.current);
+    if (mainUiTimeoutRef.current) clearTimeout(mainUiTimeoutRef.current);
+
+    // Transition from intro to main_ui_loading
+    introTimeoutRef.current = setTimeout(() => {
+      setAppPhase('main_ui_loading');
+      // Transition from main_ui_loading to running
+      mainUiTimeoutRef.current = setTimeout(() => {
+        setAppPhase('running');
+      }, MAIN_UI_LOADING_DURATION);
+    }, INTRO_DURATION);
   };
 
   const stopApp = () => {
-    setIsAppRunning(false);
-    // Clear any pending animation trigger if app is stopped
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
-      animationTimeoutRef.current = null;
-    }
-    setTriggerStartupAnimation(false); // Ensure animation is not triggered on next start unless explicitly called
+    setAppPhase('stopped');
+    if (introTimeoutRef.current) clearTimeout(introTimeoutRef.current);
+    if (mainUiTimeoutRef.current) clearTimeout(mainUiTimeoutRef.current);
+    introTimeoutRef.current = null;
+    mainUiTimeoutRef.current = null;
   };
 
   return (
     <AppStatusContext.Provider value={{
-      isAppRunning,
+      appPhase,
       startApp,
       stopApp,
-      triggerStartupAnimation,
     }}>
       {children}
     </AppStatusContext.Provider>

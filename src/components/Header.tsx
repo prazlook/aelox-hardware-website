@@ -13,7 +13,8 @@ const Stat = ({ icon: Icon, label, value, unit, className, style }: { icon: Reac
 );
 
 export const Header = () => {
-  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
+  const { appPhase } = useAppStatus(); // Get appPhase
+  const triggerMainUiAnimation = appPhase === 'main_ui_loading';
 
   return (
     <header className="bg-theme-card h-16 flex items-center justify-between px-6">
@@ -23,31 +24,31 @@ export const Header = () => {
           label="Réseau" 
           value="↓ 8.5 / ↑ 2.4" 
           unit="MB/s" 
-          className={triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.3s' } : {}}
+          className={cn(triggerMainUiAnimation && "animate-startup-slide-in-left")}
+          style={triggerMainUiAnimation ? { animationDelay: '0.3s' } : {}}
         />
         <Stat 
           icon={Zap} 
           label="Réseau Électrique" 
           value="10000" 
           unit="W max" 
-          className={triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.4s' } : {}}
+          className={cn(triggerMainUiAnimation && "animate-startup-slide-in-left")}
+          style={triggerMainUiAnimation ? { animationDelay: '0.4s' } : {}}
         />
       </div>
       <div className="flex items-center space-x-4">
         <Badge 
           variant="outline" 
-          className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerStartupAnimation ? "animate-startup-fade-in-scale" : "")}
-          style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
+          className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
+          style={triggerMainUiAnimation ? { animationDelay: '0.5s' } : {}}
         >
           <Cloud className="w-4 h-4 mr-2" />
           Cloud Connecté
         </Badge>
         <Badge 
           variant="outline" 
-          className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerStartupAnimation ? "animate-startup-fade-in-scale" : "")}
-          style={triggerStartupAnimation ? { animationDelay: '0.6s' } : {}}
+          className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
+          style={triggerMainUiAnimation ? { animationDelay: '0.6s' } : {}}
         >
           <Layers className="w-4 h-4 mr-2" />
           Pool Actif
