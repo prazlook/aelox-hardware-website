@@ -260,14 +260,20 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
 
       // Fade In
       for (let j = 0; j < fadeInSamples; j++) {
-        const gain = j / fadeInSamples; // Linear fade
+        const gain = j / fadeInSamples; // Linear fade from 0 to 1
         channelData[j] *= gain;
       }
 
       // Fade Out
-      for (let j = 0; j < fadeOutSamples; j++) {
-        const gain = (fadeOutSamples - 1 - j) / fadeOutSamples; // Linear fade
-        channelData[newBuffer.length - 1 - j] *= gain;
+      if (fadeOutSamples > 0) {
+        for (let j = 0; j < fadeOutSamples; j++) {
+          const sampleIndex = newBuffer.length - fadeOutSamples + j;
+          if (sampleIndex >= 0 && sampleIndex < newBuffer.length) {
+            // Linear fade from 1 to 0
+            const gain = (fadeOutSamples - 1 - j) / (fadeOutSamples > 1 ? fadeOutSamples - 1 : 1); 
+            channelData[sampleIndex] *= gain;
+          }
+        }
       }
     }
 
