@@ -9,7 +9,7 @@ import { useAnimation } from '@/context/AnimationContext';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getLocalAIComment } from '@/lib/localAiComments';
-import { useTypewriter } from '@/hooks/useTypewriter';
+import { useTypewriter } => '@/hooks/useTypewriter';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -155,20 +155,14 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
   };
 
-  const getAnimationStyles = (delayInSeconds: number) => {
-    return { animationDelay: `${delayInSeconds}s` };
+  // Base delay for ASIC card elements, relative to the card's overall animation delay
+  const getAsicElementDelay = (baseDelay: number) => {
+    return triggerStartupAnimation ? { animationDelay: `calc(var(--card-animation-delay) + ${baseDelay}s)` } : {};
   };
-
-  const getBootAnimationStyles = (delay: number) => ({
-    animationDelay: isBootingUp ? `${delay}s` : '0s',
-  });
-
-  const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
-  const delayOffset = isIdleOrStandby ? 100 : 0;
 
   return (
     <>
-      <div className={cn("relative h-full", className)} style={style}>
+      <div className={cn("relative h-full", className)} style={{...style, '--card-animation-delay': style?.animationDelay || '0s'} as React.CSSProperties}>
         <div
           ref={cardRef}
           className={cn(
@@ -178,15 +172,15 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
-            <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.1) : getAnimationStyles(0.1)}>
+            <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.1)}>
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.2) : getAnimationStyles(0.2)}>
+              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.2)}>
                 <StatusBadge status={asic.status} />
               </div>
-              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.3) : getAnimationStyles(0.3)}>
+              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.3)}>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -200,7 +194,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
-              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.4) : getAnimationStyles(0.4)}>
+              <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.4)}>
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
                     <Button
@@ -252,7 +246,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.5) : getAnimationStyles(0.5)}>
+          <div className={cn("text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.5)}>
             <span className="typewriter-cursor">{typedComment}</span>
           </div>
 
@@ -263,12 +257,12 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
               className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })}
-              style={isBootingUp ? getBootAnimationStyles(0.6) : getAnimationStyles(0.6)}
+              style={getAsicElementDelay(0.6)}
             />
-            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.7) : getAnimationStyles(0.7)} />
-            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.8) : getAnimationStyles(0.8)} />
+            <StatItem icon={<Thermometer size={20} />} label="Température" value={asic.temperature.toFixed(2)} unit="°C" className={cn(tempColor, contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.7)} />
+            <StatItem icon={<Zap size={20} />} label="Puissance" value={asic.power.toFixed(0)} unit="W" className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.8)} />
             
-            <div className={cn("flex items-center space-x-2", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(0.9) : getAnimationStyles(0.9)}>
+            <div className={cn("flex items-center space-x-2", contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(0.9)}>
               <button
                 onClick={() => onToggleFan(asic.id)}
                 className="p-1 rounded-full text-theme-cyan hover:bg-theme-accent/20"
@@ -291,7 +285,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={isBootingUp ? getBootAnimationStyles(1) : getAnimationStyles(1)}>
+          <div className={cn(contentAnimationClass, { 'animate-boot-up-item': isBootingUp })} style={getAsicElementDelay(1.0)}>
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
               disabled={isOffline}

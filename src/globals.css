@@ -168,7 +168,7 @@
 
 @keyframes chart-wipe-animation {
     to {
-        clip-path: inset(0 0 0 0);
+        clip-path: inset(0 100% 0 0);
     }
 }
 
@@ -257,6 +257,12 @@
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes horizontal-bar-expand {
+  0% { width: 0; transform: translateX(0); opacity: 0; }
+  1% { opacity: 1; }
+  100% { width: 800px; transform: translateX(-400px); opacity: 1; } /* VIEWBOX_WIDTH */
 }
 
 
@@ -417,6 +423,11 @@
 
   .animate-scan-line-sweep {
     animation: scan-line-sweep 4s linear infinite;
+  }
+
+  .animate-horizontal-bar-expand {
+    animation: horizontal-bar-expand 1s ease-out forwards;
+    opacity: 0;
   }
 }
 

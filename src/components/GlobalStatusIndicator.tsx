@@ -256,7 +256,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         ))}
 
         {/* New: Subtle Grid Overlay */}
-        <g stroke="currentColor" strokeOpacity="0.1" strokeWidth="0.5" className="animate-grid-fade-in" style={{ animationDelay: '1.5s' }}>
+        <g stroke="currentColor" strokeOpacity="0.1" strokeWidth="0.5" className="animate-grid-fade-in" style={{ animationDelay: '1.8s' }}>
           {Array.from({ length: VIEWBOX_WIDTH / 20 }).map((_, i) => (
             <line key={`grid-v-${i}`} x1={i * 20} y1="0" x2={i * 20} y2={VIEWBOX_HEIGHT} />
           ))}
@@ -277,7 +277,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
             strokeOpacity="0.15"
             strokeWidth="1"
             className="animate-data-line-flow"
-            style={{ animationDelay: `${2.0 + i * 0.2}s`, animationDuration: `${3 + i * 0.5}s` }}
+            style={{ animationDelay: `${2.2 + i * 0.2}s`, animationDuration: `${3 + i * 0.5}s` }}
           />
         ))}
 
@@ -289,7 +289,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           height={VIEWBOX_HEIGHT}
           fill="url(#scan-gradient)"
           className="animate-scan-line-sweep"
-          style={{ animationDelay: '2.5s', animationDuration: '5s' }}
+          style={{ animationDelay: '3.5s', animationDuration: '5s' }}
         />
         <linearGradient id="scan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="currentColor" stopOpacity="0" />
@@ -365,6 +365,17 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           filter="url(#glow)"
           style={{ transition: 'd 0.07s linear, stroke 0.3s linear' }}
           className={status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on'}
+        />
+
+        {/* New: Horizontal bar expanding from center */}
+        <rect
+          x={CIRCLE_CX}
+          y={CIRCLE_CY - 1}
+          width="0"
+          height="2"
+          fill="currentColor"
+          className="animate-horizontal-bar-expand"
+          style={{ animationDelay: '4.0s' }}
         />
       </g>
     </svg>
