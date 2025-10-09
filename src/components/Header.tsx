@@ -24,7 +24,7 @@ export const Header = () => {
           label="Réseau" 
           value="↓ 8.5 / ↑ 2.4" 
           unit="MB/s" 
-          className={cn(triggerMainUiAnimation && "animate-startup-slide-in-left")}
+          className={cn("initial-slide-in-left", triggerMainUiAnimation && "animate-startup-slide-in-left")}
           style={triggerMainUiAnimation ? { animationDelay: '0.3s' } : {}}
         />
         <Stat 
@@ -32,14 +32,14 @@ export const Header = () => {
           label="Réseau Électrique" 
           value="10000" 
           unit="W max" 
-          className={cn(triggerMainUiAnimation && "animate-startup-slide-in-left")}
+          className={cn("initial-slide-in-left", triggerMainUiAnimation && "animate-startup-slide-in-left")}
           style={triggerMainUiAnimation ? { animationDelay: '0.4s' } : {}}
         />
       </div>
       <div className="flex items-center space-x-4">
         <Badge 
           variant="outline" 
-          className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
+          className={cn("border-green-500/50 bg-green-500/10 text-green-400 initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
           style={triggerMainUiAnimation ? { animationDelay: '0.5s' } : {}}
         >
           <Cloud className="w-4 h-4 mr-2" />
@@ -47,7 +47,7 @@ export const Header = () => {
         </Badge>
         <Badge 
           variant="outline" 
-          className={cn("border-green-500/50 bg-green-500/10 text-green-400", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
+          className={cn("border-green-500/50 bg-green-500/10 text-green-400 initial-fade-in-scale", triggerMainUiAnimation && "animate-startup-fade-in-scale")}
           style={triggerMainUiAnimation ? { animationDelay: '0.6s' } : {}}
         >
           <Layers className="w-4 h-4 mr-2" />

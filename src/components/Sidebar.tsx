@@ -23,6 +23,7 @@ const NavItem = ({ to, icon: Icon, label, delay, triggerAnimation }: typeof navI
         "group relative flex items-center h-12 p-3 rounded-lg text-theme-text-secondary transition-colors duration-200 ease-in-out",
         "hover:bg-theme-card hover:text-white",
         isActive && "bg-theme-accent/20 text-theme-accent",
+        "initial-slide-in-left", // Apply initial hidden state
         triggerAnimation && "animate-startup-slide-in-left"
       )
     }
@@ -52,7 +53,7 @@ export const Sidebar = () => {
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
       <div
         className={cn(
-          "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
+          "relative flex items-center justify-center h-16 mb-4 flex-shrink-0 initial-fade-in-scale", // Apply initial hidden state
           triggerMainUiAnimation && "animate-startup-fade-in-scale"
         )}
         style={triggerMainUiAnimation ? { animationDelay: '0s' } : {}}
