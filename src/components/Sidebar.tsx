@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code } from "lucide-react";
+import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDevOptions } from "@/context/DevOptionsContext";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },
@@ -38,10 +40,26 @@ const NavItem = ({ to, icon: Icon, label }: typeof navItems[0]) => (
 );
 
 export const Sidebar = () => {
+  const { setIsAppActive } = useDevOptions();
+
+  const handleStopApp = () => {
+    setIsAppActive(false);
+  };
+
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
-      <div className="flex items-center justify-center h-16 mb-4 flex-shrink-0">
-        <Activity className="w-8 h-8 text-theme-cyan" />
+      <div className="flex items-center justify-center h-16 mb-4 flex-shrink-0 group relative">
+        <Activity className="w-8 h-8 text-theme-cyan transition-transform duration-200 group-hover:scale-110" />
+        <div className="absolute left-full ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <Button
+            variant="destructive"
+            size="sm"
+            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-xs"
+            onClick={handleStopApp}
+          >
+            <PowerOff className="w-3 h-3 mr-1" /> Arrêter
+          </Button>
+        </div>
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item) => (

@@ -9,6 +9,8 @@ interface DevOptionsContextType {
   setStartupDelay: (delay: number) => void;
   shutdownDelay: number;
   setShutdownDelay: (delay: number) => void;
+  isAppActive: boolean;
+  setIsAppActive: (active: boolean) => void;
 }
 
 const DevOptionsContext = createContext<DevOptionsContextType | undefined>(undefined);
@@ -33,6 +35,7 @@ export const DevOptionsProvider = ({ children }: { children: ReactNode }) => {
   const [preventErrors, setPreventErrors] = useState<boolean>(() => getLocalStorageItem('devOptions_preventErrors', false));
   const [startupDelay, setStartupDelay] = useState<number>(() => getLocalStorageItem('devOptions_startupDelay', 3));
   const [shutdownDelay, setShutdownDelay] = useState<number>(() => getLocalStorageItem('devOptions_shutdownDelay', 2));
+  const [isAppActive, setIsAppActive] = useState<boolean>(() => getLocalStorageItem('devOptions_isAppActive', true)); // Default to active
 
   useEffect(() => {
     localStorage.setItem('devOptions_preventOverheat', JSON.stringify(preventOverheat));
@@ -50,6 +53,10 @@ export const DevOptionsProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('devOptions_shutdownDelay', JSON.stringify(shutdownDelay));
   }, [shutdownDelay]);
 
+  useEffect(() => {
+    localStorage.setItem('devOptions_isAppActive', JSON.stringify(isAppActive));
+  }, [isAppActive]);
+
   return (
     <DevOptionsContext.Provider value={{
       preventOverheat,
@@ -60,6 +67,8 @@ export const DevOptionsProvider = ({ children }: { children: ReactNode }) => {
       setStartupDelay,
       shutdownDelay,
       setShutdownDelay,
+      isAppActive,
+      setIsAppActive,
     }}>
       {children}
     </DevOptionsContext.Provider>
