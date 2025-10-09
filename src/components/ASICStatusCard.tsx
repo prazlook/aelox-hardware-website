@@ -9,7 +9,7 @@ import { useAnimation } from '@/context/AnimationContext';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getLocalAIComment } from '@/lib/localAiComments';
-import { useTypewriter } => '@/hooks/useTypewriter';
+import { useTypewriter } from '@/hooks/useTypewriter';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -124,6 +124,8 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
   const isShuttingDown = asic.status === 'shutting down';
+  const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby' || asic.status === 'offline'; // Define this variable
+  const delayOffset = isIdleOrStandby ? 0 : 200; // Adjust delay based on context
 
   const PowerIcon = isOnline ? PowerOff : Power;
   const powerIconClassName = cn({
