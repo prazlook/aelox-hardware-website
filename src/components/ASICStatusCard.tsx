@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -118,7 +118,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
   const tempColor = isOverheating ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
   
-  const isOnline = asic.status === 'online' || asic.status === 'overclocked' || asic.status === 'idle';
+  const isOnline = asic.status === 'online' || asic.status === 'overclocked';
   const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
   const isShuttingDown = asic.status === 'shutting down';
@@ -163,18 +163,6 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
   const delayOffset = isIdleOrStandby ? 100 : 0;
-
-  const hashrateAnimationDuration = useMemo(() => {
-    if (asic.hashrate <= 0) {
-      return 10; // Very slow
-    }
-    const maxHashrate = 120; // Estimated max for one ASIC
-    const minDuration = 0.8;
-    const maxDuration = 4;
-    const speed = Math.min(asic.hashrate / maxHashrate, 1);
-    const duration = maxDuration - (maxDuration - minDuration) * speed;
-    return Math.max(minDuration, duration);
-  }, [asic.hashrate]);
 
   return (
     <>
@@ -268,7 +256,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
             <StatItem 
-              icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} animationDuration={hashrateAnimationDuration} /> : <Activity size={20} />} 
+              icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} /> : <Activity size={20} />} 
               label="Hashrate" 
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 

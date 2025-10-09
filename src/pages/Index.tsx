@@ -30,7 +30,7 @@ const Index = () => {
     const asicToToggle = asics.find(a => a.id === asicId);
     if (!asicToToggle) return;
 
-    const isRunning = asicToToggle.status === 'online' || asicToToggle.status === 'overclocked' || asicToToggle.status === 'overheat' || asicToToggle.status === 'idle';
+    const isRunning = asicToToggle.status === 'online' || asicToToggle.status === 'overclocked' || asicToToggle.status === 'overheat';
     if (isRunning) {
       playSound(powerOffSoundFile);
     } else if (asicToToggle.status === 'offline') {
@@ -112,9 +112,9 @@ const Index = () => {
   };
 
   const handleStopAll = () => {
-    const willStopAny = asics.some(asic => ['online', 'overclocked', 'overheat', 'idle'].includes(asic.status));
+    const willStopAny = asics.some(asic => ['online', 'overclocked', 'overheat'].includes(asic.status));
     if (willStopAny) playSound(powerOffSoundFile);
-    setAsics(asics.map(asic => ['online', 'overclocked', 'overheat', 'idle'].includes(asic.status) ? { ...asic, status: 'shutting down' } : asic));
+    setAsics(asics.map(asic => ['online', 'overclocked', 'overheat'].includes(asic.status) ? { ...asic, status: 'shutting down' } : asic));
   };
 
   useEffect(() => {
@@ -233,7 +233,7 @@ const Index = () => {
   }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics]);
 
   const summary = useMemo(() => {
-    const onlineAsics = asics.filter(a => a.status === 'online' || a.status === 'overclocked' || a.status === 'idle');
+    const onlineAsics = asics.filter(a => a.status === 'online' || a.status === 'overclocked');
     const totalAsicsCount = asics.length;
     const activeAsicsCount = onlineAsics.length;
     const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
@@ -288,20 +288,6 @@ const Index = () => {
     }
   }, [tempStatus.level, handleStopAll]);
 
-  const hashrateAnimationDuration = useMemo(() => {
-    if (summary.totalHashrate <= 0) {
-      return 10; // Very slow if no hashrate
-    }
-    const maxHashrate = 400; // Estimated max for all ASICs
-    const minDuration = 0.5; // Fast animation
-    const maxDuration = 4;   // Slow animation
-
-    const speed = Math.min(summary.totalHashrate / maxHashrate, 1);
-    const duration = maxDuration - (maxDuration - minDuration) * speed;
-    
-    return Math.max(minDuration, duration);
-  }, [summary.totalHashrate]);
-
   return (
     <div className="space-y-8">
       <div className="relative h-48 -mx-6 -mt-6 mb-4">
@@ -333,7 +319,7 @@ const Index = () => {
           title="Hashrate Total" 
           value={summary.totalHashrate.toFixed(2)} 
           unit="TH/s" 
-          icon={<AnimatedHashrateIcon className="w-8 h-8" animationDuration={hashrateAnimationDuration} />} 
+          icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-orange-500 to-orange-700" 
         />
         <SummaryCard 
