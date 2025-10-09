@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type TempStatusLevel = 'optimal' | 'faible' | 'eleve' | 'surcharge';
+export type TempStatusLevel = 'optimal' | 'faible' | 'eleve' | 'surcharge';
 
 interface SummaryCardProps {
   title: string;

@@ -75,8 +75,9 @@ export function getLocalAIComment(asic: ASIC): string {
     return pickRandom(comments.online.optimal);
   }
 
-  if (comments[status]) {
-    return pickRandom(comments[status as keyof typeof comments]);
+  const statusComments = comments[status as keyof typeof comments];
+  if (Array.isArray(statusComments)) {
+    return pickRandom(statusComments);
   }
 
   return "Statut inconnu.";

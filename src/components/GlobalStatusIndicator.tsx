@@ -192,7 +192,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           height={totalHeight}
           transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
           fill={barColor}
-          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${0.6 + i * 0.015}s` : '0s' }}
+          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${1.6 + i * 0.015}s` : '0s' }}
           className={cn(triggerStartupAnimation && "animate-global-indicator-bars-grow")}
         />
       );
@@ -234,7 +234,8 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         opacity={status === 'offline' ? 0.5 : 1}
         filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
       >
-        <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}>
+        {/* Particles - appear first */}
+        <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.1s' } : {}}>
           {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
               key={i}
@@ -254,8 +255,18 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           ))}
         </g>
 
-        <g opacity="0.6">{bars}</g> {/* Bars already have their own animation class */}
+        {/* Orb - appears second */}
+        <circle
+          cx={CIRCLE_CX}
+          cy={CIRCLE_CY}
+          r={dynamicValues.orbRadius}
+          fill="url(#orb-gradient)"
+          opacity={dynamicValues.orbOpacity}
+          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out', animationDelay: triggerStartupAnimation ? '0.3s' : '0s' }}
+          className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")}
+        />
 
+        {/* Waveforms (ronds internes à externes) - appear third */}
         {dynamicValues.waveformPointsArray.map((points, i) => (
             <path
                 key={i}
@@ -265,12 +276,13 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 strokeWidth={i === 0 ? "2" : i === 1 ? "1" : "0.5"}
                 opacity={1 - i * 0.25}
                 filter={i === 0 ? "url(#glow)" : "none"}
-                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? `${0.8 + i * 0.1}s` : '0s' }}
+                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? `${0.5 + i * 0.1}s` : '0s' }}
                 className={cn(triggerStartupAnimation && "animate-global-indicator-waveform-draw")}
             />
         ))}
         
-        <g style={{ transition: 'transform 0.1s linear' }}> {/* Removed animation class from here */}
+        {/* Spokes (traits externes qui se développent en cercle) - appear fourth */}
+        <g style={{ transition: 'transform 0.1s linear' }}>
           {Array.from({ length: SPOKE_COUNT }).map((_, i) => (
             <line
               key={i}
@@ -284,30 +296,24 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
               transform={`rotate(${(360 / SPOKE_COUNT) * i} ${CIRCLE_CX} ${CIRCLE_CY})`}
               style={{ 
                 '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
-                animationDelay: triggerStartupAnimation ? `${1.2 + i * 0.05}s` : '0s'
+                animationDelay: triggerStartupAnimation ? `${1.0 + i * 0.05}s` : '0s'
               } as React.CSSProperties}
               className={cn(triggerStartupAnimation && "animate-global-indicator-spokes-rotate-in")}
             />
           ))}
         </g>
 
-        <circle
-          cx={CIRCLE_CX}
-          cy={CIRCLE_CY}
-          r={dynamicValues.orbRadius}
-          fill="url(#orb-gradient)"
-          opacity={dynamicValues.orbOpacity}
-          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out', animationDelay: triggerStartupAnimation ? '1.5s' : '0s' }}
-          className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")}
-        />
+        {/* Bars (petits traits externes) - appear fifth */}
+        <g opacity="0.6">{bars}</g> {/* Bars already have their own animation class */}
 
+        {/* ECG Path (ligne horizontale) - appears last */}
         <path
           d={dynamicValues.ecgPath}
           fill="none"
           stroke={strokeColor}
           strokeWidth="2"
           filter="url(#glow)"
-          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '1.8s' : '0s' }}
+          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '2.0s' : '0s' }}
           className={cn(status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on', triggerStartupAnimation && "animate-global-indicator-ecg-center-expand")}
         />
       </g>

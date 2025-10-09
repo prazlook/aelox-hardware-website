@@ -41,7 +41,7 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
   // Initialize AudioContext
   useEffect(() => {
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      audioContextRef.current = new AudioContext();
     }
   }, []);
 
@@ -363,7 +363,7 @@ const AudioEditorDialog = ({ isOpen, onClose, audioFile, onSave }: AudioEditorDi
     writeString(view, 0, 'RIFF'); // RIFF identifier
     view.setUint32(4, 36 + dataLength, true); // file length
     writeString(view, 8, 'WAVE'); // RIFF type
-    writeString(view, 12, 'fmt '); // format chunk identifier
+    view.setUint32(12, 0x20746d66, true); // format chunk identifier ('fmt ')
     view.setUint32(16, 16, true); // format chunk length
     view.setUint16(20, 1, true); // sample format (1 = PCM)
     view.setUint16(22, numberOfChannels, true); // number of channels

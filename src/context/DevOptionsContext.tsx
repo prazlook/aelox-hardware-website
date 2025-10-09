@@ -13,7 +13,7 @@ interface DevOptionsContextType {
 
 const DevOptionsContext = createContext<DevOptionsContextType | undefined>(undefined);
 
-const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
+const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   if (typeof window !== 'undefined') {
     const storedValue = localStorage.getItem(key);
     if (storedValue !== null) {
@@ -29,10 +29,10 @@ const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
 };
 
 export const DevOptionsProvider = ({ children }: { children: ReactNode }) => {
-  const [preventOverheat, setPreventOverheat] = useState<boolean>(() => getLocalStorageItem('devOptions_preventOverheat', false));
-  const [preventErrors, setPreventErrors] = useState<boolean>(() => getLocalStorageItem('devOptions_preventErrors', false));
-  const [startupDelay, setStartupDelay] = useState<number>(() => getLocalStorageItem('devOptions_startupDelay', 3));
-  const [shutdownDelay, setShutdownDelay] = useState<number>(() => getLocalStorageItem('devOptions_shutdownDelay', 2));
+  const [preventOverheat, setPreventOverheat] = useState<boolean>(() => getLocalStorageItem<boolean>('devOptions_preventOverheat', false));
+  const [preventErrors, setPreventErrors] = useState<boolean>(() => getLocalStorageItem<boolean>('devOptions_preventErrors', false));
+  const [startupDelay, setStartupDelay] = useState<number>(() => getLocalStorageItem<number>('devOptions_startupDelay', 3));
+  const [shutdownDelay, setShutdownDelay] = useState<number>(() => getLocalStorageItem<number>('devOptions_shutdownDelay', 2));
 
   useEffect(() => {
     localStorage.setItem('devOptions_preventOverheat', JSON.stringify(preventOverheat));

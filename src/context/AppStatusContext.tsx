@@ -9,7 +9,7 @@ interface AppStatusContextType {
 
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
 
-const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
+const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   if (typeof window !== 'undefined') {
     const storedValue = localStorage.getItem(key);
     if (storedValue !== null) {
@@ -25,7 +25,7 @@ const getLocalStorageItem = <T>(key: string, defaultValue: T): T => {
 };
 
 export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
-  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem('isAppRunning', true));
+  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem<boolean>('isAppRunning', true));
   const [triggerStartupAnimation, setTriggerStartupAnimation] = useState(false);
   const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

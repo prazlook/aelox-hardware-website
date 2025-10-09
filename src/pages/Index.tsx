@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
-import { SummaryCard } from '@/components/SummaryCard';
+import { SummaryCard, TempStatusLevel } from '@/components/SummaryCard'; // Import TempStatusLevel
 import { Button } from '@/components/ui/button';
 import { Thermometer, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
@@ -95,7 +95,7 @@ const Index = () => {
             case 'force-stop':
               showSuccess(`${asic.name} a été forcé à s'arrêter.`);
               setTimeout(() => {
-                setAsics(currentAsics => currentAsics.map(a => a.id === asicId ? {
+                setAsics(currentAsics => currentAsics.map(a => a.id === asic.id ? {
                   ...a,
                   status: 'offline',
                   power: 0,
@@ -310,7 +310,7 @@ const Index = () => {
     };
   }, [asics]);
 
-  const tempStatus = useMemo(() => {
+  const tempStatus: { level: TempStatusLevel; text: string; } = useMemo(() => {
     const temp = summary.avgTemp;
     if (temp > 85) return { level: 'surcharge', text: 'SURCHARGE' };
     if (temp > 70) return { level: 'eleve', text: 'ÉLEVÉ' };
