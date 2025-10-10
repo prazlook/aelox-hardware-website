@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { useAppStatus } from '@/context/AppStatusContext';
+import { AnimatedHashrateIcon } from './AnimatedHashrateIcon'; // Import AnimatedHashrateIcon
 
 export type TempStatusLevel = 'faible' | 'optimal' | 'eleve' | 'surcharge';
 
@@ -13,9 +14,10 @@ interface SummaryCardProps {
   tempStatus?: { level: TempStatusLevel; text: string };
   className?: string;
   style?: React.CSSProperties;
+  isOverclockedMajority?: boolean; // New prop
 }
 
-export const SummaryCard = ({ title, value, unit, icon, iconColorClass, tempStatus, className, style }: SummaryCardProps) => {
+export const SummaryCard = ({ title, value, unit, icon, iconColorClass, tempStatus, className, style, isOverclockedMajority }: SummaryCardProps) => {
   const { triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
 
   const tempStatusClasses: Record<TempStatusLevel, string> = {
@@ -23,6 +25,14 @@ export const SummaryCard = ({ title, value, unit, icon, iconColorClass, tempStat
     optimal: "text-green-400",
     eleve: "text-orange-400",
     surcharge: "text-red-500 animate-pulse",
+  };
+
+  // Conditionally render AnimatedHashrateIcon with its specific prop
+  const renderIcon = () => {
+    if (title === "Hashrate Total" && React.isValidElement(icon) && icon.type === AnimatedHashrateIcon) {
+      return React.cloneElement(icon as React.ReactElement<any>, { isOverclockedMajority });
+    }
+    return icon;
   };
 
   return (
@@ -42,7 +52,7 @@ export const SummaryCard = ({ title, value, unit, icon, iconColorClass, tempStat
         </p>
       </div>
       <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-theme-card border border-theme-accent/30", iconColorClass)}>
-        {icon}
+        {renderIcon()}
       </div>
     </div>
   );
