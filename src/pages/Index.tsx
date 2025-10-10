@@ -474,11 +474,9 @@ const Index = () => {
               onToggleFan={handleToggleFan}
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
-              className={cn(
-                triggerStartupAnimation && "animate-startup-fade-in-scale",
-                triggerShutdownAnimation && "animate-fluorescent-flicker" // Apply flicker here
-              )}
-              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : triggerShutdownAnimation ? { animationDelay: `${1.8 + index * 0.1}s` } : {}}
+              triggerShutdownAnimation={triggerShutdownAnimation} // Pass the prop
+              className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""} // Only startup animation on the card wrapper
+              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
             />
           ))}
         </div>

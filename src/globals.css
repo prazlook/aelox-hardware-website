@@ -269,18 +269,26 @@
   }
 }
 
-/* New shutdown animation */
+/* New shutdown animation for the entire app content */
 @keyframes app-shutdown {
   0% {
     filter: blur(0px) brightness(1) saturate(1);
-    transform: scale(1) rotateZ(0deg);
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    filter: blur(2px) brightness(0.7) saturate(0.7);
+    transform: scale(0.99);
+    opacity: 0.8;
   }
   100% {
-    filter: blur(5px) brightness(0.5) saturate(0.5);
-    transform: scale(0.98) rotateZ(0.5deg);
+    filter: blur(5px) brightness(0.4) saturate(0.4);
+    transform: scale(0.98);
+    opacity: 0.5; /* The background fades to 50% opacity */
   }
 }
 
+/* Fluorescent flicker for individual elements, leading to full disappearance */
 @keyframes fluorescent-flicker {
   0% {
     opacity: 1;
@@ -333,14 +341,14 @@
     transform: scale(0.92);
   }
   100% {
-    opacity: 0;
-    filter: brightness(0) grayscale(1);
+    opacity: 0; /* Fully transparent */
+    filter: brightness(0) grayscale(1); /* Fully dark and grayscale */
     transform: scale(0.9);
-    pointer-events: none;
+    pointer-events: none; /* Ensure it's not clickable after disappearing */
   }
 }
 
-/* New staggered fade-out animation */
+/* Staggered fade-out for other elements */
 @keyframes staggered-fade-out {
   0% { opacity: 1; transform: translateY(0); pointer-events: auto; }
   100% { opacity: 0; transform: translateY(10px); pointer-events: none; }
@@ -513,7 +521,7 @@
   }
 
   .animate-app-shutdown {
-    animation: app-shutdown 2s ease-out forwards;
+    animation: app-shutdown 3s ease-out forwards; /* Longer duration for background effect */
   }
 
   .animate-staggered-fade-out {
