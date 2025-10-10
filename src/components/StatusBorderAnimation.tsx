@@ -90,8 +90,6 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
           <stop offset="70%" stopColor="#4B0082" />   {/* Indigo */}
           <stop offset="84%" stopColor="#8B00FF" />  {/* Violet */}
           <stop offset="100%" stopColor="#FF0000" />  {/* Red (for seamless loop) */}
-          <animate attributeName="x1" from="0%" to="-100%" dur="6s" repeatCount="indefinite" />
-          <animate attributeName="x2" from="100%" to="0%" dur="6s" repeatCount="indefinite" />
         </linearGradient>
         <linearGradient id="dyad-online-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={onlineColor} stopOpacity="0" />
