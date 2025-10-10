@@ -81,36 +81,32 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
           <stop offset="50%" stopColor="#A78BFA" stopOpacity="1" />
           <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="dyad-overclock-gradient" x1="0%" y1="0%" x2="100%" y2="0%"> {/* Horizontal gradient */}
-          <stop offset="0%" stopColor="#FF0000" />   {/* Red */}
-          <stop offset="14%" stopColor="#FF7F00" />   {/* Orange */}
-          <stop offset="28%" stopColor="#FFFF00" />   {/* Yellow */}
-          <stop offset="42%" stopColor="#00FF00" />   {/* Green */}
-          <stop offset="56%" stopColor="#0000FF" />   {/* Blue */}
-          <stop offset="70%" stopColor="#4B0082" />   {/* Indigo */}
-          <stop offset="84%" stopColor="#8B00FF" />  {/* Violet */}
-          <stop offset="100%" stopColor="#FF0000" />  {/* Red (for seamless loop) */}
+        <linearGradient id="dyad-overclock-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="20%" stopColor="#06b6d4" />
+          <stop offset="40%" stopColor="#6366f1" />
+          <stop offset="60%" stopColor="#ef4444" />
+          <stop offset="80%" stopColor="#f97316" />
+          <stop offset="100%" stopColor="#f59e0b" />
+          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-online-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={onlineColor} stopOpacity="0" />
           <stop offset="50%" stopColor={onlineColor} stopOpacity="1" />
           <stop offset="100%" stopColor={onlineColor} stopOpacity="0" />
-          <animate attributeName="x1" from="-100%" to="200%" dur="3s" repeatCount="indefinite" />
-          <animate attributeName="x2" from="0%" to="300%" dur="3s" repeatCount="indefinite" />
+          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-warning-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={warningColor} stopOpacity="0" />
           <stop offset="50%" stopColor={warningColor} stopOpacity="1" />
           <stop offset="100%" stopColor={warningColor} stopOpacity="0" />
-          <animate attributeName="x1" from="-100%" to="200%" dur="3s" repeatCount="indefinite" />
-          <animate attributeName="x2" from="0%" to="300%" dur="3s" repeatCount="indefinite" />
+          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-critical-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={criticalColor} stopOpacity="0" />
           <stop offset="50%" stopColor={criticalColor} stopOpacity="1" />
           <stop offset="100%" stopColor={criticalColor} stopOpacity="0" />
-          <animate attributeName="x1" from="-100%" to="200%" dur="3s" repeatCount="indefinite" />
-          <animate attributeName="x2" from="0%" to="300%" dur="3s" repeatCount="indefinite" />
+          {/* Removed animateTransform */}
         </linearGradient>
       </defs>
       {borderContent}
