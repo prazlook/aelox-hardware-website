@@ -1,10 +1,15 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Power } from 'lucide-react';
-import { useAppStatus } from '@/context/AppStatusContext';
+"use client";
 
-const AppStoppedScreen = () => {
-  const { startApp } = useAppStatus();
+import React from 'react';
+import { useAppStatus } from '@/context/AppStatusContext';
+import AnimatedPowerButton from '@/components/AnimatedPowerButton'; // Import du nouveau composant
+
+export const AppStoppedScreen = () => {
+  const { startApplication } = useAppStatus();
+
+  const handleStartApplication = () => {
+    startApplication();
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4">
@@ -13,16 +18,13 @@ const AppStoppedScreen = () => {
         <p className="text-xl text-gray-400">
           Tous les systèmes sont hors ligne.
         </p>
-        <Button
-          onClick={startApp}
-          className="mt-8 px-8 py-4 text-lg bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-        >
-          <Power className="w-6 h-6 mr-3" />
-          Démarrer l'Application
-        </Button>
+        <div className="mt-8">
+          <AnimatedPowerButton onClick={handleStartApplication} />
+        </div>
+        <p className="text-sm text-gray-500 mt-4">
+          Cliquez sur le bouton pour démarrer l'application.
+        </p>
       </div>
     </div>
   );
 };
-
-export default AppStoppedScreen;

@@ -1,70 +1,34 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect, useRef } from 'react';
+"use client";
+
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface AppStatusContextType {
   isAppRunning: boolean;
-  startApp: () => void;
-  stopApp: () => void;
-  triggerStartupAnimation: boolean; // New state to trigger animation
+  startApplication: () => void; // Ajout de cette ligne
+  stopApplication: () => void;
+  triggerStartupAnimation: boolean;
+  setTriggerStartupAnimation: (value: boolean) => void;
 }
 
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
 
-const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
-  if (typeof window !== 'undefined') {
-    const storedValue = localStorage.getItem(key);
-    if (storedValue !== null) {
-      try {
-        return JSON.parse(storedValue) as T;
-      } catch (e) {
-        console.error(`Error parsing localStorage key "${key}":`, e);
-        return defaultValue;
-      }
-    }
-  }
-  return defaultValue;
-};
-
 export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
-  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem<boolean>('isAppRunning', true));
+  const [isAppRunning, setIsAppRunning] = useState(false);
   const [triggerStartupAnimation, setTriggerStartupAnimation] = useState(false);
-  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    localStorage.setItem('isAppRunning', JSON.stringify(isAppRunning));
-  }, [isAppRunning]);
-
-  const startApp = () => {
+  const startApplication = () => {
     setIsAppRunning(true);
-    // Trigger animation only if it's not already running
-    if (!triggerStartupAnimation) {
-      setTriggerStartupAnimation(true);
-      // Reset trigger after a duration longer than the longest animation + delay
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
-      }
-      animationTimeoutRef.current = setTimeout(() => {
-        setTriggerStartupAnimation(false);
-      }, 3500); // Increased duration to accommodate new animations
-    }
+    setTriggerStartupAnimation(true); // Déclenche l'animation au démarrage
+    // Réinitialise l'animation après un court délai pour permettre de la re-déclencher
+    setTimeout(() => setTriggerStartupAnimation(false), 2000); 
   };
 
-  const stopApp = () => {
+  const stopApplication = () => {
     setIsAppRunning(false);
-    // Clear any pending animation trigger if app is stopped
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
-      animationTimeoutRef.current = null;
-    }
-    setTriggerStartupAnimation(false); // Ensure animation is not triggered on next start unless explicitly called
   };
 
   return (
-    <AppStatusContext.Provider value={{
-      isAppRunning,
-      startApp,
-      stopApp,
-      triggerStartupAnimation,
-    }}>
+    <AppStatusContext.Provider value={{ isAppRunning, startApplication, stopApplication, triggerStartupAnimation, setTriggerStartupAnimation }}>
       {children}
     </AppStatusContext.Provider>
   );

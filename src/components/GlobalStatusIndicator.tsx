@@ -1,322 +1,120 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { ASIC } from './ASICStatusCard';
-import { ASIC_STATUS_COLORS } from '@/config/status-colors';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
-export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
-
+// Définition de l'interface pour les props du GlobalStatusIndicator
 interface GlobalStatusIndicatorProps {
-  status: StatusLevel;
-  hashrate: number;
-  asics: ASIC[];
+  status: 'online' | 'offline' | 'warning';
+  hashrate: string;
+  asics: number;
   isOverclockedMajority: boolean;
-  className?: string;
-  style?: React.CSSProperties;
 }
 
-const statusConfig = {
-  optimal: { color: '#39FF14' }, // Neon Green
-  eleve: { color: '#FFD700' }, // Gold/Yellow
-  surcharge: { color: '#FF0000' }, // Red
-  error: { color: '#FF0000' }, // Red
-  offline: { color: '#9ca3af' }, // Gray
-};
-
-const BAR_COUNT = 100;
-const PARTICLE_COUNT = 20;
-const WAVEFORM_COUNT = 4;
-const SPOKE_COUNT = 6;
-
-const VIEWBOX_WIDTH = 800;
-const VIEWBOX_HEIGHT = 200;
-const CIRCLE_CX = VIEWBOX_WIDTH / 2;
-const CIRCLE_CY = VIEWBOX_HEIGHT / 2;
-const RADIUS = 70;
-
-export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority, className, style }: GlobalStatusIndicatorProps) => {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
-  const [rotation, setRotation] = useState(0);
-  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
-
-  const [dynamicValues, setDynamicValues] = useState({
-    barHeights: Array.from({ length: BAR_COUNT }, () => Math.random() * 5),
-    waveformPointsArray: [] as string[],
-    ecgPath: '',
-    particles: [] as { x: number, y: number, size: number, tx: number, ty: number, delay: number }[],
-    orbRadius: 0,
-    orbOpacity: 0,
-  });
-
-  const { color } = statusConfig[status];
+export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMajority }: GlobalStatusIndicatorProps) => {
+  const { triggerStartupAnimation } = useAppStatus();
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!svgRef.current) return;
-      const svg = svgRef.current;
-      const rect = svg.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const svgX = (x / rect.width) * VIEWBOX_WIDTH;
-      const svgY = (y / rect.height) * VIEWBOX_HEIGHT;
-      setMousePosition({ x: svgX, y: svgY });
-    };
-
-    const handleMouseLeave = () => {
-      setMousePosition(null);
-    };
-
-    const currentSvg = svgRef.current;
-    currentSvg?.addEventListener('mousemove', handleMouseMove);
-    currentSvg?.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      currentSvg?.removeEventListener('mousemove', handleMouseMove);
-      currentSvg?.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
-
-  useEffect(() => {
-    setDynamicValues(prev => ({
-      ...prev,
-      particles: Array.from({ length: PARTICLE_COUNT }, () => ({
-        x: Math.random() * VIEWBOX_WIDTH,
-        y: Math.random() * VIEWBOX_HEIGHT,
-        size: Math.random() * 1.5 + 0.5,
-        tx: (Math.random() - 0.5) * 120,
-        ty: (Math.random() - 0.5) * 120,
-        delay: Math.random() * -10,
-      }))
-    }));
-  }, []);
-
-  useEffect(() => {
-    if (status === 'offline') {
-      return;
+    if (triggerStartupAnimation) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 2000); // Durée de l'animation des barres
+      return () => clearTimeout(timer);
     }
+  }, [triggerStartupAnimation]);
 
-    const animationInterval = isOverclockedMajority ? 60 : 120;
+  const barCount = 30; // Nombre de barres
+  const radius = 60; // Rayon du cercle des barres
+  const indicatorSize = 150; // Taille totale du SVG
+  const centerX = indicatorSize / 2;
+  const centerY = indicatorSize / 2;
 
-    const intervalId = setInterval(() => {
-      const intensity = Math.min(hashrate / 120, 1.2);
-      setRotation(prev => (prev + (isOverclockedMajority ? 1.5 : 0.5)) % 360);
-
-      const newBarHeights = Array.from({ length: BAR_COUNT }, () => {
-        const baseHeight = Math.random() * (15 + 50 * intensity);
-        return Math.random() > 0.92 ? baseHeight * 3 : baseHeight;
-      });
-
-      const newWaveformPointsArray = [];
-      for (let j = 0; j < WAVEFORM_COUNT; j++) {
-        const waveformRadius = RADIUS * (0.3 + j * 0.2);
-        const waveformAmplitude = (3 + 8 * intensity) / (j + 1);
-        const points = Array.from({ length: 50 }, (_, i) => {
-          const angle = (i / 49) * Math.PI * 2;
-          const r = waveformRadius + (Math.random() - 0.5) * waveformAmplitude;
-          const x = CIRCLE_CX + Math.cos(angle) * r;
-          const y = CIRCLE_CY + Math.sin(angle) * r;
-          return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
-        }).join(' ') + ' Z';
-        newWaveformPointsArray.push(points);
-      }
-      
-      let path = `M -200 ${CIRCLE_CY}`;
-      const ecgAmplitude = 5 + 25 * intensity;
-      for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
-        let y = CIRCLE_CY;
-        if (Math.random() > 0.96) {
-            y += (Math.random() - 0.5) * ecgAmplitude * 3.5;
-        } else {
-            y += (Math.random() - 0.5) * ecgAmplitude * 0.5;
-        }
-        path += ` L ${i} ${y.toFixed(2)}`;
-      }
-
-      const time = Date.now() / (isOverclockedMajority ? 300 : 500);
-      const newOrbRadius = 15 + (Math.sin(time) * 5 + 5) * intensity;
-      const newOrbOpacity = 0.4 + (Math.sin(time * 0.7) * 0.2 + 0.2) * intensity;
-
-      setDynamicValues(prev => ({
-        ...prev,
-        barHeights: newBarHeights,
-        waveformPointsArray: newWaveformPointsArray,
-        ecgPath: path,
-        orbRadius: newOrbRadius,
-        orbOpacity: newOrbOpacity,
-      }));
-    }, animationInterval);
-
-    return () => clearInterval(intervalId);
-  }, [hashrate, status, isOverclockedMajority]);
-
-  const bars = useMemo(() => {
-    const asicCount = asics.length;
-    if (asicCount === 0) return [];
-
-    return dynamicValues.barHeights.map((baseHeight, i) => {
-      const angleDegrees = (i / BAR_COUNT) * 360;
-      
-      const asicIndex = i % asicCount;
-      const asicStatus = asics[asicIndex]?.status || 'offline';
-      let barColor = isOverclockedMajority ? `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, 70%)` : ASIC_STATUS_COLORS[asicStatus];
-      let totalHeight = baseHeight;
-
-      if (mousePosition) {
-        const dx = mousePosition.x - CIRCLE_CX;
-        const dy = mousePosition.y - CIRCLE_CY;
-        const mouseAngleDegrees = (Math.atan2(dy, dx) * 180 / Math.PI) + 90;
-        const normalizedMouseAngle = (mouseAngleDegrees + 360) % 360;
-
-        let angleDiff = Math.abs(normalizedMouseAngle - angleDegrees);
-        if (angleDiff > 180) angleDiff = 360 - angleDiff;
-
-        const maxEffectAngle = 45;
-        if (angleDiff < maxEffectAngle) {
-          const proximity = 1 - (angleDiff / maxEffectAngle);
-          totalHeight += 40 * Math.pow(proximity, 2);
-          if (isOverclockedMajority) {
-            barColor = `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, ${70 + 20 * proximity}%)`;
-          } else {
-            barColor = color; // Use the main status color for highlighting
-          }
-        }
-      }
-
-      return (
-        <rect
-          key={i}
-          x={CIRCLE_CX - 0.75}
-          y={CIRCLE_CY - RADIUS - totalHeight}
-          width="1.5"
-          height={totalHeight}
-          transform={`rotate(${angleDegrees} ${CIRCLE_CX} ${CIRCLE_CY})`}
-          fill={barColor}
-          style={{ transition: 'height 0.07s ease-out, y 0.07s ease-out, fill 0.1s linear', animationDelay: triggerStartupAnimation ? `${1.6 + i * 0.015}s` : '0s' }}
-          className={cn(triggerStartupAnimation && "animate-global-indicator-bars-grow")}
-        />
-      );
-    });
-  }, [dynamicValues.barHeights, asics, mousePosition, isOverclockedMajority, color, triggerStartupAnimation]);
-
-  const strokeColor = isOverclockedMajority ? "url(#overclock-gradient)" : "currentColor";
+  const getStatusColor = (currentStatus: string) => {
+    switch (currentStatus) {
+      case 'online':
+        return 'text-green-500';
+      case 'warning':
+        return 'text-yellow-500';
+      case 'offline':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
 
   return (
-    <svg ref={svgRef} viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} width="100%" height="100%" className={cn("overflow-visible", className)} style={style} preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <linearGradient id="overclock-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#ffb3ba" />
-          <stop offset="20%" stopColor="#ffdfba" />
-          <stop offset="40%" stopColor="#ffffba" />
-          <stop offset="60%" stopColor="#baffc9" />
-          <stop offset="80%" stopColor="#bae1ff" />
-          <stop offset="100%" stopColor="#e0baff" />
-          <animate attributeName="x1" from="-100%" to="100%" dur="8s" repeatCount="indefinite" />
-          <animate attributeName="x2" from="0%" to="200%" dur="8s" repeatCount="indefinite" />
-        </linearGradient>
-        <radialGradient id="orb-gradient">
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.8" />
-          <stop offset="70%" stopColor="currentColor" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      
-      <g 
-        style={{ transition: 'color 0.5s ease, filter 0.3s ease-out' }} 
-        color={color} 
-        opacity={status === 'offline' ? 0.5 : 1}
-        filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
-      >
-        {/* Particles - appear first */}
-        <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.1s' } : {}}>
-          {status !== 'offline' && dynamicValues.particles.map((p, i) => (
-            <rect
-              key={i}
-              x={p.x}
-              y={p.y}
-              width={p.size}
-              height={p.size}
-              fill={strokeColor}
-              className="animate-float-particle"
-              style={{
-                '--tx': `${p.tx}px`,
-                '--ty': `${p.ty}px`,
-                animationDelay: `${p.delay}s`,
-              } as React.CSSProperties}
-              opacity="0.7"
-            />
-          ))}
-        </g>
+    <div
+      className={cn(
+        "fixed bottom-0 right-0 m-6 p-4 bg-theme-card rounded-lg shadow-lg flex items-center space-x-4 z-50",
+        triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
+      )}
+      style={triggerStartupAnimation ? { animationDelay: '1.5s' } : {}}
+    >
+      <div className="relative" style={{ width: indicatorSize, height: indicatorSize }}>
+        {/* Cercle central */}
+        <svg className="absolute inset-0" width={indicatorSize} height={indicatorSize} viewBox={`0 0 ${indicatorSize} ${indicatorSize}`}>
+          <circle
+            cx={centerX}
+            cy={centerY}
+            r={radius - 10}
+            fill="none"
+            stroke="rgba(255,255,255,0.1)"
+            strokeWidth="2"
+          />
+          {/* Barres externes */}
+          {Array.from({ length: barCount }).map((_, i) => {
+            const angle = (i / barCount) * 2 * Math.PI;
+            const x1 = centerX + (radius - 5) * Math.cos(angle);
+            const y1 = centerY + (radius - 5) * Math.sin(angle);
+            const x2 = centerX + (radius + 10) * Math.cos(angle);
+            const y2 = centerY + (radius + 10) * Math.sin(angle);
 
-        {/* Orb - appears second */}
-        <circle
-          cx={CIRCLE_CX}
-          cy={CIRCLE_CY}
-          r={dynamicValues.orbRadius}
-          fill="url(#orb-gradient)"
-          opacity={dynamicValues.orbOpacity}
-          style={{ transition: 'r 0.1s ease-out, opacity 0.1s ease-out', animationDelay: triggerStartupAnimation ? '0.3s' : '0s' }}
-          className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")}
-        />
-
-        {/* Waveforms (ronds internes à externes) - appear third */}
-        {dynamicValues.waveformPointsArray.map((points, i) => (
-            <path
+            return (
+              <line
                 key={i}
-                d={points}
-                fill="none"
-                stroke={strokeColor}
-                strokeWidth={i === 0 ? "2" : i === 1 ? "1" : "0.5"}
-                opacity={1 - i * 0.25}
-                filter={i === 0 ? "url(#glow)" : "none"}
-                style={{ transition: 'd 0.07s ease-out, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? `${0.5 + i * 0.1}s` : '0s' }}
-                className={cn(triggerStartupAnimation && "animate-global-indicator-waveform-draw")}
-            />
-        ))}
-        
-        {/* Spokes (traits externes qui se développent en cercle) - appear fourth */}
-        <g style={{ transition: 'transform 0.1s linear' }}>
-          {Array.from({ length: SPOKE_COUNT }).map((_, i) => (
-            <line
-              key={i}
-              x1={CIRCLE_CX}
-              y1={CIRCLE_CY}
-              x2={CIRCLE_CX}
-              y2={CIRCLE_CY - RADIUS * 1.5}
-              stroke={strokeColor}
-              strokeWidth="1"
-              opacity="0.3"
-              transform={`rotate(${(360 / SPOKE_COUNT) * i} ${CIRCLE_CX} ${CIRCLE_CY})`}
-              style={{ 
-                '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
-                animationDelay: triggerStartupAnimation ? `${1.0 + i * 0.05}s` : '0s'
-              } as React.CSSProperties}
-              className={cn(triggerStartupAnimation && "animate-global-indicator-spokes-rotate-in")}
-            />
-          ))}
-        </g>
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="url(#gradient-bar)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                className={cn(
+                  "origin-center",
+                  isAnimating ? "animate-global-indicator-bars-grow" : ""
+                )}
+                style={isAnimating ? { animationDelay: `${1.6 + i * 0.015}s` } : {}}
+              />
+            );
+          })}
+          {/* Dégradé pour les barres */}
+          <defs>
+            <linearGradient id="gradient-bar" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#00FFFF" />
+              <stop offset="100%" stopColor="#FF00FF" />
+            </linearGradient>
+          </defs>
+        </svg>
+        {/* Icône de statut au centre */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className={cn("w-12 h-12 rounded-full flex items-center justify-center", getStatusColor(status))}>
+            {status === 'online' && <span className="text-2xl">✓</span>}
+            {status === 'warning' && <span className="text-2xl">!</span>}
+            {status === 'offline' && <span className="text-2xl">✗</span>}
+          </div>
+        </div>
+      </div>
 
-        {/* Bars (petits traits externes) - appear fifth */}
-        <g opacity="0.6">{bars}</g> {/* Bars already have their own animation class */}
-
-        {/* ECG Path (ligne horizontale) - appears last */}
-        <path
-          d={dynamicValues.ecgPath}
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="2"
-          filter="url(#glow)"
-          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '2.0s' : '0s' }}
-          className={cn(status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on', triggerStartupAnimation && "animate-global-indicator-ecg-center-expand")}
-        />
-      </g>
-    </svg>
+      {/* Informations de statut */}
+      <div className="flex flex-col space-y-1">
+        <span className="text-lg font-semibold text-theme-text-primary">Statut: <span className={getStatusColor(status)}>{status.toUpperCase()}</span></span>
+        <span className="text-sm text-theme-text-secondary">Hashrate: {hashrate}</span>
+        <span className="text-sm text-theme-text-secondary">ASICs actifs: {asics}</span>
+        <span className="text-sm text-theme-text-secondary">Overclock: {isOverclockedMajority ? 'Majorité' : 'Non'}</span>
+      </div>
+    </div>
   );
 };
