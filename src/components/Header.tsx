@@ -16,7 +16,9 @@ export const Header = () => {
   const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
 
   return (
-    <header className="bg-theme-card h-16 flex items-center justify-between px-6">
+    <header className={cn("bg-theme-card h-16 flex items-center justify-between px-6 fixed bottom-0 left-0 right-0 z-50", triggerStartupAnimation ? "animate-startup-fade-in-scale" : "")}
+      style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
+    >
       <div className="flex items-center space-x-6">
         <Stat 
           icon={Wifi} 
