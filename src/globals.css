@@ -373,21 +373,13 @@
 
 /* New hashrate glitch animation */
 @keyframes hashrate-glitch-keyframes {
-  0%, 100% {
-    stroke-dasharray: 42 0; /* Solid line (approximate path length 42) */
+  0% {
+    stroke-dasharray: 0 8 34; /* 8-unit gap at the very beginning, rest is solid */
     stroke-dashoffset: 0;
   }
-  5% { /* Brief glitch 1 */
-    stroke-dasharray: 10 5 10 5 10 5; /* Introduce gaps */
-    stroke-dashoffset: 0;
-  }
-  7% { /* Brief glitch 2 - shift gaps */
-    stroke-dasharray: 10 5 10 5 10 5;
-    stroke-dashoffset: 10;
-  }
-  9% { /* Return to solid */
-    stroke-dasharray: 42 0;
-    stroke-dashoffset: 0;
+  100% {
+    stroke-dasharray: 0 8 34;
+    stroke-dashoffset: -42; /* Move the pattern by one full path length to the left */
   }
 }
 
