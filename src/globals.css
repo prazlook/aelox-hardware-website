@@ -44,12 +44,6 @@
   }
 }
 
-@keyframes ecg-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 @keyframes zap-trace {
   to {
     stroke-dashoffset: 0;
@@ -377,14 +371,69 @@
   }
 }
 
+/* New hashrate glitch animation */
+@keyframes hashrate-glitch {
+  0%, 100% {
+    stroke-dasharray: 42 0; /* Solid line */
+    stroke-dashoffset: 0;
+  }
+  10% {
+    stroke-dasharray: 10 5 10 5 10 5; /* Introduce gaps */
+    stroke-dashoffset: 0;
+  }
+  12% {
+    stroke-dasharray: 10 5 10 5 10 5;
+    stroke-dashoffset: 10; /* Shift gaps */
+  }
+  14% {
+    stroke-dasharray: 42 0; /* Back to solid */
+    stroke-dashoffset: 0;
+  }
+  20% {
+    stroke-dasharray: 5 15 5 15 5; /* Different gaps */
+    stroke-dashoffset: 0;
+  }
+  22% {
+    stroke-dasharray: 5 15 5 15 5;
+    stroke-dashoffset: 15;
+  }
+  24% {
+    stroke-dasharray: 42 0;
+    stroke-dashoffset: 0;
+  }
+  30% {
+    stroke-dasharray: 2 10 2 10 2 10 2 10;
+    stroke-dashoffset: 0;
+  }
+  32% {
+    stroke-dasharray: 2 10 2 10 2 10 2 10;
+    stroke-dashoffset: 5;
+  }
+  34% {
+    stroke-dasharray: 42 0;
+    stroke-dashoffset: 0;
+  }
+  40% {
+    stroke-dasharray: 15 5 10 12;
+    stroke-dashoffset: 0;
+  }
+  42% {
+    stroke-dasharray: 15 5 10 12;
+    stroke-dashoffset: 10;
+  }
+  44% {
+    stroke-dasharray: 42 0;
+    stroke-dashoffset: 0;
+  }
+  /* Keep solid for the rest of the time */
+  45%, 100% {
+    stroke-dasharray: 42 0;
+    stroke-dashoffset: 0;
+  }
+}
+
 
 @layer components {
-  .animate-ecg-draw {
-    stroke-dasharray: 42;
-    stroke-dashoffset: 42;
-    animation: ecg-draw 2s ease-in-out infinite;
-  }
-
   .animate-zap-trace polygon {
     stroke-dasharray: 60;
     stroke-dashoffset: 60;
@@ -412,8 +461,6 @@
   }
 
   .animate-draw-border {
-    stroke-dasharray: 500;
-    stroke-dashoffset: 500;
     animation: draw-border 0.5s ease-out forwards;
     animation-delay: inherit;
   }

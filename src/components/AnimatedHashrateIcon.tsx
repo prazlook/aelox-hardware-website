@@ -13,11 +13,11 @@ export const AnimatedHashrateIcon = ({ className, isOverclockedMajority, ...prop
     viewBox="0 0 24 24"
     fill="none"
     stroke={isOverclockedMajority ? "url(#overclock-hashrate-gradient)" : "#00F0FF"}
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
-    className={cn("animate-ecg-draw", className)}
+    className={cn("animate-hashrate-glitch", className)}
   >
     <defs>
       {isOverclockedMajority && (
