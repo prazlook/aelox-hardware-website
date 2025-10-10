@@ -14,7 +14,6 @@ const AppStoppedScreen = () => {
           className="mt-8 px-8 py-4 text-lg bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
         >
           <Power className="w-6 h-6 mr-3" />
-          Démarrer l'Application
         </Button>
       </div>
     </div>
