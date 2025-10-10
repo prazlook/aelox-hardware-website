@@ -12,6 +12,7 @@ import { showError, showSuccess } from '@/utils/toast';
 import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusIndicator';
 import { useDevOptions } from '@/context/DevOptionsContext';
 import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
+import { cn } from '@/lib/utils'; // Import cn for conditional classNames
 
 const playSound = (file: File | null) => {
   if (file) {
@@ -28,7 +29,7 @@ const Index = () => {
   const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
   const { preventOverheat, preventErrors, startupDelay, shutdownDelay } = useDevOptions();
-  const { triggerStartupAnimation } = useAppStatus(); // Get animation trigger
+  const { triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus(); // Get animation trigger
   const prevAsicsRef = useRef(asics);
   const maxTemp = 85;
   const criticalTemp = 100;
@@ -444,7 +445,10 @@ const Index = () => {
               onToggleFan={handleToggleFan}
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
-              className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
+              className={cn(
+                triggerStartupAnimation && "animate-startup-fade-in-scale",
+                triggerShutdownAnimation && "animate-fluorescent-flicker" // Apply flicker here
+              )}
               style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
             />
           ))}
