@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import PowerButton from '@/components/PowerButton';
+import PowerButton from '@/components/PowerButton'; // Revert to using the alias
 import { useAppStatus } from '@/context/AppStatusContext';
 
 const AppStoppedScreen: React.FC = () => {
