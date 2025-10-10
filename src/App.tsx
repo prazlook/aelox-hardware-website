@@ -1,15 +1,24 @@
-"use client";
-
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
-import { SoundProvider } from "./context/SoundContext";
-import { Header } from "./components/Header";
-import { Sidebar } from "./components/Sidebar";
-import { GlobalStatusIndicator } from "./components/GlobalStatusIndicator";
-import IndexPage from "./pages/Index";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import Layout from "./components/Layout";
+import WalletPage from "./pages/Wallet";
+import ConfigurationPage from "./pages/Configuration";
+import StatisticsPage from "./pages/Statistics";
+import AsicManagementPage from "./pages/AsicManagement";
 import DevOptionsPage from "./pages/DevOptions";
-import { AppStoppedScreen } from "./pages/AppStoppedScreen";
+import AppStoppedScreen from "./pages/AppStoppedScreen"; // Import the new component
+import { SoundProvider } from "./context/SoundContext";
+import { AsicProvider } from "./context/AsicContext";
+import { AnimationProvider } from "./context/AnimationContext";
+import { DevOptionsProvider } from "./context/DevOptionsContext";
+import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext"; // Import AppStatusProvider and useAppStatus
+
+const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { isAppRunning } = useAppStatus();
@@ -19,39 +28,40 @@ const AppContent = () => {
   }
 
   return (
-    <div className="flex h-screen bg-theme-dark text-theme-text-primary">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 p-6 pt-20 overflow-auto"> {/* Added pt-20 to account for fixed header */}
-          <Routes>
-            <Route path="/" element={<IndexPage />} />
-            <Route path="/dev-options" element={<DevOptionsPage />} />
-            {/* Add other routes here */}
-          </Routes>
-        </main>
-        {/* Passage des props requises au GlobalStatusIndicator */}
-        <GlobalStatusIndicator 
-          status="online" // Exemple de valeur
-          hashrate="1.2 TH/s" // Exemple de valeur
-          asics={12} // Exemple de valeur
-          isOverclockedMajority={false} // Exemple de valeur
-        />
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Index />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/asic-management" element={<AsicManagementPage />} />
+          <Route path="/configuration" element={<ConfigurationPage />} />
+          <Route path="/dev-options" element={<DevOptionsPage />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
-function App() {
-  return (
-    <Router>
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
       <SoundProvider>
-        <AppStatusProvider>
-          <AppContent />
-        </AppStatusProvider>
+        <AsicProvider>
+          <AnimationProvider>
+            <DevOptionsProvider>
+              <AppStatusProvider> {/* Wrap the entire app content with AppStatusProvider */}
+                <Toaster />
+                <Sonner />
+                <AppContent />
+              </AppStatusProvider>
+            </DevOptionsProvider>
+          </AnimationProvider>
+        </AsicProvider>
       </SoundProvider>
-    </Router>
-  );
-}
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

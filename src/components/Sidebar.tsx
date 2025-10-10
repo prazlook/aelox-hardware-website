@@ -1,124 +1,81 @@
-"use client";
+import { NavLink } from "react-router-dom";
+import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code, PowerOff } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useAppStatus } from "@/context/AppStatusContext"; // Import useAppStatus
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Home, Settings, Power, BarChart2, Cpu, HardDrive, Network, Bell, Info, ChevronRight, ChevronLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAppStatus } from '@/context/AppStatusContext';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+const navItems = [
+  { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },
+  { to: "/statistics", icon: BarChart2, label: "Statistiques" },
+  { to: "/wallet", icon: Wallet, label: "Portefeuille" },
+  { to: "/asic-management", icon: Server, label: "Gestion ASICs" },
+  { to: "/configuration", icon: Settings, label: "Configuration" },
+  { to: "/dev-options", icon: Code, label: "Options Dev" },
+];
 
-interface SidebarLinkProps {
-  to: string;
-  icon: React.ElementType;
-  label: string;
-  isCollapsed: boolean;
-  delay: number;
-}
-
-const SidebarLink = ({ to, icon: Icon, label, isCollapsed, delay }: SidebarLinkProps) => {
-  const { triggerStartupAnimation } = useAppStatus();
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Link
-            to={to}
-            className={cn(
-              "flex items-center h-10 px-3 rounded-md text-theme-text-secondary hover:bg-theme-hover hover:text-theme-text-primary transition-colors duration-200",
-              isCollapsed ? "justify-center" : "",
-              triggerStartupAnimation ? "animate-startup-slide-in-left" : ""
-            )}
-            style={triggerStartupAnimation ? { animationDelay: `${delay}s` } : {}}
-          >
-            <Icon className={cn("w-5 h-5", !isCollapsed && "mr-3")} />
-            {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
-          </Link>
-        </TooltipTrigger>
-        {isCollapsed && <TooltipContent side="right">{label}</TooltipContent>}
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
-
-export const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showStopButton, setShowStopButton] = useState(false);
-  const { stopApplication, triggerStartupAnimation } = useAppStatus(); // Correction ici: stopApp -> stopApplication
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  return (
-    <aside
+const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay: number }) => (
+  <NavLink
+    to={to}
+    end
+    className={({ isActive }) =>
+      cn(
+        "group relative flex items-center h-12 p-3 rounded-lg text-theme-text-secondary transition-colors duration-200 ease-in-out",
+        "hover:bg-theme-card hover:text-white",
+        isActive && "bg-theme-accent/20 text-theme-accent",
+        "animate-startup-slide-in-left"
+      )
+    }
+    style={{ animationDelay: `${delay}s` }}
+  >
+    <Icon className="w-6 h-6 transition-transform duration-200 group-hover:scale-125" />
+    <span
       className={cn(
-        "bg-theme-card h-screen flex flex-col border-r border-theme-border py-4 transition-all duration-300 ease-in-out z-40",
-        isCollapsed ? "w-20 items-center" : "w-64 px-4"
+        "absolute left-full ml-4 px-3 py-2 rounded-md bg-theme-card text-white pointer-events-none z-10",
+        "font-medium whitespace-nowrap",
+        "opacity-0 transition-opacity",
+        "group-hover:opacity-100 group-hover:animate-typewriter group-hover:typewriter-cursor"
       )}
     >
-      <div className={cn("flex items-center mb-8", isCollapsed ? "justify-center" : "justify-between")}>
-        {!isCollapsed && (
-          <h2
-            className={cn(
-              "text-2xl font-bold text-theme-text-primary",
-              triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
-            )}
-            style={triggerStartupAnimation ? { animationDelay: '0.1s' } : {}}
-          >
-            MineOS
-          </h2>
+      {label}
+    </span>
+  </NavLink>
+);
+
+export const Sidebar = () => {
+  const [showStopButton, setShowStopButton] = useState(false);
+  const { stopApp, triggerStartupAnimation } = useAppStatus(); // Get animation trigger
+
+  return (
+    <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
+      <div
+        className={cn(
+          "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
+          triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className={cn(
-            "text-theme-text-secondary hover:bg-theme-hover hover:text-theme-text-primary",
-            isCollapsed ? "" : "ml-auto",
-            triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
-          )}
-          style={triggerStartupAnimation ? { animationDelay: '0.2s' } : {}}
-        >
-          {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-        </Button>
+        style={triggerStartupAnimation ? { animationDelay: '0s' } : {}}
+        onMouseEnter={() => setShowStopButton(true)}
+        onMouseLeave={() => setShowStopButton(false)}
+      >
+        <Activity className="w-8 h-8 text-theme-cyan" />
+        {showStopButton && (
+          <Button
+            size="icon"
+            variant="destructive"
+            className="absolute -right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full opacity-0 animate-fade-in-slide-up"
+            style={{ animationDelay: '0.1s' }}
+            onClick={stopApp}
+            aria-label="Arrêter l'application"
+          >
+            <PowerOff className="w-4 h-4" />
+          </Button>
+        )}
       </div>
-
-      <nav className="flex-1 space-y-2">
-        <SidebarLink to="/" icon={Home} label="Accueil" isCollapsed={isCollapsed} delay={0.3} />
-        <SidebarLink to="/dashboard" icon={BarChart2} label="Tableau de bord" isCollapsed={isCollapsed} delay={0.4} />
-        <SidebarLink to="/asics" icon={Cpu} label="ASICs" isCollapsed={isCollapsed} delay={0.5} />
-        <SidebarLink to="/storage" icon={HardDrive} label="Stockage" isCollapsed={isCollapsed} delay={0.6} />
-        <SidebarLink to="/network" icon={Network} label="Réseau" isCollapsed={isCollapsed} delay={0.7} />
-        <SidebarLink to="/notifications" icon={Bell} label="Notifications" isCollapsed={isCollapsed} delay={0.8} />
-        <SidebarLink to="/settings" icon={Settings} label="Paramètres" isCollapsed={isCollapsed} delay={0.9} />
-        <SidebarLink to="/dev-options" icon={Info} label="Options Dev" isCollapsed={isCollapsed} delay={1.0} />
+      <nav className="flex flex-col space-y-2">
+        {navItems.map((item, index) => (
+          <NavItem key={item.to} {...item} delay={0.2 + index * 0.1} />
+        ))}
       </nav>
-
-      <div className={cn("mt-auto pt-4 border-t border-theme-border", isCollapsed ? "px-0" : "px-3")}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                className={cn(
-                  "w-full flex items-center justify-center h-10 rounded-md text-red-500 hover:bg-red-500/20 hover:text-red-400 transition-colors duration-200",
-                  isCollapsed ? "px-0" : "px-3",
-                  triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""
-                )}
-                style={triggerStartupAnimation ? { animationDelay: '1.1s' } : {}}
-                onClick={stopApplication}
-                onMouseEnter={() => setShowStopButton(true)}
-                onMouseLeave={() => setShowStopButton(false)}
-              >
-                <Power className={cn("w-5 h-5", !isCollapsed && "mr-3")} />
-                {!isCollapsed && <span className="whitespace-nowrap">Arrêter l'application</span>}
-              </Button>
-            </TooltipTrigger>
-            {isCollapsed && <TooltipContent side="right">Arrêter l'application</TooltipContent>}
-          </Tooltip>
-        </TooltipProvider>
-      </div>
     </aside>
   );
 };
