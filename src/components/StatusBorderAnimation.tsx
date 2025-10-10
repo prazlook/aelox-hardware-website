@@ -24,8 +24,9 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
   const criticalColor = '#EF4444';
   const criticalMutedColor = '#F97316';
 
+  // Conditional class for border animation
   const borderAnimationClasses = cn(
-    triggerStartupAnimation && "animate-asic-border-draw-in"
+    triggerStartupAnimation ? "animate-asic-border-draw-in" : "animate-futuristic-border-flow"
   );
   const borderAnimationStyle = triggerStartupAnimation ? { animationDelay: `${startupDelay}s` } : {};
 
@@ -43,7 +44,7 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
         strokeWidth="3"
         filter="url(#dyad-glow)"
         className={borderAnimationClasses} // Apply here
-        style={borderAnimationStyle as React.CSSProperties} // Apply here, removed transformOrigin
+        style={borderAnimationStyle as React.CSSProperties} // Apply here
       />
     </>
   );
