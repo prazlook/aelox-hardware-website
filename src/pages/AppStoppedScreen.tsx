@@ -3,13 +3,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PowerButton from '@/components/PowerButton';
+import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
 
 const AppStoppedScreen: React.FC = () => {
   const navigate = useNavigate();
+  const { startApp } = useAppStatus(); // Get startApp function from context
 
   const handleStartApplication = () => {
     console.log('Starting application...');
-    navigate('/dashboard');
+    startApp(); // Call startApp from context
+    navigate('/'); // Navigate to the root path
   };
 
   return (
