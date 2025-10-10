@@ -445,7 +445,7 @@ const Index = () => {
           value={`${summary.activeAsics} / ${summary.totalAsics}`} 
           unit="" 
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
-          iconColorClass="text-blue-500" // Updated prop and value
+          iconColorClass="text-cyan-400" // Updated to match AnimatedZapIcon
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
