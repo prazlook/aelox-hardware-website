@@ -269,6 +269,18 @@
   }
 }
 
+/* New keyframes for the power button glow */
+@keyframes pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px var(--theme-cyan)) drop-shadow(0 0 20px var(--theme-cyan));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 5px var(--theme-cyan)) drop-shadow(0 0 10px var(--theme-cyan));
+    opacity: 0.7;
+  }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -433,6 +445,12 @@
     stroke-dashoffset: 500;
     animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
     opacity: 0;
+  }
+
+  /* Custom class for the power button glow */
+  .power-button-glow {
+    filter: drop-shadow(0 0 10px var(--theme-cyan)) drop-shadow(0 0 20px var(--theme-cyan));
+    animation: pulse-glow 2s ease-in-out infinite;
   }
 }
 
