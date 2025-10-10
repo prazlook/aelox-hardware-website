@@ -23,8 +23,11 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
   const warningMutedColor = '#F59E0B';
   const criticalColor = '#EF4444';
   const criticalMutedColor = '#F97316';
-  const idleColor = '#A855F7';
-  const busyColor = '#A0AEC0';
+
+  const borderAnimationClasses = cn(
+    triggerStartupAnimation && "animate-asic-border-draw-in"
+  );
+  const borderAnimationStyle = triggerStartupAnimation ? { animationDelay: `${startupDelay}s` } : {};
 
   const renderBorder = (gradientId: string, mutedColor: string) => (
     <>
@@ -39,8 +42,8 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
         stroke={`url(#${gradientId})`}
         strokeWidth="3"
         filter="url(#dyad-glow)"
-        className={cn(triggerStartupAnimation && "animate-asic-border-draw-in")} // Only apply draw-in on startup
-        style={triggerStartupAnimation ? { animationDelay: `${startupDelay}s` } : {}} // Apply delay only for startup
+        className={borderAnimationClasses} // Apply here
+        style={borderAnimationStyle as React.CSSProperties} // Apply here, removed transformOrigin
       />
     </>
   );
@@ -53,13 +56,13 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
   } else if (status === 'online') {
     borderContent = renderBorder('dyad-online-gradient', onlineMutedColor);
   } else if (status === 'overclocked') {
-    borderContent = renderBorder('dyad-overclock-gradient', onlineMutedColor); // Use a gradient for overclocked
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="url(#dyad-overclock-gradient)" strokeWidth="3" className={borderAnimationClasses} style={borderAnimationStyle as React.CSSProperties} />;
   } else if (status === 'idle') {
-    borderContent = renderBorder('dyad-idle-gradient', idleColor);
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className={cn("animate-idle-pulse", borderAnimationClasses)} filter="url(#dyad-glow)" style={borderAnimationStyle as React.CSSProperties} />;
   } else if (isBusy) {
-    borderContent = renderBorder('dyad-busy-gradient', busyColor);
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A0AEC0" strokeWidth="2" className={cn("animate-marching-ants", borderAnimationClasses)} style={borderAnimationStyle as React.CSSProperties} />;
   } else if (status === 'standby') {
-    borderContent = <rect y="calc(100% - 4px)" height="3" width="30%" fill="url(#dyad-standby-gradient)" rx="1.5" ry="1.5" className={cn("animate-standby-scan", triggerStartupAnimation && "animate-asic-border-draw-in")} style={triggerStartupAnimation ? { animationDelay: `${startupDelay}s` } : {}} />;
+    borderContent = <rect y="calc(100% - 4px)" height="3" width="30%" fill="url(#dyad-standby-gradient)" rx="1.5" ry="1.5" className={cn("animate-standby-scan", borderAnimationClasses)} style={borderAnimationStyle as React.CSSProperties} />;
   }
 
   return (
@@ -85,79 +88,25 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
           <stop offset="60%" stopColor="#ef4444" />
           <stop offset="80%" stopColor="#f97316" />
           <stop offset="100%" stopColor="#f59e0b" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="6s"
-            repeatCount="indefinite"
-          />
+          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-online-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={onlineColor} stopOpacity="0" />
           <stop offset="50%" stopColor={onlineColor} stopOpacity="1" />
           <stop offset="100%" stopColor={onlineColor} stopOpacity="0" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="4s"
-            repeatCount="indefinite"
-          />
+          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-warning-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={warningColor} stopOpacity="0" />
           <stop offset="50%" stopColor={warningColor} stopOpacity="1" />
           <stop offset="100%" stopColor={warningColor} stopOpacity="0" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="4s"
-            repeatCount="indefinite"
-          />
+          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-critical-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={criticalColor} stopOpacity="0" />
           <stop offset="50%" stopColor={criticalColor} stopOpacity="1" />
           <stop offset="100%" stopColor={criticalColor} stopOpacity="0" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="4s"
-            repeatCount="indefinite"
-          />
-        </linearGradient>
-        <linearGradient id="dyad-idle-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor={idleColor} stopOpacity="0" />
-          <stop offset="50%" stopColor={idleColor} stopOpacity="1" />
-          <stop offset="100%" stopColor={idleColor} stopOpacity="0" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="5s"
-            repeatCount="indefinite"
-          />
-        </linearGradient>
-        <linearGradient id="dyad-busy-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor={busyColor} stopOpacity="0" />
-          <stop offset="50%" stopColor={busyColor} stopOpacity="1" />
-          <stop offset="100%" stopColor={busyColor} stopOpacity="0" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="3s"
-            repeatCount="indefinite"
-          />
+          {/* Removed animateTransform */}
         </linearGradient>
       </defs>
       {borderContent}
