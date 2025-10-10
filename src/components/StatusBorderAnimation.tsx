@@ -88,25 +88,29 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
           <stop offset="60%" stopColor="#ef4444" />
           <stop offset="80%" stopColor="#f97316" />
           <stop offset="100%" stopColor="#f59e0b" />
-          {/* Removed animateTransform */}
+          <animate attributeName="x1" from="0%" to="200%" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="x2" from="100%" to="300%" dur="4s" repeatCount="indefinite" />
         </linearGradient>
         <linearGradient id="dyad-online-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={onlineColor} stopOpacity="0" />
           <stop offset="50%" stopColor={onlineColor} stopOpacity="1" />
           <stop offset="100%" stopColor={onlineColor} stopOpacity="0" />
-          {/* Removed animateTransform */}
+          <animate attributeName="x1" from="-100%" to="200%" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="x2" from="0%" to="300%" dur="3s" repeatCount="indefinite" />
         </linearGradient>
         <linearGradient id="dyad-warning-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={warningColor} stopOpacity="0" />
           <stop offset="50%" stopColor={warningColor} stopOpacity="1" />
           <stop offset="100%" stopColor={warningColor} stopOpacity="0" />
-          {/* Removed animateTransform */}
+          <animate attributeName="x1" from="-100%" to="200%" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="x2" from="0%" to="300%" dur="3s" repeatCount="indefinite" />
         </linearGradient>
         <linearGradient id="dyad-critical-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={criticalColor} stopOpacity="0" />
           <stop offset="50%" stopColor={criticalColor} stopOpacity="1" />
           <stop offset="100%" stopColor={criticalColor} stopOpacity="0" />
-          {/* Removed animateTransform */}
+          <animate attributeName="x1" from="-100%" to="200%" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="x2" from="0%" to="300%" dur="3s" repeatCount="indefinite" />
         </linearGradient>
       </defs>
       {borderContent}
