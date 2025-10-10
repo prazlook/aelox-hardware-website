@@ -64,10 +64,8 @@ const Index = () => {
       setTimeout(() => {
         setAsics(prevAsics =>
           prevAsics.map(asic =>
-            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asic.temperature + 5) } : asic
-          )
-        );
-      }, startupDelay * 1000);
+            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asic.temperature + 5) } : asic));
+        }, startupDelay * 1000);
     }
   };
 
@@ -356,30 +354,45 @@ const Index = () => {
             hashrate={summary.totalHashrate} 
             asics={asics}
             isOverclockedMajority={summary.isOverclockedMajority}
-            className={triggerStartupAnimation ? "animate-startup-fade-in-from-center" : ""}
-            style={triggerStartupAnimation ? { animationDelay: '0.2s' } : {}}
+            className={cn(
+              triggerStartupAnimation && "animate-startup-fade-in-from-center",
+              triggerShutdownAnimation && "animate-staggered-fade-out"
+            )}
+            style={triggerStartupAnimation ? { animationDelay: '0.2s' } : triggerShutdownAnimation ? { '--delay': '0.1s' } as React.CSSProperties : {}}
           />
         </div>
         <div className="relative z-10 flex justify-between items-center h-full px-6">
           <h1 
-            className={`text-3xl font-bold ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
-            style={triggerStartupAnimation ? { animationDelay: '0.4s' } : {}}
+            className={cn(
+              "text-3xl font-bold",
+              triggerStartupAnimation && "animate-startup-slide-in-left",
+              triggerShutdownAnimation && "animate-staggered-fade-out"
+            )}
+            style={triggerStartupAnimation ? { animationDelay: '0.4s' } : triggerShutdownAnimation ? { '--delay': '0.2s' } as React.CSSProperties : {}}
           >
             Centre de Contrôle
           </h1>
           <div className="flex space-x-3">
             <Button 
               onClick={handleStartAll} 
-              className={`bg-green-500/20 text-green-400 hover:bg-green-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
-              style={triggerStartupAnimation ? { animationDelay: '0.5s' } : {}}
+              className={cn(
+                "bg-green-500/20 text-green-400 hover:bg-green-500/30",
+                triggerStartupAnimation && "animate-startup-slide-in-right",
+                triggerShutdownAnimation && "animate-staggered-fade-out"
+              )}
+              style={triggerStartupAnimation ? { animationDelay: '0.5s' } : triggerShutdownAnimation ? { '--delay': '0.4s' } as React.CSSProperties : {}}
             >
               <Power className="w-4 h-4 mr-2" />
               Démarrer Tout
             </Button>
             <Button 
               onClick={handleStopAll} 
-              className={`bg-red-500/20 text-red-400 hover:bg-red-500/30 ${triggerStartupAnimation ? "animate-startup-slide-in-right" : ""}`}
-              style={triggerStartupAnimation ? { animationDelay: '0.6s' } : {}}
+              className={cn(
+                "bg-red-500/20 text-red-400 hover:bg-red-500/30",
+                triggerStartupAnimation && "animate-startup-slide-in-right",
+                triggerShutdownAnimation && "animate-staggered-fade-out"
+              )}
+              style={triggerStartupAnimation ? { animationDelay: '0.6s' } : triggerShutdownAnimation ? { '--delay': '0.6s' } as React.CSSProperties : {}}
             >
               <X className="w-4 h-4 mr-2" />
               Arrêter Tout
@@ -395,8 +408,11 @@ const Index = () => {
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
           iconBgColor={summary.isOverclockedMajority ? "bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora" : "bg-gradient-to-br from-orange-500 to-orange-700"} 
-          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.7s' } : {}}
+          className={cn(
+            triggerStartupAnimation && "animate-startup-fade-in-scale",
+            triggerShutdownAnimation && "animate-staggered-fade-out"
+          )}
+          style={triggerStartupAnimation ? { animationDelay: '0.7s' } : triggerShutdownAnimation ? { '--delay': '0.8s' } as React.CSSProperties : {}}
         />
         <SummaryCard 
           title="Température Moyenne" 
@@ -405,8 +421,11 @@ const Index = () => {
           icon={<Thermometer className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
           tempStatus={tempStatus}
-          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.8s' } : {}}
+          className={cn(
+            triggerStartupAnimation && "animate-startup-fade-in-scale",
+            triggerShutdownAnimation && "animate-staggered-fade-out"
+          )}
+          style={triggerStartupAnimation ? { animationDelay: '0.8s' } : triggerShutdownAnimation ? { '--delay': '1.0s' } as React.CSSProperties : {}}
         />
         <SummaryCard 
           title="Consommation Totale" 
@@ -414,8 +433,11 @@ const Index = () => {
           unit="W" 
           icon={<AnimatedZapIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-cyan-400 to-cyan-600" 
-          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '0.9s' } : {}}
+          className={cn(
+            triggerStartupAnimation && "animate-startup-fade-in-scale",
+            triggerShutdownAnimation && "animate-staggered-fade-out"
+          )}
+          style={triggerStartupAnimation ? { animationDelay: '0.9s' } : triggerShutdownAnimation ? { '--delay': '1.2s' } as React.CSSProperties : {}}
         />
         <SummaryCard 
           title="ASICs Actifs" 
@@ -423,15 +445,22 @@ const Index = () => {
           unit="" 
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
           iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700" 
-          className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""}
-          style={triggerStartupAnimation ? { animationDelay: '1.0s' } : {}}
+          className={cn(
+            triggerStartupAnimation && "animate-startup-fade-in-scale",
+            triggerShutdownAnimation && "animate-staggered-fade-out"
+          )}
+          style={triggerStartupAnimation ? { animationDelay: '1.0s' } : triggerShutdownAnimation ? { '--delay': '1.4s' } as React.CSSProperties : {}}
         />
       </div>
 
       <div>
         <h2 
-          className={`text-2xl font-bold mb-4 ${triggerStartupAnimation ? "animate-startup-slide-in-left" : ""}`}
-          style={triggerStartupAnimation ? { animationDelay: '1.1s' } : {}}
+          className={cn(
+            "text-2xl font-bold mb-4",
+            triggerStartupAnimation && "animate-startup-slide-in-left",
+            triggerShutdownAnimation && "animate-staggered-fade-out"
+          )}
+          style={triggerStartupAnimation ? { animationDelay: '1.1s' } : triggerShutdownAnimation ? { '--delay': '1.6s' } as React.CSSProperties : {}}
         >
           Vos Machines
         </h2>
@@ -449,7 +478,7 @@ const Index = () => {
                 triggerStartupAnimation && "animate-startup-fade-in-scale",
                 triggerShutdownAnimation && "animate-fluorescent-flicker" // Apply flicker here
               )}
-              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
+              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : triggerShutdownAnimation ? { animationDelay: `${1.8 + index * 0.1}s` } : {}}
             />
           ))}
         </div>
