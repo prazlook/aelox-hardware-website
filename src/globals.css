@@ -374,12 +374,12 @@
 /* New hashrate glitch animation */
 @keyframes hashrate-glitch-keyframes {
   0% {
-    stroke-dasharray: 0 8 34; /* 8-unit gap at the very beginning, rest is solid */
-    stroke-dashoffset: 0;
+    stroke-dasharray: 34 8; /* Dash of 34, gap of 8 */
+    stroke-dashoffset: 8;  /* Start with the gap at the beginning of the path */
   }
   100% {
-    stroke-dasharray: 0 8 34;
-    stroke-dashoffset: -42; /* Move the pattern by one full path length to the left */
+    stroke-dasharray: 34 8;
+    stroke-dashoffset: -34; /* End with the gap at the end of the path */
   }
 }
 
