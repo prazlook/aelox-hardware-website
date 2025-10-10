@@ -273,82 +273,123 @@
 @keyframes app-shutdown {
   0% {
     opacity: 1;
-    transform: scale(1);
-    filter: blur(0px);
+    transform: scale(1) rotateZ(0deg);
+    filter: blur(0px) brightness(1) saturate(1);
+  }
+  5% {
+    opacity: 0.8;
+    transform: scale(0.99) rotateZ(0.5deg);
+    filter: blur(1px) brightness(0.8) saturate(0.8);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1) rotateZ(-0.5deg);
+    filter: blur(0px) brightness(1) saturate(1);
+  }
+  20% {
+    opacity: 0.5;
+    transform: scale(0.97) rotateZ(1deg);
+    filter: blur(3px) brightness(0.6) saturate(0.5);
   }
   30% {
-    opacity: 0.8;
-    transform: scale(0.98);
-    filter: blur(2px);
+    opacity: 0.9;
+    transform: scale(0.99) rotateZ(-0.8deg);
+    filter: blur(1px) brightness(0.9) saturate(0.7);
+  }
+  40% {
+    opacity: 0.3;
+    transform: scale(0.95) rotateZ(1.2deg);
+    filter: blur(4px) brightness(0.5) saturate(0.3);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98) rotateZ(-1deg);
+    filter: blur(2px) brightness(0.7) saturate(0.6);
+  }
+  60% {
+    opacity: 0.1;
+    transform: scale(0.93) rotateZ(1.5deg);
+    filter: blur(6px) brightness(0.4) saturate(0.2);
   }
   70% {
-    opacity: 0.2;
-    transform: scale(0.9);
-    filter: blur(5px);
+    opacity: 0.4;
+    transform: scale(0.96) rotateZ(-1.3deg);
+    filter: blur(3px) brightness(0.6) saturate(0.4);
+  }
+  80% {
+    opacity: 0.05;
+    transform: scale(0.9) rotateZ(1.8deg);
+    filter: blur(8px) brightness(0.3) saturate(0.1);
+  }
+  90% {
+    opacity: 0.01;
+    transform: scale(0.88) rotateZ(-1.5deg);
+    filter: blur(9px) brightness(0.2) saturate(0);
   }
   100% {
     opacity: 0;
-    transform: scale(0.8);
-    filter: blur(10px);
+    transform: scale(0.85) rotateZ(0deg); /* End with no rotation */
+    filter: blur(10px) brightness(0) saturate(0);
+    pointer-events: none;
   }
 }
 
 @keyframes fluorescent-flicker {
   0% {
     opacity: 1;
-    filter: brightness(1);
+    filter: brightness(1) grayscale(0);
     transform: scale(1);
   }
   10% {
     opacity: 0.1;
-    filter: brightness(0.3);
+    filter: brightness(0.3) grayscale(1);
     transform: scale(0.98);
   }
   20% {
     opacity: 0.7;
-    filter: brightness(1.1);
+    filter: brightness(1.1) grayscale(0);
     transform: scale(1.01);
   }
   30% {
     opacity: 0.2;
-    filter: brightness(0.4);
+    filter: brightness(0.4) grayscale(1);
     transform: scale(0.97);
   }
   40% {
     opacity: 0.9;
-    filter: brightness(1.05);
+    filter: brightness(1.05) grayscale(0);
     transform: scale(1);
   }
   50% {
     opacity: 0.15;
-    filter: brightness(0.35);
+    filter: brightness(0.35) grayscale(1);
     transform: scale(0.96);
   }
   60% {
     opacity: 0.6;
-    filter: brightness(0.9);
+    filter: brightness(0.9) grayscale(0);
     transform: scale(0.99);
   }
   70% {
     opacity: 0.05;
-    filter: brightness(0.2);
+    filter: brightness(0.2) grayscale(1);
     transform: scale(0.95);
   }
   80% {
     opacity: 0.3;
-    filter: brightness(0.5);
+    filter: brightness(0.5) grayscale(1);
     transform: scale(0.93);
   }
   90% {
     opacity: 0.02;
-    filter: brightness(0.1);
+    filter: brightness(0.1) grayscale(1);
     transform: scale(0.92);
   }
   100% {
     opacity: 0;
-    filter: brightness(0);
+    filter: brightness(0) grayscale(1);
     transform: scale(0.9);
-    pointer-events: none; /* Ensure it's not clickable after disappearing */
+    pointer-events: none;
   }
 }
 
@@ -519,7 +560,7 @@
   }
 
   .animate-app-shutdown {
-    animation: app-shutdown 1s ease-out forwards;
+    animation: app-shutdown 2s ease-out forwards;
   }
 }
 

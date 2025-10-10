@@ -58,7 +58,7 @@ export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
     shutdownAnimationTimeoutRef.current = setTimeout(() => {
       setIsAppRunning(false);
       setTriggerShutdownAnimation(false); // Reset after animation completes
-    }, 1000); // Duration of the shutdown animation
+    }, 2000); // Duration of the shutdown animation (2 seconds)
 
     // Clear any pending startup animation trigger if app is stopped
     if (animationTimeoutRef.current) {
