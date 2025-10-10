@@ -1,48 +1,47 @@
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { useAppStatus } from '@/context/AppStatusContext';
 
-export type TempStatusLevel = 'optimal' | 'faible' | 'eleve' | 'surcharge';
+export type TempStatusLevel = 'faible' | 'optimal' | 'eleve' | 'surcharge';
 
 interface SummaryCardProps {
   title: string;
   value: string;
   unit: string;
   icon: React.ReactNode;
-  iconBgColor: string;
-  tempStatus?: {
-    level: TempStatusLevel;
-    text: string;
-  };
-  className?: string; // Add className prop
-  style?: React.CSSProperties; // Add style prop
+  iconColorClass: string; // Changed from iconBgColor to iconColorClass
+  tempStatus?: { level: TempStatusLevel; text: string };
+  className?: string;
+  style?: React.CSSProperties;
 }
 
-const statusStyles: Record<TempStatusLevel, string> = {
-  faible: 'bg-blue-500 text-blue-200',
-  optimal: 'bg-green-500 text-green-200',
-  eleve: 'bg-orange-500 text-orange-200',
-  surcharge: 'bg-red-500 text-red-200',
-};
+export const SummaryCard = ({ title, value, unit, icon, iconColorClass, tempStatus, className, style }: SummaryCardProps) => {
+  const { triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
 
-export const SummaryCard = ({ title, value, unit, icon, iconBgColor, tempStatus, className, style }: SummaryCardProps) => {
+  const tempStatusClasses: Record<TempStatusLevel, string> = {
+    faible: "text-blue-400",
+    optimal: "text-green-400",
+    eleve: "text-orange-400",
+    surcharge: "text-red-500 animate-pulse",
+  };
+
   return (
-    <div className={cn("bg-theme-card p-5 rounded-2xl flex justify-between items-center relative overflow-hidden", className)} style={style}>
-      <div className={cn("absolute -right-12 -top-12 w-32 h-32 rounded-full opacity-10", iconBgColor)} />
-      
+    <div 
+      className={cn(
+        "relative bg-theme-card rounded-2xl p-4 flex items-center justify-between border border-theme-border-muted",
+        className,
+        triggerShutdownAnimation && "animate-staggered-fade-out",
+        triggerStartupAnimation && "animate-startup-fade-in-scale"
+      )}
+      style={style}
+    >
       <div>
-        <div className="flex items-center space-x-2">
-          <p className="text-sm text-theme-text-secondary uppercase tracking-wider">{title}</p>
-          {tempStatus && (
-            <div className="flex items-center space-x-1.5">
-              <span className={cn("w-2 h-2 rounded-full", statusStyles[tempStatus.level])} />
-              <span className={cn("text-xs font-medium", statusStyles[tempStatus.level].replace('bg-', 'text-'))}>{tempStatus.text}</span>
-            </div>
-          )}
-        </div>
-        <p className="text-3xl font-bold mt-1">
-          {value} <span className="text-xl font-medium text-theme-text-secondary">{unit}</span>
+        <p className="text-sm text-theme-text-secondary">{title}</p>
+        <p className={cn("text-2xl font-bold mt-1", tempStatus ? tempStatusClasses[tempStatus.level] : "text-white")}>
+          {value} <span className="text-base font-normal text-theme-text-secondary">{unit}</span>
         </p>
       </div>
-      <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center text-white shrink-0", iconBgColor)}>
+      <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-theme-card border border-theme-accent/30", iconColorClass)}>
         {icon}
       </div>
     </div>

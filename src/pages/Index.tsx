@@ -407,7 +407,7 @@ const Index = () => {
           value={summary.totalHashrate.toFixed(2)} 
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
-          iconBgColor={summary.isOverclockedMajority ? "bg-[linear-gradient(120deg,_#ffb3ba,_#ffdfba,_#ffffba,_#baffc9,_#bae1ff,_#e0baff,_#ffb3ba)] bg-[length:200%_200%] animate-aurora" : "bg-gradient-to-br from-orange-500 to-orange-700"} 
+          iconColorClass={summary.isOverclockedMajority ? "text-purple-400 animate-aurora" : "text-orange-500"} // Updated prop and value
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
@@ -419,7 +419,7 @@ const Index = () => {
           value={summary.avgTemp.toFixed(2)} 
           unit="°C" 
           icon={<Thermometer className="w-8 h-8" />} 
-          iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
+          iconColorClass="text-green-500" // Updated prop and value
           tempStatus={tempStatus}
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
@@ -432,7 +432,7 @@ const Index = () => {
           value={summary.totalPower.toFixed(0)} 
           unit="W" 
           icon={<AnimatedZapIcon className="w-8 h-8" />} 
-          iconBgColor="bg-gradient-to-br from-cyan-400 to-cyan-600" 
+          iconColorClass="text-cyan-400" // Updated prop and value
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
@@ -444,7 +444,7 @@ const Index = () => {
           value={`${summary.activeAsics} / ${summary.totalAsics}`} 
           unit="" 
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
-          iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700" 
+          iconColorClass="text-blue-500" // Updated prop and value
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
