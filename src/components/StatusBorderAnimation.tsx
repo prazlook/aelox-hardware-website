@@ -43,7 +43,7 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
         strokeWidth="3"
         filter="url(#dyad-glow)"
         className={borderAnimationClasses} // Apply here
-        style={{ ...borderAnimationStyle, transformOrigin: 'center center' } as React.CSSProperties} // Apply transformOrigin here
+        style={{ ...borderAnimationStyle, strokeDasharray: 1000 } as React.CSSProperties} // Apply stroke-dasharray here
       />
     </>
   );
@@ -56,13 +56,13 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
   } else if (status === 'online') {
     borderContent = renderRotatingBorder('dyad-online-gradient', onlineMutedColor);
   } else if (status === 'overclocked') {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="url(#dyad-overclock-gradient)" strokeWidth="3" className={borderAnimationClasses} style={{ ...borderAnimationStyle, transformOrigin: 'center center' } as React.CSSProperties} />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="url(#dyad-overclock-gradient)" strokeWidth="3" className={borderAnimationClasses} style={{ ...borderAnimationStyle, strokeDasharray: 1000 } as React.CSSProperties} />;
   } else if (status === 'idle') {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className={cn("animate-idle-pulse", borderAnimationClasses)} filter="url(#dyad-glow)" style={{ ...borderAnimationStyle, transformOrigin: 'center center' } as React.CSSProperties} />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className={cn("animate-idle-pulse", borderAnimationClasses)} filter="url(#dyad-glow)" style={{ ...borderAnimationStyle, strokeDasharray: 1000 } as React.CSSProperties} />;
   } else if (isBusy) {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A0AEC0" strokeWidth="2" className={cn("animate-marching-ants", borderAnimationClasses)} style={{ ...borderAnimationStyle, transformOrigin: 'center center' } as React.CSSProperties} />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A0AEC0" strokeWidth="2" className={cn("animate-marching-ants", borderAnimationClasses)} style={{ ...borderAnimationStyle, strokeDasharray: 1000 } as React.CSSProperties} />;
   } else if (status === 'standby') {
-    borderContent = <rect y="calc(100% - 4px)" height="3" width="30%" fill="url(#dyad-standby-gradient)" rx="1.5" ry="1.5" className={cn("animate-standby-scan", borderAnimationClasses)} style={{ ...borderAnimationStyle, transformOrigin: 'center center' } as React.CSSProperties} />;
+    borderContent = <rect y="calc(100% - 4px)" height="3" width="30%" fill="url(#dyad-standby-gradient)" rx="1.5" ry="1.5" className={cn("animate-standby-scan", borderAnimationClasses)} style={{ ...borderAnimationStyle, strokeDasharray: 1000 } as React.CSSProperties} />;
   }
 
   return (
