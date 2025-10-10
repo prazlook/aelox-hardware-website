@@ -475,8 +475,10 @@ const Index = () => {
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
               triggerShutdownAnimation={triggerShutdownAnimation} // Pass the prop
-              className={triggerStartupAnimation ? "animate-startup-fade-in-scale" : ""} // Only startup animation on the card wrapper
-              style={triggerStartupAnimation ? { animationDelay: `${1.2 + index * 0.1}s` } : {}}
+              triggerStartupAnimation={triggerStartupAnimation} // Pass the prop
+              startupDelay={1.2 + index * 0.1} // Base delay for this specific card
+              className={""} // No animation on the card wrapper itself
+              style={{}} // No animation on the card wrapper itself
             />
           ))}
         </div>

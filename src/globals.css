@@ -354,6 +354,20 @@
   100% { opacity: 0; transform: translateY(10px); pointer-events: none; }
 }
 
+/* New ASIC border draw-in animation */
+@keyframes asic-border-draw-in {
+  from {
+    stroke-dasharray: 0 1000; /* Start with no visible stroke, gap of 1000 */
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  to {
+    stroke-dasharray: 1000 0; /* End with full stroke, no gap */
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -527,6 +541,13 @@
   .animate-staggered-fade-out {
     animation: staggered-fade-out 0.5s ease-out forwards;
     animation-delay: var(--delay, 0s);
+  }
+
+  .animate-asic-border-draw-in {
+    animation: asic-border-draw-in 0.8s ease-out forwards;
+    stroke-dasharray: 0 1000; /* Initial state for animation */
+    stroke-dashoffset: 0;
+    opacity: 0; /* Start hidden */
   }
 }
 

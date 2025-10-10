@@ -1,14 +1,17 @@
 import { ASICStatus } from './ASICStatusCard';
+import { cn } from '@/lib/utils'; // Import cn
 
 interface StatusBorderAnimationProps {
   status: ASICStatus;
   isWarning: boolean;
   isOverheating: boolean;
+  triggerStartupAnimation: boolean; // New prop
+  startupDelay: number; // New prop
 }
 
 const CARD_RX = 14; // Slightly less than the card's rounding to fit inside
 
-export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: StatusBorderAnimationProps) => {
+export const StatusBorderAnimation = ({ status, isWarning, isOverheating, triggerStartupAnimation, startupDelay }: StatusBorderAnimationProps) => {
   if (status === 'offline') return null;
 
   const isBusy = status === 'booting up' || status === 'shutting down';
@@ -21,10 +24,27 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: Stat
   const criticalColor = '#EF4444';
   const criticalMutedColor = '#F97316';
 
+  const borderAnimationClasses = cn(
+    triggerStartupAnimation && "animate-asic-border-draw-in"
+  );
+  const borderAnimationStyle = triggerStartupAnimation ? { animationDelay: `${startupDelay}s` } : {};
+
   const renderRotatingBorder = (gradientId: string, mutedColor: string) => (
     <>
       <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke={mutedColor} strokeOpacity="0.3" strokeWidth="2" />
-      <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke={`url(#${gradientId})`} strokeWidth="3" filter="url(#dyad-glow)" />
+      <rect
+        x="1.5"
+        y="1.5"
+        width="calc(100% - 3px)"
+        height="calc(100% - 3px)"
+        rx={CARD_RX}
+        ry={CARD_RX}
+        stroke={`url(#${gradientId})`}
+        strokeWidth="3"
+        filter="url(#dyad-glow)"
+        className={borderAnimationClasses} // Apply here
+        style={borderAnimationStyle as React.CSSProperties} // Apply here
+      />
     </>
   );
 
@@ -36,13 +56,13 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating }: Stat
   } else if (status === 'online') {
     borderContent = renderRotatingBorder('dyad-online-gradient', onlineMutedColor);
   } else if (status === 'overclocked') {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="url(#dyad-overclock-gradient)" strokeWidth="3" />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="url(#dyad-overclock-gradient)" strokeWidth="3" className={borderAnimationClasses} style={borderAnimationStyle as React.CSSProperties} />;
   } else if (status === 'idle') {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className="animate-idle-pulse" filter="url(#dyad-glow)" />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A855F7" strokeWidth="3" className={cn("animate-idle-pulse", borderAnimationClasses)} filter="url(#dyad-glow)" style={borderAnimationStyle as React.CSSProperties} />;
   } else if (isBusy) {
-    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A0AEC0" strokeWidth="2" className="animate-marching-ants" />;
+    borderContent = <rect x="1.5" y="1.5" width="calc(100% - 3px)" height="calc(100% - 3px)" rx={CARD_RX} ry={CARD_RX} stroke="#A0AEC0" strokeWidth="2" className={cn("animate-marching-ants", borderAnimationClasses)} style={borderAnimationStyle as React.CSSProperties} />;
   } else if (status === 'standby') {
-    borderContent = <rect y="calc(100% - 4px)" height="3" width="30%" fill="url(#dyad-standby-gradient)" rx="1.5" ry="1.5" className="animate-standby-scan" />;
+    borderContent = <rect y="calc(100% - 4px)" height="3" width="30%" fill="url(#dyad-standby-gradient)" rx="1.5" ry="1.5" className={cn("animate-standby-scan", borderAnimationClasses)} style={borderAnimationStyle as React.CSSProperties} />;
   }
 
   return (
