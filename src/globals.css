@@ -377,61 +377,583 @@
     stroke-dasharray: 42 0; /* Solid line */
     stroke-dashoffset: 0;
   }
-  10% {
+  5% {
     stroke-dasharray: 10 5 10 5 10 5; /* Introduce gaps */
     stroke-dashoffset: 0;
   }
-  12% {
+  7% {
     stroke-dasharray: 10 5 10 5 10 5;
     stroke-dashoffset: 10; /* Shift gaps */
   }
-  14% {
+  10% {
     stroke-dasharray: 42 0; /* Back to solid */
     stroke-dashoffset: 0;
   }
-  20% {
+  15% {
     stroke-dasharray: 5 15 5 15 5; /* Different gaps */
     stroke-dashoffset: 0;
   }
-  22% {
+  17% {
     stroke-dasharray: 5 15 5 15 5;
     stroke-dashoffset: 15;
   }
-  24% {
+  20% {
     stroke-dasharray: 42 0;
     stroke-dashoffset: 0;
   }
-  30% {
+  25% {
     stroke-dasharray: 2 10 2 10 2 10 2 10;
     stroke-dashoffset: 0;
   }
-  32% {
+  27% {
     stroke-dasharray: 2 10 2 10 2 10 2 10;
     stroke-dashoffset: 5;
   }
-  34% {
+  30% {
     stroke-dasharray: 42 0;
     stroke-dashoffset: 0;
   }
-  40% {
+  35% {
     stroke-dasharray: 15 5 10 12;
     stroke-dashoffset: 0;
   }
-  42% {
+  37% {
     stroke-dasharray: 15 5 10 12;
     stroke-dashoffset: 10;
   }
-  44% {
+  40% {
     stroke-dasharray: 42 0;
     stroke-dashoffset: 0;
   }
-  /* Keep solid for the rest of the time */
-  45%, 100% {
+  /* Keep solid for the rest of the time, but the animation duration will be short */
+  41%, 100% {
     stroke-dasharray: 42 0;
     stroke-dashoffset: 0;
   }
 }
 
+
+@layer components {
+  .animate-zap-trace polygon {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: zap-trace 2.5s linear infinite;
+    fill: none;
+  }
+
+  .animate-server-blink .light-1 {
+    animation: server-blink 1.5s infinite;
+    stroke-width: 3;
+  }
+  .animate-server-blink .light-2 {
+    animation: server-blink 1.5s infinite 0.5s;
+    stroke-width: 3;
+  }
+  
+  .animate-marching-ants {
+    stroke-dasharray: 12 24;
+    animation: marching-ants 1s linear infinite;
+  }
+
+  .animate-slide-in-item {
+    animation: slide-in-item 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-draw-border {
+    animation: draw-border 0.5s ease-out forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-flicker-in {
+    animation: flicker-in 0.8s ease-in-out forwards;
+    animation-delay: inherit;
+    opacity: 0;
+  }
+
+  .group:hover .animate-ecg-on-hover {
+    stroke-dasharray: 8 4 2 4 2 4;
+    animation: ecg-border-flow 0.75s linear infinite;
+  }
+
+  .animate-shutdown-wave {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: shutdown-wave 0.8s ease-out forwards;
+  }
+
+  .animate-flicker-and-fade {
+    animation: flicker-and-fade 1.5s forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-gentle-shutdown {
+    animation: gentle-shutdown-flicker 1.2s ease-out forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-standby-scan {
+    animation: standby-scan 4s ease-in-out infinite;
+  }
+  .animate-idle-pulse {
+    stroke-dasharray: 50 1150;
+    animation: idle-pulse 8s linear infinite;
+  }
+
+  .ecg-line {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform-origin: center;
+  }
+  .ecg-line-on {
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+  .ecg-line-off {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  .animate-boot-up-item {
+    animation: boot-up-item 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-aurora {
+    animation: aurora 6s linear infinite;
+  }
+
+  .chart-line-draw .recharts-area-curve {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    animation: chart-draw-animation 1.5s ease-out forwards;
+  }
+
+  .chart-area-draw .recharts-area-path {
+      clip-path: inset(0 100% 0 0);
+      animation: chart-wipe-animation 1.5s ease-out forwards;
+  }
+
+  .animate-fade-in-slide-up {
+    animation: fade-in-slide-up 0.4s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* New startup animation utility classes */
+  .animate-startup-fade-in-scale {
+    animation: startup-fade-in-scale 0.6s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-slide-in-left {
+    animation: startup-slide-in-left 0.5s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-slide-in-right {
+    animation: startup-slide-in-right 0.5s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-fade-in-from-center {
+    animation: startup-fade-in-from-center 1s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* Global Status Indicator Animation Classes */
+  .animate-global-indicator-fade-in {
+    animation: global-indicator-fade-in 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-global-indicator-bars-grow {
+    animation: global-indicator-bars-grow 0.6s ease-out forwards;
+    transform-origin: center bottom;
+    opacity: 0;
+  }
+
+  .animate-global-indicator-waveform-draw {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: global-indicator-waveform-draw 1s ease-out forwards;
+  }
+
+  .animate-global-indicator-spokes-rotate-in {
+    animation: global-indicator-spokes-rotate-in 0.8s ease-out forwards;
+    opacity: 0;
+    transform-origin: center center;
+  }
+
+  .animate-global-indicator-ecg-center-expand {
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: 500;
+    animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-app-shutdown {
+    animation: app-shutdown 3s ease-out forwards; /* Longer duration for background effect */
+  }
+
+  .animate-staggered-fade-out {
+    animation: staggered-fade-out 0.5s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .animate-asic-border-draw-in {
+    animation: asic-border-draw-in 0.8s ease-out forwards;
+    stroke-dasharray: 0 1000; /* Initial state for animation */
+    stroke-dashoffset: 0;
+    opacity: 0; /* Start hidden */
+  }
+}
+
+@layer components {
+  .animate-zap-trace polygon {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: zap-trace 2.5s linear infinite;
+    fill: none;
+  }
+
+  .animate-server-blink .light-1 {
+    animation: server-blink 1.5s infinite;
+    stroke-width: 3;
+  }
+  .animate-server-blink .light-2 {
+    animation: server-blink 1.5s infinite 0.5s;
+    stroke-width: 3;
+  }
+  
+  .animate-marching-ants {
+    stroke-dasharray: 12 24;
+    animation: marching-ants 1s linear infinite;
+  }
+
+  .animate-slide-in-item {
+    animation: slide-in-item 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-draw-border {
+    animation: draw-border 0.5s ease-out forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-flicker-in {
+    animation: flicker-in 0.8s ease-in-out forwards;
+    animation-delay: inherit;
+    opacity: 0;
+  }
+
+  .group:hover .animate-ecg-on-hover {
+    stroke-dasharray: 8 4 2 4 2 4;
+    animation: ecg-border-flow 0.75s linear infinite;
+  }
+
+  .animate-shutdown-wave {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: shutdown-wave 0.8s ease-out forwards;
+  }
+
+  .animate-flicker-and-fade {
+    animation: flicker-and-fade 1.5s forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-gentle-shutdown {
+    animation: gentle-shutdown-flicker 1.2s ease-out forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-standby-scan {
+    animation: standby-scan 4s ease-in-out infinite;
+  }
+  .animate-idle-pulse {
+    stroke-dasharray: 50 1150;
+    animation: idle-pulse 8s linear infinite;
+  }
+
+  .ecg-line {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform-origin: center;
+  }
+  .ecg-line-on {
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+  .ecg-line-off {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  .animate-boot-up-item {
+    animation: boot-up-item 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-aurora {
+    animation: aurora 6s linear infinite;
+  }
+
+  .chart-line-draw .recharts-area-curve {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    animation: chart-draw-animation 1.5s ease-out forwards;
+  }
+
+  .chart-area-draw .recharts-area-path {
+      clip-path: inset(0 100% 0 0);
+      animation: chart-wipe-animation 1.5s ease-out forwards;
+  }
+
+  .animate-fade-in-slide-up {
+    animation: fade-in-slide-up 0.4s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* New startup animation utility classes */
+  .animate-startup-fade-in-scale {
+    animation: startup-fade-in-scale 0.6s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-slide-in-left {
+    animation: startup-slide-in-left 0.5s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-slide-in-right {
+    animation: startup-slide-in-right 0.5s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-fade-in-from-center {
+    animation: startup-fade-in-from-center 1s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* Global Status Indicator Animation Classes */
+  .animate-global-indicator-fade-in {
+    animation: global-indicator-fade-in 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-global-indicator-bars-grow {
+    animation: global-indicator-bars-grow 0.6s ease-out forwards;
+    transform-origin: center bottom;
+    opacity: 0;
+  }
+
+  .animate-global-indicator-waveform-draw {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: global-indicator-waveform-draw 1s ease-out forwards;
+  }
+
+  .animate-global-indicator-spokes-rotate-in {
+    animation: global-indicator-spokes-rotate-in 0.8s ease-out forwards;
+    opacity: 0;
+    transform-origin: center center;
+  }
+
+  .animate-global-indicator-ecg-center-expand {
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: 500;
+    animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-app-shutdown {
+    animation: app-shutdown 3s ease-out forwards; /* Longer duration for background effect */
+  }
+
+  .animate-staggered-fade-out {
+    animation: staggered-fade-out 0.5s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .animate-asic-border-draw-in {
+    animation: asic-border-draw-in 0.8s ease-out forwards;
+    stroke-dasharray: 0 1000; /* Initial state for animation */
+    stroke-dashoffset: 0;
+    opacity: 0; /* Start hidden */
+  }
+}
+
+@layer components {
+  .animate-zap-trace polygon {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: zap-trace 2.5s linear infinite;
+    fill: none;
+  }
+
+  .animate-server-blink .light-1 {
+    animation: server-blink 1.5s infinite;
+    stroke-width: 3;
+  }
+  .animate-server-blink .light-2 {
+    animation: server-blink 1.5s infinite 0.5s;
+    stroke-width: 3;
+  }
+  
+  .animate-marching-ants {
+    stroke-dasharray: 12 24;
+    animation: marching-ants 1s linear infinite;
+  }
+
+  .animate-slide-in-item {
+    animation: slide-in-item 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-draw-border {
+    animation: draw-border 0.5s ease-out forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-flicker-in {
+    animation: flicker-in 0.8s ease-in-out forwards;
+    animation-delay: inherit;
+    opacity: 0;
+  }
+
+  .group:hover .animate-ecg-on-hover {
+    stroke-dasharray: 8 4 2 4 2 4;
+    animation: ecg-border-flow 0.75s linear infinite;
+  }
+
+  .animate-shutdown-wave {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: shutdown-wave 0.8s ease-out forwards;
+  }
+
+  .animate-flicker-and-fade {
+    animation: flicker-and-fade 1.5s forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-gentle-shutdown {
+    animation: gentle-shutdown-flicker 1.2s ease-out forwards;
+    animation-delay: inherit;
+  }
+
+  .animate-standby-scan {
+    animation: standby-scan 4s ease-in-out infinite;
+  }
+  .animate-idle-pulse {
+    stroke-dasharray: 50 1150;
+    animation: idle-pulse 8s linear infinite;
+  }
+
+  .ecg-line {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform-origin: center;
+  }
+  .ecg-line-on {
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+  .ecg-line-off {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  .animate-boot-up-item {
+    animation: boot-up-item 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-aurora {
+    animation: aurora 6s linear infinite;
+  }
+
+  .chart-line-draw .recharts-area-curve {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    animation: chart-draw-animation 1.5s ease-out forwards;
+  }
+
+  .chart-area-draw .recharts-area-path {
+      clip-path: inset(0 100% 0 0);
+      animation: chart-wipe-animation 1.5s ease-out forwards;
+  }
+
+  .animate-fade-in-slide-up {
+    animation: fade-in-slide-up 0.4s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* New startup animation utility classes */
+  .animate-startup-fade-in-scale {
+    animation: startup-fade-in-scale 0.6s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-slide-in-left {
+    animation: startup-slide-in-left 0.5s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-slide-in-right {
+    animation: startup-slide-in-right 0.5s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-startup-fade-in-from-center {
+    animation: startup-fade-in-from-center 1s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* Global Status Indicator Animation Classes */
+  .animate-global-indicator-fade-in {
+    animation: global-indicator-fade-in 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-global-indicator-bars-grow {
+    animation: global-indicator-bars-grow 0.6s ease-out forwards;
+    transform-origin: center bottom;
+    opacity: 0;
+  }
+
+  .animate-global-indicator-waveform-draw {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: global-indicator-waveform-draw 1s ease-out forwards;
+  }
+
+  .animate-global-indicator-spokes-rotate-in {
+    animation: global-indicator-spokes-rotate-in 0.8s ease-out forwards;
+    opacity: 0;
+    transform-origin: center center;
+  }
+
+  .animate-global-indicator-ecg-center-expand {
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: 500;
+    animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-app-shutdown {
+    animation: app-shutdown 3s ease-out forwards; /* Longer duration for background effect */
+  }
+
+  .animate-staggered-fade-out {
+    animation: staggered-fade-out 0.5s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .animate-asic-border-draw-in {
+    animation: asic-border-draw-in 0.8s ease-out forwards;
+    stroke-dasharray: 0 1000; /* Initial state for animation */
+    stroke-dashoffset: 0;
+    opacity: 0; /* Start hidden */
+  }
+}
 
 @layer components {
   .animate-zap-trace polygon {
