@@ -81,15 +81,15 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
           <stop offset="50%" stopColor="#A78BFA" stopOpacity="1" />
           <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="dyad-overclock-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="dyad-overclock-gradient" x1="0%" y1="0%" x2="100%" y2="0%"> {/* Changed y2 to 0% for horizontal flow */}
           <stop offset="0%" stopColor="#10b981" />
           <stop offset="20%" stopColor="#06b6d4" />
           <stop offset="40%" stopColor="#6366f1" />
           <stop offset="60%" stopColor="#ef4444" />
           <stop offset="80%" stopColor="#f97316" />
           <stop offset="100%" stopColor="#f59e0b" />
-          <animate attributeName="x1" from="0%" to="200%" dur="4s" repeatCount="indefinite" />
-          <animate attributeName="x2" from="100%" to="300%" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="x1" from="0%" to="200%" dur="6s" repeatCount="indefinite" /> {/* Increased duration */}
+          <animate attributeName="x2" from="100%" to="300%" dur="6s" repeatCount="indefinite" /> {/* Increased duration */}
         </linearGradient>
         <linearGradient id="dyad-online-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={onlineColor} stopOpacity="0" />
