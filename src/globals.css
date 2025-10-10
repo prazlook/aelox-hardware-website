@@ -269,6 +269,18 @@
   }
 }
 
+/* New shutdown animation */
+@keyframes app-shutdown {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
 
 @layer components {
   .animate-ecg-draw {
@@ -433,6 +445,10 @@
     stroke-dashoffset: 500;
     animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
     opacity: 0;
+  }
+
+  .animate-app-shutdown {
+    animation: app-shutdown 1s ease-out forwards;
   }
 }
 
