@@ -356,15 +356,32 @@
 
 /* New ASIC border draw-in animation */
 @keyframes asic-border-draw-in {
-  from {
+  0% {
     stroke-dasharray: 0 1000; /* Start with no visible stroke, gap of 1000 */
     stroke-dashoffset: 0;
     opacity: 0;
+    transform: rotate(0deg); /* Start rotation */
   }
-  to {
+  50% { /* Mid-point for drawing */
+    stroke-dasharray: 500 500; /* Half drawn, half gap */
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: rotate(180deg); /* Rotate halfway */
+  }
+  100% {
     stroke-dasharray: 1000 0; /* End with full stroke, no gap */
     stroke-dashoffset: 0;
     opacity: 1;
+    transform: rotate(360deg); /* Complete rotation */
+  }
+}
+
+@keyframes card-fill-from-top {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0% 0 0 0);
   }
 }
 
