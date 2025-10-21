@@ -149,12 +149,18 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 yVariation = (Math.random() - 0.5) * 1; // Very small noise for flat
                 break;
               case 'low':
-                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.5;
-                if (Math.random() > 0.95) yVariation *= 2; // Occasional small spikes
+                // Peaks mostly upwards (negative yVariation)
+                yVariation = -(Math.random() * ecgBaseAmplitude * 0.5);
+                if (Math.random() > 0.95) yVariation -= Math.random() * ecgBaseAmplitude * 0.5; // Occasional larger upward spike
+                // Add a small chance for a slight dip downwards to break monotony
+                if (Math.random() > 0.98) yVariation += Math.random() * ecgBaseAmplitude * 0.1;
                 break;
               case 'high':
-                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 1.5;
-                if (Math.random() > 0.8) yVariation *= 2.5; // More frequent larger spikes
+                // Peaks mostly upwards (negative yVariation) with higher amplitude
+                yVariation = -(Math.random() * ecgBaseAmplitude * 1.5);
+                if (Math.random() > 0.8) yVariation -= Math.random() * ecgBaseAmplitude * 1.0; // More frequent larger upward spikes
+                // Add a small chance for a slight dip downwards
+                if (Math.random() > 0.95) yVariation += Math.random() * ecgBaseAmplitude * 0.2;
                 break;
             }
             lastY = CIRCLE_CY + yVariation;
@@ -329,7 +335,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
                 animationDelay: triggerStartupAnimation ? `${1.0 + i * 0.05}s` : '0s'
               } as React.CSSProperties}
-              // Removed className="animate-global-indicator-spokes-rotate-in"
             />
           ))}
         </g>
