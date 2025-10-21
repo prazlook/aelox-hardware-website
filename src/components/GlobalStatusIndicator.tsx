@@ -142,25 +142,21 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           // Start the segment from the last point to ensure continuity
           path += ` L ${currentX} ${lastY.toFixed(2)}`;
 
-          for (let x = currentX + 4; x <= segmentEndX; x += 4) {
+          // Generate points for the current segment
+          for (let x = currentX + 2; x <= segmentEndX; x += 2) { // Decreased step for smoother line
             let yVariation = 0;
             switch (segmentMode) {
               case 'flat':
                 yVariation = (Math.random() - 0.5) * 1; // Very small noise for flat
                 break;
               case 'low':
-                // Peaks mostly upwards (negative yVariation)
-                yVariation = -(Math.random() * ecgBaseAmplitude * 0.5);
-                if (Math.random() > 0.95) yVariation -= Math.random() * ecgBaseAmplitude * 0.5; // Occasional larger upward spike
-                // Add a small chance for a slight dip downwards to break monotony
-                if (Math.random() > 0.98) yVariation += Math.random() * ecgBaseAmplitude * 0.1;
+                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.3; // Base small fluctuations
+                if (Math.random() > 0.9) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 0.7; // Occasional moderate spike/trough
                 break;
               case 'high':
-                // Peaks mostly upwards (negative yVariation) with higher amplitude
-                yVariation = -(Math.random() * ecgBaseAmplitude * 1.5);
-                if (Math.random() > 0.8) yVariation -= Math.random() * ecgBaseAmplitude * 1.0; // More frequent larger upward spikes
-                // Add a small chance for a slight dip downwards
-                if (Math.random() > 0.95) yVariation += Math.random() * ecgBaseAmplitude * 0.2;
+                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.8; // Base larger fluctuations
+                if (Math.random() > 0.7) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 1.2; // More frequent large spike/trough
+                if (Math.random() > 0.95) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 2.0; // Very rare extreme spike/trough
                 break;
             }
             lastY = CIRCLE_CY + yVariation;
@@ -349,7 +345,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           stroke={strokeColor}
           strokeWidth="2"
           filter="url(#glow)"
-          style={{ transition: 'd 0.07s linear, stroke 0.3s linear', animationDelay: triggerStartupAnimation ? '2.0s' : '0s' }}
+          style={{ animationDelay: triggerStartupAnimation ? '2.0s' : '0s' }} // Removed transition for smoother dynamic updates
           className={cn(status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on', triggerStartupAnimation && "animate-global-indicator-ecg-center-expand")}
         />
       </g>
