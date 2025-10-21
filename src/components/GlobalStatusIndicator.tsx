@@ -47,8 +47,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
     particles: [] as { x: number, y: number, size: number, tx: number, ty: number, delay: number }[],
     orbRadius: 0,
     orbOpacity: 0,
-    ecgMode: 'low' as 'flat' | 'low' | 'high', // Add ecgMode here
-    modeCounter: 0, // Add modeCounter here
   });
 
   const { color } = statusConfig[status];
@@ -99,21 +97,9 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
     }
 
     const animationInterval = isOverclockedMajority ? 60 : 120;
-    const MODE_CHANGE_THRESHOLD = 50; // Number of updates before potentially changing mode
 
     const intervalId = setInterval(() => {
       setDynamicValues(prev => {
-        let newModeCounter = prev.modeCounter + 1;
-        let newEcgMode = prev.ecgMode;
-
-        if (newModeCounter >= MODE_CHANGE_THRESHOLD) {
-          newModeCounter = 0;
-          const rand = Math.random();
-          if (rand < 0.2) newEcgMode = 'flat'; // 20% chance for flat
-          else if (rand < 0.7) newEcgMode = 'low'; // 50% chance for low
-          else newEcgMode = 'high'; // 30% chance for high
-        }
-
         const intensity = Math.min(hashrate / 120, 1.2);
         setRotation(prevRot => (prevRot + (isOverclockedMajority ? 1.5 : 0.5)) % 360);
 
@@ -137,24 +123,44 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         }
         
         let path = `M -200 ${CIRCLE_CY}`;
-        const ecgAmplitude = 5 + 25 * intensity;
-        for (let i = -200; i <= VIEWBOX_WIDTH + 200; i += 4) {
-          let yVariation = 0;
-          switch (newEcgMode) {
-            case 'flat':
-              yVariation = (Math.random() - 0.5) * 2; // Very small variation
-              break;
-            case 'low':
-              yVariation = (Math.random() - 0.5) * ecgAmplitude * 0.5;
-              if (Math.random() > 0.98) yVariation *= 3; // Occasional small spikes
-              break;
-            case 'high':
-              yVariation = (Math.random() - 0.5) * ecgAmplitude * 1.5;
-              if (Math.random() > 0.9) yVariation *= 2; // More frequent larger spikes
-              break;
+        const ecgBaseAmplitude = 5 + 25 * intensity; // Base amplitude for non-flat modes
+        const segmentMinLength = 80; // Minimum length of a segment
+        const segmentMaxLength = 250; // Maximum length of a segment
+        let currentX = -200;
+        let lastY = CIRCLE_CY; // To ensure smooth transitions between segments
+
+        while (currentX < VIEWBOX_WIDTH + 200) {
+          const segmentLength = segmentMinLength + Math.random() * (segmentMaxLength - segmentMinLength);
+          const segmentEndX = Math.min(currentX + segmentLength, VIEWBOX_WIDTH + 200);
+
+          const rand = Math.random();
+          let segmentMode: 'flat' | 'low' | 'high';
+          if (rand < 0.3) segmentMode = 'flat'; // 30% flat
+          else if (rand < 0.8) segmentMode = 'low'; // 50% low
+          else segmentMode = 'high'; // 20% high
+
+          // Start the segment from the last point to ensure continuity
+          path += ` L ${currentX} ${lastY.toFixed(2)}`;
+
+          for (let x = currentX + 4; x <= segmentEndX; x += 4) {
+            let yVariation = 0;
+            switch (segmentMode) {
+              case 'flat':
+                yVariation = (Math.random() - 0.5) * 1; // Very small noise for flat
+                break;
+              case 'low':
+                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.5;
+                if (Math.random() > 0.95) yVariation *= 2; // Occasional small spikes
+                break;
+              case 'high':
+                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 1.5;
+                if (Math.random() > 0.8) yVariation *= 2.5; // More frequent larger spikes
+                break;
+            }
+            lastY = CIRCLE_CY + yVariation;
+            path += ` L ${x} ${lastY.toFixed(2)}`;
           }
-          const y = CIRCLE_CY + yVariation;
-          path += ` L ${i} ${y.toFixed(2)}`;
+          currentX = segmentEndX;
         }
 
         const time = Date.now() / (isOverclockedMajority ? 300 : 500);
@@ -168,8 +174,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           ecgPath: path,
           orbRadius: newOrbRadius,
           orbOpacity: newOrbOpacity,
-          ecgMode: newEcgMode, // Update ecgMode in state
-          modeCounter: newModeCounter, // Update modeCounter in state
         };
       });
     }, animationInterval);
@@ -325,7 +329,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
                 animationDelay: triggerStartupAnimation ? `${1.0 + i * 0.05}s` : '0s'
               } as React.CSSProperties}
-              className={cn(triggerStartupAnimation && "animate-global-indicator-spokes-rotate-in")}
+              // Removed className="animate-global-indicator-spokes-rotate-in"
             />
           ))}
         </g>
