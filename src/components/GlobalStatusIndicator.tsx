@@ -124,8 +124,8 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         
         let path = `M -200 ${CIRCLE_CY}`;
         const ecgBaseAmplitude = 5 + 25 * intensity; // Base amplitude for non-flat modes
-        const segmentMinLength = 80; // Minimum length of a segment
-        const segmentMaxLength = 250; // Maximum length of a segment
+        const segmentMinLength = 200; // Increased minimum length of a segment
+        const segmentMaxLength = 600; // Increased maximum length of a segment
         let currentX = -200;
         let lastY = CIRCLE_CY; // To ensure smooth transitions between segments
 
@@ -329,7 +329,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
                 '--final-rotation': `${(360 / SPOKE_COUNT) * i}deg`,
                 animationDelay: triggerStartupAnimation ? `${1.0 + i * 0.05}s` : '0s'
               } as React.CSSProperties}
-              // Removed className="animate-global-indicator-spokes-rotate-in"
             />
           ))}
         </g>
