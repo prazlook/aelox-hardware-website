@@ -226,7 +226,7 @@
   }
 }
 
-/* Global Status Indicator Animation Classes */
+/* Global Status Indicator Animations */
 @keyframes global-indicator-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -242,11 +242,10 @@
   to { stroke-dashoffset: 0; }
 }
 
-/* Removed global-indicator-spokes-rotate-in as rays are now dynamic */
-/* @keyframes global-indicator-spokes-rotate-in {
+@keyframes global-indicator-spokes-rotate-in {
   from { transform: rotate(0deg) scale(0); opacity: 0; }
   to { transform: rotate(var(--final-rotation)) scale(1); opacity: 0.3; }
-} */
+}
 
 @keyframes global-indicator-ecg-center-expand {
   0% {
@@ -482,6 +481,19 @@
     animation: idle-pulse 8s linear infinite;
   }
 
+  .ecg-line {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transform-origin: center;
+  }
+  .ecg-line-on {
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+  .ecg-line-off {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
   .animate-boot-up-item {
     animation: boot-up-item 0.5s ease-out forwards;
     opacity: 0;
@@ -546,12 +558,11 @@
     animation: global-indicator-waveform-draw 1s ease-out forwards;
   }
 
-  /* Removed global-indicator-spokes-rotate-in as rays are now dynamic */
-  /* .animate-global-indicator-spokes-rotate-in {
+  .animate-global-indicator-spokes-rotate-in {
     animation: global-indicator-spokes-rotate-in 0.8s ease-out forwards;
     opacity: 0;
     transform-origin: center center;
-  } */
+  }
 
   .animate-global-indicator-ecg-center-expand {
     stroke-dasharray: 0 1000;
