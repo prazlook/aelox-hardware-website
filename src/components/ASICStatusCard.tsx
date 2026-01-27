@@ -40,6 +40,7 @@ interface ASICStatusCardProps {
   triggerShutdownAnimation: boolean; // New prop
   triggerStartupAnimation: boolean; // New prop
   startupDelay: number; // Base delay for this specific card
+  shutdownDelay: number; // New prop for shutdown delay
 }
 
 interface StatusBadgeProps {
@@ -70,8 +71,7 @@ const StatusBadge = ({ status, triggerShutdownAnimation, shutdownDelay, triggerS
       className={cn(
         "flex items-center space-x-1.5 rounded-full px-2 py-0.5 text-xs font-medium border", 
         config.className,
-        triggerShutdownAnimation && "animate-fluorescent-flicker",
-        triggerStartupAnimation && "animate-startup-fade-in-scale"
+        triggerShutdownAnimation && "animate-fluorescent-flicker"
       )}
       style={triggerShutdownAnimation ? { animationDelay: `${shutdownDelay}s` } : triggerStartupAnimation ? { animationDelay: `${startupDelay}s` } : {}}
     >
@@ -97,8 +97,7 @@ interface StatItemProps {
 const StatItem = ({ icon, label, value, unit, className, style, triggerShutdownAnimation, shutdownDelay, triggerStartupAnimation, startupDelay }: StatItemProps) => (
   <div 
     className={cn("flex items-center space-x-2", className,
-      triggerShutdownAnimation && "animate-fluorescent-flicker",
-      triggerStartupAnimation && "animate-startup-fade-in-scale"
+      triggerShutdownAnimation && "animate-fluorescent-flicker"
     )}
     style={triggerShutdownAnimation ? { animationDelay: `${shutdownDelay}s`, ...style } : triggerStartupAnimation ? { animationDelay: `${startupDelay}s`, ...style } : style}
   >
@@ -131,7 +130,7 @@ const ShutdownAnimation = () => (
   </div>
 );
 
-export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction, className, style, triggerShutdownAnimation, triggerStartupAnimation, startupDelay: cardBaseStartupDelay }: ASICStatusCardProps) => {
+export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onToggleOverclock, onPowerAction, className, style, triggerShutdownAnimation, triggerStartupAnimation, startupDelay: cardBaseStartupDelay, shutdownDelay: cardBaseShutdownDelay }: ASICStatusCardProps) => {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { triggerBurst } = useAnimation();
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
@@ -188,11 +187,16 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   };
 
   // Base delay for internal elements after border (0.8s) and fill (0.5s) animations
-  const internalElementsBaseDelay = cardBaseStartupDelay + 0.8 + 0.5;
+  const internalElementsBaseStartupDelay = cardBaseStartupDelay + 0.8 + 0.5;
 
   // Helper to get startup animation styles for internal elements
   const getInternalStartupDelay = (offset: number) => {
-    return triggerStartupAnimation ? { animationDelay: `${internalElementsBaseDelay + offset}s` } : {};
+    return triggerStartupAnimation ? { animationDelay: `${internalElementsBaseStartupDelay + offset}s` } : {};
+  };
+
+  // Helper to get shutdown animation styles for internal elements
+  const getInternalShutdownDelay = (offset: number) => {
+    return triggerShutdownAnimation ? { animationDelay: `${cardBaseShutdownDelay + offset}s` } : {};
   };
 
   const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
@@ -200,7 +204,14 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
   return (
     <>
-      <div className={cn("relative h-full rounded-2xl overflow-hidden", className)} style={style}>
+      <div 
+        className={cn(
+          "relative h-full rounded-2xl overflow-hidden", 
+          className,
+          triggerShutdownAnimation && "animate-staggered-fade-out" // Apply staggered fade-out to the entire card
+        )} 
+        style={triggerShutdownAnimation ? { '--delay': `${cardBaseShutdownDelay}s`, ...style } as React.CSSProperties : style}
+      >
         {/* Border SVG - appears first */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           <StatusBorderAnimation
@@ -324,9 +335,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                 <StatusBadge 
                   status={asic.status} 
                   triggerShutdownAnimation={triggerShutdownAnimation} 
-                  shutdownDelay={1.9} // Shutdown delay
+                  shutdownDelay={cardBaseShutdownDelay + 1.9} // Shutdown delay for badge
                   triggerStartupAnimation={triggerStartupAnimation} // Pass startup prop
-                  startupDelay={internalElementsBaseDelay + 1.1} // Startup delay for badge
+                  startupDelay={internalElementsBaseStartupDelay + 1.1} // Startup delay for badge
                 />
               </div>
             </div>
@@ -353,9 +364,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               unit="TH/s" 
               className={contentAnimationClass} // Shutdown animation class
               triggerShutdownAnimation={triggerShutdownAnimation}
-              shutdownDelay={0.5} // Shutdown delay
+              shutdownDelay={cardBaseShutdownDelay + 0.5} // Shutdown delay
               triggerStartupAnimation={triggerStartupAnimation}
-              startupDelay={internalElementsBaseDelay + 0.3} // Adjusted delay
+              startupDelay={internalElementsBaseStartupDelay + 0.3} // Adjusted delay
             />
             <StatItem 
               icon={<Thermometer size={20} />} 
@@ -364,9 +375,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               unit="°C" 
               className={cn(tempColor, contentAnimationClass)} // Shutdown animation class
               triggerShutdownAnimation={triggerShutdownAnimation}
-              shutdownDelay={0.6} // Shutdown delay
+              shutdownDelay={cardBaseShutdownDelay + 0.6} // Shutdown delay
               triggerStartupAnimation={triggerStartupAnimation}
-              startupDelay={internalElementsBaseDelay + 0.4} // Adjusted delay
+              startupDelay={internalElementsBaseStartupDelay + 0.4} // Adjusted delay
             />
             <StatItem 
               icon={<Zap size={20} />} 
@@ -375,9 +386,9 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               unit="W" 
               className={contentAnimationClass} // Shutdown animation class
               triggerShutdownAnimation={triggerShutdownAnimation}
-              shutdownDelay={0.7} // Shutdown delay
+              shutdownDelay={cardBaseShutdownDelay + 0.7} // Shutdown delay
               triggerStartupAnimation={triggerStartupAnimation}
-              startupDelay={internalElementsBaseDelay + 0.5} // Adjusted delay
+              startupDelay={internalElementsBaseStartupDelay + 0.5} // Adjusted delay
             />
             
             {/* Fan Control */}

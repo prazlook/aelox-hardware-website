@@ -117,7 +117,7 @@
   25% { opacity: 0.6; }
   50% { opacity: 0.8; }
   75% { opacity: 0.4; color: #A0AEC0; }
-  100% { opacity: 0.2; color: #A0AEC0; }
+  100% { opacity: 0; color: #A0AEC0; pointer-events: none; } /* Modified to fully disappear */
 }
 
 @keyframes ecg-border-flow {

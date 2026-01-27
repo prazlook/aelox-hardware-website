@@ -88,7 +88,7 @@ const Index = () => {
             case 'reboot':
               playSound(powerOffSoundFile);
               setTimeout(() => {
-                setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asicId ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asicItem.temperature - 10) } : asicItem));
+                setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asicItem.temperature - 10) } : asicItem));
               }, shutdownDelay * 1000);
               return { ...asic, status: 'shutting down' };
             case 'force-stop':
@@ -478,6 +478,7 @@ const Index = () => {
               triggerShutdownAnimation={triggerShutdownAnimation} // Pass the prop
               triggerStartupAnimation={triggerStartupAnimation} // Pass the prop
               startupDelay={1.2 + index * 0.1} // Base delay for this specific card
+              shutdownDelay={1.8 + index * 0.1} // Staggered shutdown delay for each card
               className={""} // No animation on the card wrapper itself
               style={{}} // No animation on the card wrapper itself
             />
