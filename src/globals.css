@@ -386,6 +386,34 @@
   }
 }
 
+/* Button build animation */
+@keyframes button-build-animation {
+  0% {
+    clip-path: inset(50% 50% 50% 50%); /* 1x1px square in the center */
+    opacity: 0;
+  }
+  5% {
+    opacity: 1; /* Become visible */
+  }
+  20% {
+    clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); /* Expand horizontally to a 1px line */
+  }
+  40% {
+    clip-path: inset(0% 0% 0% 0%); /* Expand vertically to full button */
+  }
+  100% {
+    clip-path: inset(0% 0% 0% 0%);
+    opacity: 1;
+  }
+}
+
+/* Button content fade-in animation */
+@keyframes button-content-fade-in {
+  0% { opacity: 0; }
+  60% { opacity: 0; } /* Delay text appearance until button is mostly formed */
+  100% { opacity: 1; }
+}
+
 
 @layer components {
   .animate-hashrate-glitch {
@@ -573,6 +601,17 @@
     animation: asic-border-draw-in 0.8s ease-out forwards;
     stroke-dasharray: 0 1000; /* Initial state for animation */
     stroke-dashoffset: 0;
+    opacity: 0; /* Start hidden */
+  }
+
+  /* Button animations */
+  .animate-button-build {
+    animation: button-build-animation 1s ease-out forwards;
+    opacity: 0; /* Start hidden */
+  }
+
+  .animate-button-content-fade-in {
+    animation: button-content-fade-in 0.5s ease-out forwards;
     opacity: 0; /* Start hidden */
   }
 }
