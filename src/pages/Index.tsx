@@ -19,7 +19,7 @@ const HomePage = () => {
         <Button asChild className="bg-theme-cyan text-black hover:bg-theme-cyan/90 px-8 py-6 text-lg rounded-xl shadow-lg">
           <Link to="/dashboard" className={cn("relative overflow-hidden flex items-center justify-center animate-button-build")} style={{ animationDelay: '0.8s' }}>
             <span className={cn("animate-button-content-fade-in")} style={{ animationDelay: '1.4s' }}>
-              Accéder au Tableau de Bord <ArrowRight className="ml-2 h-5 w-5" />
+              Accéder au Tableau de Bord
             </span>
           </Link>
         </Button>
