@@ -1,84 +1,136 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton, { HexagonIcon } from '@/components/HoneycombButton';
+import { NeuralHexNetwork } from '@/components/NeuralHexNetwork';
 import { useTypewriter } from '@/hooks/useTypewriter';
 import { cn } from '@/lib/utils';
 
-type TransitionState = 'idle' | 'morphing' | 'hex-line' | 'box-typing' | 'flash' | 'complete';
+type TransitionState = 'idle' | 'morphing' | 'fighting' | 'locking' | 'flash';
 
 const AppStoppedScreen = () => {
   const { startApp } = useAppStatus();
   const [step, setStep] = useState<TransitionState>('idle');
+  const [redHexPos, setRedHexPos] = useState({ x: 0, y: 0 });
+  const [terminalBoxPos, setTerminalBoxPos] = useState({ x: 0, y: 0 });
   const [terminalText, setTerminalText] = useState('');
   
-  const textToType = "> INITIALIZING CORE SYSTEMS...\n> LOADING NEURAL NETWORK...\n> CONNECTING TO ASIC NODES...\n> SECURITY HANDSHAKE: OK.\n> SYSTEM READY.";
-  const typedText = useTypewriter(terminalText, 25);
+  const boxRef = useRef<HTMLDivElement>(null);
+  
+  const textToType = "> PROTOCOL BREACH DETECTED...\n> AGENT_RED IDENTIFIED.\n> ATTEMPTING CONTAINMENT...\n> REPELLING HOSTILE NODE...\n> TARGET ACQUIRED.\n> LOCKING DOWN SYSTEM.";
+  const typedText = useTypewriter(terminalText, 20);
+
+  // Update terminal box position for the network physics
+  useEffect(() => {
+    if (boxRef.current) {
+      const rect = boxRef.current.getBoundingClientRect();
+      setTerminalBoxPos({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      });
+    }
+  }, [step]);
 
   const handleStart = () => {
     setStep('morphing');
     
-    // Séquence temporelle
-    setTimeout(() => setStep('hex-line'), 1000);
+    // Début de la séquence longue
     setTimeout(() => {
-      setStep('box-typing');
+      setStep('fighting');
       setTerminalText(textToType);
-    }, 2000);
-    setTimeout(() => setStep('flash'), 4500);
-    setTimeout(() => startApp(), 5000);
+    }, 1500);
+
+    // Phase de verrouillage (viseur)
+    setTimeout(() => {
+      setStep('locking');
+    }, 7000);
+
+    // Flash final
+    setTimeout(() => {
+      setStep('flash');
+    }, 9500);
+
+    // Lancement de l'app
+    setTimeout(() => {
+      startApp();
+    }, 10000);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
       
+      {/* Réseau de fond réactif */}
+      <div className={cn(
+        "fixed inset-0 transition-opacity duration-1000 z-0",
+        step === 'idle' ? "opacity-0" : "opacity-100"
+      )}>
+        <NeuralHexNetwork 
+          redHexActive={step !== 'idle' && step !== 'morphing'} 
+          terminalBoxPos={terminalBoxPos}
+          onRedHexPos={setRedHexPos}
+        />
+      </div>
+
       {/* L'éclair blanc final */}
       {step === 'flash' && (
         <div className="fixed inset-0 z-50 animate-final-flash pointer-events-none" />
       )}
 
-      {/* Séquence de transition SVG */}
-      {step !== 'idle' && step !== 'morphing' && (
-        <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
-          <svg className="w-full h-full max-w-4xl max-h-[600px]" viewBox="0 0 800 600">
-            {/* Hexagone rouge au centre (là où était le bouton) */}
-            <g className={cn("animate-red-hex-appear", step === 'flash' && "opacity-0")}>
-              <foreignObject x="360" y="260" width="80" height="80">
-                <div className={cn("w-full h-full text-red-500", step === 'box-typing' && "animate-hex-red-orange")}>
-                  <HexagonIcon className="w-full h-full fill-red-500/20" />
-                </div>
-              </foreignObject>
-            </g>
+      {/* Viseur de verrouillage */}
+      {step === 'locking' && (
+        <div 
+          className="absolute z-40 pointer-events-none transition-all duration-300 ease-out animate-target-lock"
+          style={{ 
+            left: redHexPos.x, 
+            top: redHexPos.y, 
+            transform: 'translate(-50%, -50%)' 
+          }}
+        >
+          <div className="relative w-24 h-24">
+            <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-red-500 animate-target-bracket-in" style={{ '--tx': '-40px', '--ty': '-40px' } as any} />
+            <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-red-500 animate-target-bracket-in" style={{ '--tx': '40px', '--ty': '-40px' } as any} />
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-red-500 animate-target-bracket-in" style={{ '--tx': '-40px', '--ty': '40px' } as any} />
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-red-500 animate-target-bracket-in" style={{ '--tx': '40px', '--ty': '40px' } as any} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-1 h-1 bg-red-500 rounded-full" />
+            </div>
+          </div>
+        </div>
+      )}
 
-            {/* Ligne de connexion rouge */}
-            {(step === 'hex-line' || step === 'box-typing') && (
-              <path
-                d="M 440 300 L 550 300 L 550 200"
-                stroke="#ef4444"
-                strokeWidth="2"
-                fill="none"
-                className="animate-red-line-draw"
-                filter="drop-shadow(0 0 5px red)"
-              />
-            )}
+      {/* Séquence de combat visuelle */}
+      {(step === 'fighting' || step === 'locking') && (
+        <div className="absolute inset-0 z-30 pointer-events-none">
+          <svg className="w-full h-full" viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}>
+            {/* Ligne de connexion dynamique qui suit l'hexagone rouge */}
+            <path
+              d={`M ${redHexPos.x} ${redHexPos.y} L ${terminalBoxPos.x - 160} ${terminalBoxPos.y}`}
+              stroke="#ef4444"
+              strokeWidth="2"
+              fill="none"
+              className="animate-red-line-draw"
+              filter="drop-shadow(0 0 5px red)"
+            />
           </svg>
 
-          {/* Boîte de terminal rouge futuriste */}
-          {step === 'box-typing' && (
-            <div className="absolute top-[120px] left-[550px] w-80 p-4 border-2 border-red-500 bg-red-950/40 backdrop-blur-md animate-box-reveal shadow-[0_0_20px_rgba(239,68,68,0.3)]">
-              <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
-                <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest">System Monitor</span>
-                <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500/30" />
-                </div>
+          {/* Boîte de terminal */}
+          <div 
+            ref={boxRef}
+            className="absolute top-1/2 left-[70%] -translate-y-1/2 w-80 p-4 border-2 border-red-500 bg-red-950/40 backdrop-blur-md animate-box-reveal shadow-[0_0_20px_rgba(239,68,68,0.3)]"
+          >
+            <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
+              <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest">Breach Monitor v2.0</span>
+              <div className="flex gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500/30" />
               </div>
-              <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor">
-                {typedText}
-              </pre>
             </div>
-          )}
+            <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor">
+              {typedText}
+            </pre>
+          </div>
         </div>
       )}
 
@@ -88,10 +140,10 @@ const AppStoppedScreen = () => {
       )}>
         <div className="space-y-2">
           <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600">
-            Système en Veille
+            Aelox Core
           </h1>
           <p className="text-theme-text-secondary text-lg">
-            Appuyez pour initialiser le déploiement
+            Initialisation du protocole de sécurité
           </p>
         </div>
       </div>
