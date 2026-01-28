@@ -395,10 +395,10 @@
   5% {
     opacity: 1; /* Become visible */
   }
-  30% { /* Increased from 20% to 30% */
+  20% {
     clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); /* Expand horizontally to a 1px line */
   }
-  50% { /* Increased from 40% to 50% */
+  40% {
     clip-path: inset(0% 0% 0% 0%); /* Expand vertically to full button */
   }
   100% {
