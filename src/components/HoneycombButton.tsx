@@ -11,17 +11,29 @@ interface HoneycombButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 
 const HoneycombButton = ({ children, className, ...props }: HoneycombButtonProps) => {
   return (
-    <div className="relative group p-48"> {/* Zone encore plus large pour le Canvas */}
+    <div className="relative group p-32"> {/* Zone p-32 pour une extension massive */}
       {/* Réseau neuronal d'hexagones en arrière-plan étendu */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
         <NeuralHexNetwork />
       </div>
 
-      {/* Halo multi-couches pour un dégradé très flou */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse" />
-        <div className="absolute w-[150px] h-[150px] rounded-full bg-green-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      {/* Grille Honeycomb statique légère en arrière-plan */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden scale-110">
+        <svg className="w-full h-full text-green-500/10" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <pattern id="honeycomb-bg" x="0" y="0" width="10" height="17.32" patternUnits="userSpaceOnUse">
+            <path 
+              d="M5 0 L10 2.88 L10 8.66 L5 11.54 L0 8.66 L0 2.88 Z" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="0.1" 
+            />
+          </pattern>
+          <rect width="100" height="100" fill="url(#honeycomb-bg)" />
+        </svg>
       </div>
+
+      {/* Halo de lueur central plus large */}
+      <div className="absolute inset-0 rounded-full bg-green-500/5 blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-glow-pulse" />
 
       {/* Le bouton central */}
       <div className="relative flex justify-center items-center">
@@ -41,11 +53,11 @@ const HoneycombButton = ({ children, className, ...props }: HoneycombButtonProps
         </Button>
       </div>
       
-      {/* Décorations hexagonales flottantes */}
-      <div className="absolute top-24 right-24 w-16 h-16 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-150 transform group-hover:translate-x-8 group-hover:-translate-y-8">
+      {/* Décorations hexagonales flottantes décalées */}
+      <div className="absolute top-10 right-10 w-16 h-16 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-150 transform group-hover:translate-x-8 group-hover:-translate-y-8">
         <HexagonIcon className="text-green-400 w-full h-full animate-pulse" />
       </div>
-      <div className="absolute bottom-24 left-24 w-14 h-14 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-300 transform group-hover:-translate-x-8 group-hover:translate-y-8">
+      <div className="absolute bottom-10 left-10 w-14 h-14 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-300 transform group-hover:-translate-x-8 group-hover:translate-y-8">
         <HexagonIcon className="text-green-500 w-full h-full animate-pulse" />
       </div>
     </div>

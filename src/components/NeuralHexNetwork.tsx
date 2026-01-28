@@ -10,8 +10,6 @@ interface Particle {
   size: number;
   rotation: number;
   vRotation: number;
-  isDying: boolean;
-  deathProgress: number; // 0 to 1
 }
 
 interface Connection {
@@ -38,20 +36,19 @@ export const NeuralHexNetwork = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
       
-      particles.current = Array.from({ length: 100 }, () => ({
+      // Augmentation du nombre de particules pour couvrir la zone étendue
+      particles.current = Array.from({ length: 80 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 5 + 3,
         rotation: Math.random() * Math.PI,
-        vRotation: (Math.random() - 0.5) * 0.02,
-        isDying: false,
-        deathProgress: 0
+        vRotation: (Math.random() - 0.5) * 0.015
       }));
     };
 
-    const drawHex = (x: number, y: number, size: number, rotation: number, opacity: number, color: string, glow: boolean = false) => {
+    const drawHex = (x: number, y: number, size: number, rotation: number, opacity: number) => {
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
         const angle = rotation + (i * Math.PI) / 3;
@@ -61,85 +58,45 @@ export const NeuralHexNetwork = () => {
         else ctx.lineTo(px, py);
       }
       ctx.closePath();
-      
-      if (glow) {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = color;
-      } else {
-        ctx.shadowBlur = 0;
-      }
-
-      ctx.strokeStyle = color;
-      ctx.globalAlpha = opacity;
+      ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.4})`;
       ctx.stroke();
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
     };
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-      const survivalRadius = Math.min(canvas.width, canvas.height) * 0.35;
 
-      // Update and draw particles
-      particles.current = particles.current.filter(p => {
+      // Update particles
+      particles.current.forEach(p => {
         p.x += p.vx;
         p.y += p.vy;
         p.rotation += p.vRotation;
 
-        const dist = Math.hypot(p.x - cx, p.y - cy);
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-        // Déclencher la mort si trop loin du centre
-        if (dist > survivalRadius && !p.isDying) {
-          p.isDying = true;
-        }
-
-        if (p.isDying) {
-          p.deathProgress += 0.04;
-          // Flash blanc éclatant
-          const flashOpacity = Math.sin(p.deathProgress * Math.PI);
-          drawHex(p.x, p.y, p.size * (1 + p.deathProgress), p.rotation, flashOpacity, 'white', true);
-          return p.deathProgress < 1;
-        }
-
-        drawHex(p.x, p.y, p.size, p.rotation, 0.4, '#22c55e');
-        return true;
+        drawHex(p.x, p.y, p.size, p.rotation, 0.3);
       });
 
-      // Remplacer les particules mortes
-      while (particles.current.length < 100) {
-        particles.current.push({
-          x: cx + (Math.random() - 0.5) * survivalRadius * 1.5,
-          y: cy + (Math.random() - 0.5) * survivalRadius * 1.5,
-          vx: (Math.random() - 0.5) * 0.6,
-          vy: (Math.random() - 0.5) * 0.6,
-          size: Math.random() * 5 + 3,
-          rotation: Math.random() * Math.PI,
-          vRotation: (Math.random() - 0.5) * 0.02,
-          isDying: false,
-          deathProgress: 0
-        });
-      }
-
-      // Connections
-      if (Math.random() > 0.9) {
+      // Manage connections
+      if (Math.random() > 0.93) {
         const p1 = Math.floor(Math.random() * particles.current.length);
         const p2 = Math.floor(Math.random() * particles.current.length);
-        if (!particles.current[p1].isDying && !particles.current[p2].isDying) {
-          const dist = Math.hypot(particles.current[p1].x - particles.current[p2].x, particles.current[p1].y - particles.current[p2].y);
-          if (dist < 150) {
-            connections.current.push({ p1, p2, life: 1, status: 'scintillating' });
-          }
+        const dist = Math.hypot(particles.current[p1].x - particles.current[p2].x, particles.current[p1].y - particles.current[p2].y);
+        
+        // Portée de connexion augmentée
+        if (dist < 180 && p1 !== p2) {
+          connections.current.push({ p1, p2, life: 1, status: 'scintillating' });
         }
       }
 
+      // Draw and update connections
       connections.current = connections.current.filter(c => {
         const p1 = particles.current[c.p1];
         const p2 = particles.current[c.p2];
-        if (!p1 || !p2 || p1.isDying || p2.isDying) return false;
+        if (!p1 || !p2) return false;
 
-        c.life -= 0.006;
+        c.life -= 0.004; // Durée de vie légèrement plus longue
+
         if (c.life > 0.7) c.status = 'scintillating';
         else if (c.life > 0.2) c.status = 'graying';
         else c.status = 'dying';
@@ -149,15 +106,15 @@ export const NeuralHexNetwork = () => {
         ctx.lineTo(p2.x, p2.y);
 
         if (c.status === 'scintillating') {
-          ctx.setLineDash([3, 6]);
-          ctx.lineDashOffset = Date.now() / 30;
-          ctx.strokeStyle = `rgba(34, 197, 94, ${Math.random() * 0.8})`;
+          ctx.setLineDash([3, 5]);
+          ctx.lineDashOffset = Date.now() / 40;
+          ctx.strokeStyle = `rgba(34, 197, 94, ${Math.random() * 0.7})`;
         } else if (c.status === 'graying') {
           ctx.setLineDash([]);
-          ctx.strokeStyle = `rgba(100, 116, 139, ${c.life})`;
+          ctx.strokeStyle = `rgba(100, 116, 139, ${c.life * 0.8})`;
         } else {
           ctx.setLineDash([]);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${c.life * 8})`;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${c.life * 6})`;
           ctx.lineWidth = 2;
         }
 
