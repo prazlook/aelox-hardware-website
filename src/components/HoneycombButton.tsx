@@ -11,9 +11,9 @@ interface HoneycombButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 
 const HoneycombButton = ({ children, className, ...props }: HoneycombButtonProps) => {
   return (
-    <div className="relative group p-48"> {/* Zone encore plus large pour le Canvas */}
-      {/* Réseau neuronal d'hexagones en arrière-plan étendu */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
+    <div className="relative group p-48">
+      {/* Réseau neuronal d'hexagones étendu à toute la page */}
+      <div className="fixed inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-0">
         <NeuralHexNetwork />
       </div>
 
