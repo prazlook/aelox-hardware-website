@@ -36,14 +36,15 @@ export const NeuralHexNetwork = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
       
-      particles.current = Array.from({ length: 40 }, () => ({
+      // Augmentation du nombre de particules pour couvrir la zone étendue
+      particles.current = Array.from({ length: 80 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 4 + 4,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 5 + 3,
         rotation: Math.random() * Math.PI,
-        vRotation: (Math.random() - 0.5) * 0.02
+        vRotation: (Math.random() - 0.5) * 0.015
       }));
     };
 
@@ -57,7 +58,7 @@ export const NeuralHexNetwork = () => {
         else ctx.lineTo(px, py);
       }
       ctx.closePath();
-      ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.5})`;
+      ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.4})`;
       ctx.stroke();
     };
 
@@ -73,28 +74,28 @@ export const NeuralHexNetwork = () => {
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-        drawHex(p.x, p.y, p.size, p.rotation, 0.4);
+        drawHex(p.x, p.y, p.size, p.rotation, 0.3);
       });
 
       // Manage connections
-      // 1. Create new connections
-      if (Math.random() > 0.95) {
+      if (Math.random() > 0.93) {
         const p1 = Math.floor(Math.random() * particles.current.length);
         const p2 = Math.floor(Math.random() * particles.current.length);
         const dist = Math.hypot(particles.current[p1].x - particles.current[p2].x, particles.current[p1].y - particles.current[p2].y);
         
-        if (dist < 120 && p1 !== p2) {
+        // Portée de connexion augmentée
+        if (dist < 180 && p1 !== p2) {
           connections.current.push({ p1, p2, life: 1, status: 'scintillating' });
         }
       }
 
-      // 2. Draw and update connections
+      // Draw and update connections
       connections.current = connections.current.filter(c => {
         const p1 = particles.current[c.p1];
         const p2 = particles.current[c.p2];
         if (!p1 || !p2) return false;
 
-        c.life -= 0.005;
+        c.life -= 0.004; // Durée de vie légèrement plus longue
 
         if (c.life > 0.7) c.status = 'scintillating';
         else if (c.life > 0.2) c.status = 'graying';
@@ -105,15 +106,15 @@ export const NeuralHexNetwork = () => {
         ctx.lineTo(p2.x, p2.y);
 
         if (c.status === 'scintillating') {
-          ctx.setLineDash([2, 4]);
-          ctx.lineDashOffset = Date.now() / 50;
-          ctx.strokeStyle = `rgba(34, 197, 94, ${Math.random() * 0.8})`;
+          ctx.setLineDash([3, 5]);
+          ctx.lineDashOffset = Date.now() / 40;
+          ctx.strokeStyle = `rgba(34, 197, 94, ${Math.random() * 0.7})`;
         } else if (c.status === 'graying') {
           ctx.setLineDash([]);
-          ctx.strokeStyle = `rgba(100, 116, 139, ${c.life})`;
+          ctx.strokeStyle = `rgba(100, 116, 139, ${c.life * 0.8})`;
         } else {
           ctx.setLineDash([]);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${c.life * 5})`;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${c.life * 6})`;
           ctx.lineWidth = 2;
         }
 
