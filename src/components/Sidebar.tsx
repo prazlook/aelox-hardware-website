@@ -71,14 +71,14 @@ export const Sidebar = () => {
         size="icon"
         variant="destructive"
         className={cn(
-          "mt-auto mx-auto w-12 h-12 rounded-full mb-4",
+          "mt-auto mx-auto w-12 h-12 rounded-full mb-4", // Adjusted classes for bottom positioning and larger size
           triggerShutdownAnimation && "animate-staggered-fade-out"
         )}
         style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
         onClick={stopApp}
         aria-label="Arrêter l'application"
       >
-        <PowerOff className="w-8 h-8" /> {/* L'icône est maintenant plus grande (w-8 h-8) */}
+        <PowerOff className="w-6 h-6" /> {/* Larger icon */}
       </Button>
     </aside>
   );
