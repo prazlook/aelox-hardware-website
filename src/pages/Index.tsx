@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils'; // Import cn for conditional classNames
+import { AnimatedButtonText } from '@/components/AnimatedButtonText'; // Import new component
 
 const HomePage = () => {
   return (
@@ -18,16 +18,16 @@ const HomePage = () => {
       <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-slide-up" style={{ animationDelay: '0.6s' }}>
         <Button asChild className="bg-theme-cyan text-black hover:bg-theme-cyan/90 px-8 py-6 text-lg rounded-xl shadow-lg">
           <Link to="/dashboard" className={cn("relative overflow-hidden flex items-center justify-center animate-button-build")} style={{ animationDelay: '0.8s' }}>
-            <span className={cn("animate-button-content-fade-in")} style={{ animationDelay: '1.4s' }}>
+            <AnimatedButtonText startTypingDelay={1.4}>
               Accéder au Tableau de Bord
-            </span>
+            </AnimatedButtonText>
           </Link>
         </Button>
         <Button asChild variant="outline" className="border-gray-600 text-white hover:bg-gray-800 px-8 py-6 text-lg rounded-xl shadow-lg">
           <Link to="/about" className={cn("relative overflow-hidden flex items-center justify-center animate-button-build")} style={{ animationDelay: '1.0s' }}>
-            <span className={cn("animate-button-content-fade-in")} style={{ animationDelay: '1.6s' }}>
+            <AnimatedButtonText startTypingDelay={1.6}>
               En savoir plus
-            </span>
+            </AnimatedButtonText>
           </Link>
         </Button>
       </div>
