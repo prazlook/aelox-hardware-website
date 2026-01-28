@@ -12,11 +12,18 @@ interface Particle {
   speed: number;
   vx: number;
   vy: number;
+  isRed?: boolean;
 }
 
-export const NeuralHexNetwork = () => {
+interface NeuralHexNetworkProps {
+  redHexActive?: boolean;
+  onRedHexPos?: (pos: { x: number, y: number }) => void;
+}
+
+export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetworkProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
+  const redHexRef = useRef<Particle | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,7 +43,6 @@ export const NeuralHexNetwork = () => {
 
     const initParticles = () => {
       particles = [];
-      // Densité augmentée (diviseur plus petit = plus de particules)
       const numberOfParticles = Math.floor((canvas.width * canvas.height) / 4000);
       
       for (let i = 0; i < numberOfParticles; i++) {
@@ -47,7 +53,6 @@ export const NeuralHexNetwork = () => {
           y,
           baseX: x,
           baseY: y,
-          // Variété de taille plus importante (de 1 à 12)
           size: Math.random() * 11 + 1,
           angle: Math.random() * Math.PI * 2,
           speed: Math.random() * 2 + 1,
@@ -55,9 +60,27 @@ export const NeuralHexNetwork = () => {
           vy: (Math.random() - 0.5) * 2.5
         });
       }
+
+      // Initialisation de l'hexagone rouge au centre
+      if (redHexActive) {
+        redHexRef.current = {
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          baseX: canvas.width / 2,
+          baseY: canvas.height / 2,
+          size: 20,
+          angle: 0,
+          speed: 2,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5,
+          isRed: true
+        };
+      } else {
+        redHexRef.current = null;
+      }
     };
 
-    const drawHexagon = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
+    const drawHexagon = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, isRed?: boolean) => {
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
         ctx.lineTo(
@@ -66,6 +89,10 @@ export const NeuralHexNetwork = () => {
         );
       }
       ctx.closePath();
+      if (isRed) {
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+        ctx.fill();
+      }
       ctx.stroke();
     };
 
@@ -73,13 +100,11 @@ export const NeuralHexNetwork = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const haloRadius = 150;
-      const maxTotalDistance = 600;
-      const minSize = 1;
-      const maxSize = 12;
-      // Limite de connexion réduite pour diminuer la densité des lignes
-      const connectionLimit = 80;
+      const connectionLimit = 120; // Un peu plus large pour l'interaction
 
-      particles.forEach(p => {
+      const allParticles = redHexRef.current ? [...particles, redHexRef.current] : particles;
+
+      allParticles.forEach(p => {
         p.angle += 0.05;
         p.baseX += p.vx;
         p.baseY += p.vy;
@@ -87,65 +112,55 @@ export const NeuralHexNetwork = () => {
         if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
         if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
 
-        const currentX = p.baseX + Math.cos(p.angle) * 10;
-        const currentY = p.baseY + Math.sin(p.angle) * 10;
-        p.x = currentX;
-        p.y = currentY;
+        p.x = p.baseX + Math.cos(p.angle) * 10;
+        p.y = p.baseY + Math.sin(p.angle) * 10;
 
-        let opacity = 0;
+        // On expose la position de l'hexagone rouge pour la ligne de la boîte
+        if (p.isRed && onRedHexPos) {
+          onRedHexPos({ x: p.x, y: p.y });
+        }
+
+        let opacity = 0.3; // Visibilité par défaut pour les rouges/actifs
         
         if (mouseRef.current.active) {
-          const dx = mouseRef.current.x - currentX;
-          const dy = mouseRef.current.y - currentY;
+          const dx = mouseRef.current.x - p.x;
+          const dy = mouseRef.current.y - p.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < haloRadius) opacity = 1;
+        }
 
-          if (distance < haloRadius) {
-            opacity = 1;
-          } else {
-            const sizeFactor = (maxSize - p.size) / (maxSize - minSize);
-            const availableRange = maxTotalDistance - haloRadius;
-            const minPersistence = availableRange / 2;
-            const maxPersistence = availableRange;
+        if (p.isRed) {
+          ctx.strokeStyle = `rgba(239, 68, 68, ${opacity})`;
+          ctx.lineWidth = 2;
+        } else {
+          ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.5})`;
+          ctx.lineWidth = 1;
+        }
+
+        drawHexagon(ctx, p.x, p.y, p.size, p.isRed);
+
+        // Connexions
+        allParticles.forEach(p2 => {
+          if (p === p2) return;
+          const dx = p2.x - p.x;
+          const dy = p2.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < connectionLimit) {
+            ctx.beginPath();
+            ctx.setLineDash(p.isRed || p2.isRed ? [5, 5] : []); // Pointillés si l'un est rouge
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
             
-            const allowedPersistenceDistance = minPersistence + (sizeFactor * (maxPersistence - minPersistence));
-            const limit = haloRadius + allowedPersistenceDistance;
-
-            if (distance < limit) {
-              opacity = 1 - (distance - haloRadius) / (limit - haloRadius);
+            if (p.isRed || p2.isRed) {
+              ctx.strokeStyle = `rgba(239, 68, 68, ${opacity * 0.4})`;
+            } else {
+              ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.1})`;
             }
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset
           }
-        }
-
-        if (opacity > 0) {
-          ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.6})`;
-          ctx.lineWidth = Math.max(0.5, p.size / 4);
-          drawHexagon(ctx, currentX, currentY, p.size);
-
-          particles.forEach(p2 => {
-            if (p === p2) return;
-            const dx = p2.x - currentX;
-            const dy = p2.y - currentY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            if (dist < connectionLimit) {
-              const isDying = dist > connectionLimit * 0.8;
-              
-              ctx.beginPath();
-              ctx.moveTo(currentX, currentY);
-              ctx.lineTo(p2.x, p2.y);
-              
-              if (isDying) {
-                const flashIntensity = (dist - connectionLimit * 0.8) / (connectionLimit * 0.2);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * flashIntensity * 0.8})`;
-                ctx.lineWidth = 1.5;
-              } else {
-                ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.15})`;
-                ctx.lineWidth = 0.5;
-              }
-              ctx.stroke();
-            }
-          });
-        }
+        });
       });
 
       animationFrameId = requestAnimationFrame(animate);
@@ -166,12 +181,7 @@ export const NeuralHexNetwork = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [redHexActive, onRedHexPos]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-    />
-  );
+  return <canvas ref={canvasRef} className="w-full h-full" />;
 };
