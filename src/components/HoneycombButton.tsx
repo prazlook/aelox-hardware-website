@@ -11,16 +11,16 @@ interface HoneycombButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 
 const HoneycombButton = ({ children, className, ...props }: HoneycombButtonProps) => {
   return (
-    <div className="relative group p-48"> {/* Zone encore plus large pour le Canvas */}
-      {/* Réseau neuronal d'hexagones en arrière-plan étendu */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
+    <div className="relative group">
+      {/* Réseau neuronal d'hexagones plein écran au survol */}
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
         <NeuralHexNetwork />
       </div>
 
-      {/* Halo multi-couches pour un dégradé très flou */}
+      {/* Halo multi-couches pour un dégradé très flou et fluide */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse" />
-        <div className="absolute w-[150px] h-[150px] rounded-full bg-green-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="w-[400px] h-[400px] rounded-full bg-green-500/5 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse" />
+        <div className="absolute w-[200px] h-[200px] rounded-full bg-green-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
       </div>
 
       {/* Le bouton central */}
@@ -41,11 +41,11 @@ const HoneycombButton = ({ children, className, ...props }: HoneycombButtonProps
         </Button>
       </div>
       
-      {/* Décorations hexagonales flottantes */}
-      <div className="absolute top-24 right-24 w-16 h-16 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-150 transform group-hover:translate-x-8 group-hover:-translate-y-8">
+      {/* Décorations hexagonales flottantes thématiques */}
+      <div className="absolute -top-12 -right-12 w-16 h-16 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-150 transform group-hover:translate-x-8 group-hover:-translate-y-8">
         <HexagonIcon className="text-green-400 w-full h-full animate-pulse" />
       </div>
-      <div className="absolute bottom-24 left-24 w-14 h-14 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-300 transform group-hover:-translate-x-8 group-hover:translate-y-8">
+      <div className="absolute -bottom-12 -left-12 w-14 h-14 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-300 transform group-hover:-translate-x-8 group-hover:translate-y-8">
         <HexagonIcon className="text-green-500 w-full h-full animate-pulse" />
       </div>
     </div>
