@@ -395,22 +395,6 @@
   5% {
     opacity: 1; /* Become visible */
   }
-  7% {
-    opacity: 0.2; /* Flicker 1 */
-  }
-  9% {
-    opacity: 1; /* Flicker 2 */
-  }
-  11% {
-    opacity: 0.4; /* Flicker 3 */
-  }
-  13% {
-    opacity: 1; /* Flicker 4 */
-  }
-  15% {
-    clip-path: inset(50% 50% 50% 50%); /* Hold 1x1px visible before expansion */
-    opacity: 1;
-  }
   20% {
     clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); /* Expand horizontally to a 1px line */
   }
