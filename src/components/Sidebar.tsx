@@ -1,12 +1,13 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BarChart2, Wallet, Server, Settings, Activity, Code, PowerOff } from "lucide-react";
+import { Home, LayoutDashboard, BarChart2, Wallet, Server, Settings, Code, PowerOff } from "lucide-react"; // Added Home icon
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useAppStatus } from "@/context/AppStatusContext"; // Import useAppStatus
+import { useAppStatus } from "@/context/AppStatusContext";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Tableau de Bord" },
+  { to: "/", icon: Home, label: "Accueil" }, // New Home link
+  { to: "/dashboard", icon: LayoutDashboard, label: "Tableau de Bord" }, // Old Index, now Dashboard
   { to: "/statistics", icon: BarChart2, label: "Statistiques" },
   { to: "/wallet", icon: Wallet, label: "Portefeuille" },
   { to: "/asic-management", icon: Server, label: "Gestion ASICs" },
@@ -48,7 +49,7 @@ const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay:
 
 export const Sidebar = () => {
   const [showStopButton, setShowStopButton] = useState(false);
-  const { stopApp, triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus(); // Get animation trigger
+  const { stopApp, triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
 
   return (
     <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
@@ -62,7 +63,8 @@ export const Sidebar = () => {
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
-        <Activity className="w-8 h-8 text-theme-cyan" />
+        {/* Changed Activity icon to a more generic logo placeholder or company initial */}
+        <span className="text-3xl font-bold text-theme-cyan">A</span> 
         {showStopButton && (
           <Button
             size="icon"
