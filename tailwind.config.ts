@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme"; // Import fontFamily
 
 export default {
   darkMode: ["class"],
@@ -86,13 +87,13 @@ export default {
           "25%, 75%": { opacity: "1" },
           "100%": { transform: "translate(var(--tx), var(--ty)) rotate(360deg)", opacity: "0" },
         },
-        typewriter: {
+        "text-reveal-clip": {
           from: { "clip-path": "polygon(0 0, 0 0, 0 100%, 0 100%)" },
           to: { "clip-path": "polygon(0 0, 100% 0, 100% 100%, 0 100%)" },
         },
         "blink-caret": {
-          "from, to": { opacity: "1" },
-          "50%": { opacity: "0" },
+          "from, to": { "border-color": "transparent" },
+          "50%": { "border-color": "currentColor" },
         },
       },
       animation: {
@@ -101,7 +102,13 @@ export default {
         "border-spin": "border-spin 4s linear infinite",
         "aurora": "aurora 8s linear infinite",
         "float-particle": "float-particle 6s infinite ease-in-out",
-        typewriter: "typewriter 0.5s steps(30, end) forwards",
+        "text-reveal-clip": "text-reveal-clip var(--text-reveal-duration, 2s) steps(var(--text-reveal-steps, 40), end) forwards",
+        "blink-caret": "blink-caret 1s step-end infinite",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+        orbitron: ['Orbitron', 'sans-serif'], // Add Orbitron
       },
     },
   },

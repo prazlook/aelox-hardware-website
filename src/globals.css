@@ -42,6 +42,14 @@
   body {
     @apply bg-theme-dark text-theme-text-primary;
   }
+
+  @font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/Orbitron-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
 }
 
 @keyframes zap-trace {
@@ -386,6 +394,17 @@
   }
 }
 
+/* Keyframes for text reveal */
+@keyframes text-reveal-clip {
+  from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+  to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: currentColor; }
+}
+
 
 @layer components {
   .animate-hashrate-glitch {
@@ -578,6 +597,11 @@
 }
 
 @layer utilities {
+  .animate-text-reveal {
+    animation: text-reveal-clip var(--text-reveal-duration, 2s) steps(var(--text-reveal-steps, 40), end) forwards;
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); /* Initial state */
+  }
+
   .typewriter-cursor::after {
     content: '_';
     display: inline-block;
