@@ -10,6 +10,8 @@ interface Particle {
   baseY: number;
   angle: number;
   speed: number;
+  vx: number;
+  vy: number;
 }
 
 export const NeuralHexNetwork = () => {
@@ -34,7 +36,7 @@ export const NeuralHexNetwork = () => {
 
     const initParticles = () => {
       particles = [];
-      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 8000);
+      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 7000);
       
       for (let i = 0; i < numberOfParticles; i++) {
         const x = Math.random() * canvas.width;
@@ -44,9 +46,11 @@ export const NeuralHexNetwork = () => {
           y,
           baseX: x,
           baseY: y,
-          size: Math.random() * 6 + 2, // Taille entre 2 et 8
+          size: Math.random() * 6 + 2,
           angle: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.5 + 0.2
+          speed: Math.random() * 2 + 1, // Vitesse augmentée
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2
         });
       }
     };
@@ -70,12 +74,22 @@ export const NeuralHexNetwork = () => {
       const maxTotalDistance = 600;
       const minSize = 2;
       const maxSize = 8;
+      const connectionLimit = 110;
 
       particles.forEach(p => {
-        // Animation de flottement doux
-        p.angle += 0.01;
-        const currentX = p.baseX + Math.cos(p.angle) * 5;
-        const currentY = p.baseY + Math.sin(p.angle) * 5;
+        // Mouvement plus dynamique et rapide
+        p.angle += 0.05;
+        p.baseX += p.vx;
+        p.baseY += p.vy;
+
+        // Rebond sur les bords
+        if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
+        if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
+
+        const currentX = p.baseX + Math.cos(p.angle) * 10;
+        const currentY = p.baseY + Math.sin(p.angle) * 10;
+        p.x = currentX;
+        p.y = currentY;
 
         let opacity = 0;
         
@@ -87,10 +101,7 @@ export const NeuralHexNetwork = () => {
           if (distance < haloRadius) {
             opacity = 1;
           } else {
-            // Logique de persistance demandée :
-            // Plus il est petit, plus il persiste longtemps.
-            // La durée (distance) va de la moitié de la distance restante à la distance totale.
-            const sizeFactor = (maxSize - p.size) / (maxSize - minSize); // 1 pour le plus petit, 0 pour le plus grand
+            const sizeFactor = (maxSize - p.size) / (maxSize - minSize);
             const availableRange = maxTotalDistance - haloRadius;
             const minPersistence = availableRange / 2;
             const maxPersistence = availableRange;
@@ -105,20 +116,34 @@ export const NeuralHexNetwork = () => {
         }
 
         if (opacity > 0) {
-          ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.4})`;
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.6})`;
+          ctx.lineWidth = 1.5;
           drawHexagon(ctx, currentX, currentY, p.size);
 
-          // Lignes de connexion "neuronales" proches
+          // Connexions dynamiques
           particles.forEach(p2 => {
+            if (p === p2) return;
             const dx = p2.x - currentX;
             const dy = p2.y - currentY;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 100) {
+            
+            if (dist < connectionLimit) {
+              // Effet d'éclair blanc : si la connexion approche de la limite de rupture
+              const isDying = dist > connectionLimit * 0.85;
+              
               ctx.beginPath();
               ctx.moveTo(currentX, currentY);
               ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.1})`;
+              
+              if (isDying) {
+                // Flash blanc
+                const flashIntensity = (dist - connectionLimit * 0.85) / (connectionLimit * 0.15);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * flashIntensity})`;
+                ctx.lineWidth = 2;
+              } else {
+                ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.2})`;
+                ctx.lineWidth = 1;
+              }
               ctx.stroke();
             }
           });
@@ -132,13 +157,8 @@ export const NeuralHexNetwork = () => {
       mouseRef.current = { x: e.clientX, y: e.clientY, active: true };
     };
 
-    const handleMouseEnter = () => { mouseRef.current.active = true; };
-    const handleMouseLeave = () => { mouseRef.current.active = false; };
-
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    document.addEventListener('mouseleave', handleMouseLeave);
     
     resize();
     animate();
@@ -146,8 +166,6 @@ export const NeuralHexNetwork = () => {
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      document.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
