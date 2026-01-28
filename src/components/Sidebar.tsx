@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { Home, LayoutDashboard, BarChart2, Wallet, Server, Settings, Code, PowerOff } from "lucide-react"; // Added Home icon
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppStatus } from "@/context/AppStatusContext";
+import { Logo } from "./Logo"; // Import the new Logo component
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", icon: Home, label: "Accueil" }, // New Home link
@@ -63,8 +64,7 @@ export const Sidebar = () => {
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
-        {/* Changed Activity icon to a more generic logo placeholder or company initial */}
-        <span className="text-3xl font-bold text-theme-cyan">A</span> 
+        <Logo className="h-10 w-auto" /> {/* Use the Logo component here */}
         {showStopButton && (
           <Button
             size="icon"
