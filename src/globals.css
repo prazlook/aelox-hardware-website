@@ -414,6 +414,39 @@
   100% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
 }
 
+/* NOUVELLES ANIMATIONS DE TRANSITION Honeycomb */
+@keyframes button-morph-to-hex {
+  0% { border-radius: 9999px; transform: rotate(0deg) scale(1); }
+  50% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: rotate(180deg) scale(1.1); }
+  100% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: rotate(360deg) scale(0); opacity: 0; }
+}
+
+@keyframes red-hex-appear {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; filter: drop-shadow(0 0 0 red); }
+  50% { transform: scale(1.2) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 20px red); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; filter: drop-shadow(0 0 10px red); }
+}
+
+@keyframes red-line-draw {
+  from { stroke-dashoffset: 400; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes terminal-box-reveal {
+  0% { transform: scaleX(0); opacity: 0; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes hex-flicker-red-orange {
+  0%, 100% { color: #ef4444; filter: drop-shadow(0 0 10px #ef4444); }
+  50% { color: #f97316; filter: drop-shadow(0 0 20px #f97316); }
+}
+
+@keyframes powerful-white-flash {
+  0% { opacity: 0; }
+  50% { opacity: 1; background-color: white; }
+  100% { opacity: 0; }
+}
 
 @layer components {
   .animate-hashrate-glitch {
@@ -605,7 +638,6 @@
     opacity: 0;
   }
 
-  /* CLASSES D'ANIMATION POUR LES HEXAGONES ORBITAUX */
   .animate-hexagon-orbital {
     animation: hexagon-orbital-path 4s ease-in-out infinite;
     transform-origin: center center;
@@ -614,6 +646,33 @@
   .animate-hexagon-spin-flash {
     animation: hexagon-local-spin-and-flash 4s ease-in-out infinite;
     transform-origin: center center;
+  }
+
+  .animate-button-morph-hex {
+    animation: button-morph-to-hex 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .animate-red-hex-appear {
+    animation: red-hex-appear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .animate-red-line-draw {
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: red-line-draw 0.8s ease-out forwards;
+  }
+
+  .animate-box-reveal {
+    animation: terminal-box-reveal 0.4s ease-out forwards;
+    transform-origin: left;
+  }
+
+  .animate-hex-red-orange {
+    animation: hex-flicker-red-orange 0.3s ease-in-out infinite;
+  }
+
+  .animate-final-flash {
+    animation: powerful-white-flash 0.5s ease-out forwards;
   }
 }
 
