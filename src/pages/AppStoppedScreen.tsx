@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton from '@/components/HoneycombButton';
@@ -10,13 +10,20 @@ import { cn } from '@/lib/utils';
 
 type TransitionState = 'idle' | 'morphing' | 'hex-infiltrating' | 'struggling' | 'box-active' | 'flash' | 'complete';
 
+interface DecodingBox {
+  id: number;
+  x: number;
+  y: number;
+  content: string;
+}
+
 const AppStoppedScreen = () => {
   const { startApp } = useAppStatus();
   const [step, setStep] = useState<TransitionState>('idle');
   const [redHexPos, setRedHexPos] = useState({ x: 0, y: 0 });
   const [terminalText, setTerminalText] = useState('');
+  const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
   
-  // Texte plus long pour accompagner la durée étendue
   const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 45%\n> INJECTING MALWARE... 82%\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> INFILTRATION: 100%\n> ACCESS GRANTED.";
   const typedText = useTypewriter(terminalText, 40);
 
@@ -24,16 +31,39 @@ const AppStoppedScreen = () => {
     setRedHexPos(pos);
   }, []);
 
+  // Gérer l'apparition des boîtes de décodage
+  useEffect(() => {
+    if (step === 'struggling' || step === 'box-active') {
+      const interval = setInterval(() => {
+        const id = Math.random();
+        const newBox: DecodingBox = {
+          id,
+          x: (Math.random() - 0.5) * 400, // Autour du terminal
+          y: (Math.random() - 0.5) * 300,
+          content: `0x${Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase()}`
+        };
+        setDecodingBoxes(prev => [...prev, newBox]);
+        
+        // Supprimer après l'animation
+        setTimeout(() => {
+          setDecodingBoxes(prev => prev.filter(b => b.id !== id));
+        }, 1200);
+      }, 400);
+
+      return () => clearInterval(interval);
+    }
+  }, [step]);
+
   const handleStart = () => {
     setStep('morphing');
     
-    // Séquence temporelle étirée pour un combat plus long
+    // Séquence temporelle étirée
     setTimeout(() => setStep('hex-infiltrating'), 1500);
     
-    // Début du combat (struggling) - dure 10 secondes
+    // Début du combat
     setTimeout(() => setStep('struggling'), 4000);
     
-    // Apparition du terminal après le combat acharné
+    // Apparition du terminal
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
@@ -78,32 +108,50 @@ const AppStoppedScreen = () => {
             />
           </svg>
 
-          {/* Boîte de terminal rouge en "lutte" */}
-          <div 
-            className={cn(
-              "absolute top-[20%] left-[calc(50%+150px)] w-80 p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500",
-              step === 'struggling' ? "animate-struggle" : "animate-box-reveal"
-            )}
-          >
-            <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
-              <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                Aggressive Breach
-              </span>
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                <div className="w-1.5 h-1.5 rounded-full bg-red-800" />
+          {/* Conteneur du Terminal et des Boîtes de Décodage */}
+          <div className="absolute top-[20%] left-[calc(50%+150px)]">
+            {/* Boîte de terminal principale */}
+            <div 
+              className={cn(
+                "w-80 p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
+                step === 'struggling' ? "animate-struggle" : "animate-box-reveal"
+              )}
+            >
+              <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
+                <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  Aggressive Breach
+                </span>
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-800" />
+                </div>
               </div>
+              <pre className="text-[11px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor min-h-[120px]">
+                {step === 'box-active' ? typedText : "> ERROR: SECURITY BUFFER RESISTING...\n> RETRYING EXPLOIT..."}
+              </pre>
             </div>
-            <pre className="text-[11px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor min-h-[120px]">
-              {step === 'box-active' ? typedText : "> ERROR: SECURITY BUFFER RESISTING...\n> RETRYING EXPLOIT..."}
-            </pre>
-            {step === 'struggling' && (
-              <div className="mt-2 text-[10px] text-red-500 animate-pulse font-bold text-center">
-                SYSTEM UNDER ATTACK
+
+            {/* Boîtes de décodage flottantes */}
+            {decodingBoxes.map(box => (
+              <div
+                key={box.id}
+                className="absolute w-20 p-1 border border-red-500 bg-red-900/80 text-[8px] font-mono text-red-200 animate-decoding flex items-center justify-center backdrop-blur-sm shadow-lg z-20"
+                style={{
+                  left: box.x,
+                  top: box.y,
+                }}
+              >
+                {box.content}
               </div>
-            )}
+            ))}
           </div>
+
+          {step === 'struggling' && (
+            <div className="absolute top-[50%] left-[calc(50%+150px)] w-80 mt-4 text-[10px] text-red-500 animate-pulse font-bold text-center">
+              SYSTEM UNDER ATTACK
+            </div>
+          )}
         </div>
       )}
 

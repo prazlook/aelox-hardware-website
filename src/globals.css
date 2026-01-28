@@ -65,6 +65,13 @@
   100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1); }
 }
 
+@keyframes decoding-pop {
+  0% { transform: scale(0.5) translate(0, 0); opacity: 0; }
+  20% { transform: scale(1.1) translate(-2px, -2px); opacity: 1; }
+  80% { transform: scale(1) translate(2px, 2px); opacity: 1; }
+  100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
+}
+
 /* Animations existantes conservées */
 @keyframes zap-trace { to { stroke-dashoffset: 0; } }
 @keyframes server-blink { 0%, 100% { opacity: 1; } 25% { opacity: 0.2; } 50% { opacity: 0.8; } 75% { opacity: 0.4; } }
@@ -157,6 +164,9 @@
   
   /* Nouvelle classe de lutte */
   .animate-struggle { animation: struggle-jitter 0.2s linear infinite; }
+
+  /* Nouvelle classe de décodage */
+  .animate-decoding { animation: decoding-pop 1.2s ease-in-out forwards; }
 }
 
 @layer utilities {
