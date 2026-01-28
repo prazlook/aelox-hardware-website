@@ -18,9 +18,10 @@ interface Particle {
 interface NeuralHexNetworkProps {
   redHexActive?: boolean;
   onRedHexPos?: (pos: { x: number, y: number }) => void;
+  avoidRect?: { x: number, y: number, w: number, h: number } | null;
 }
 
-export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetworkProps) => {
+export const NeuralHexNetwork = ({ redHexActive, onRedHexPos, avoidRect }: NeuralHexNetworkProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
   const redHexRef = useRef<Particle | null>(null);
@@ -61,7 +62,6 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
         });
       }
 
-      // Initialisation de l'hexagone rouge au centre
       if (redHexActive) {
         redHexRef.current = {
           x: canvas.width / 2,
@@ -71,8 +71,8 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
           size: 20,
           angle: 0,
           speed: 2,
-          vx: (Math.random() - 0.5) * 1.5,
-          vy: (Math.random() - 0.5) * 1.5,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
           isRed: true
         };
       } else {
@@ -100,7 +100,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const haloRadius = 150;
-      const connectionLimit = 120; // Un peu plus large pour l'interaction
+      const connectionLimit = 120;
 
       const allParticles = redHexRef.current ? [...particles, redHexRef.current] : particles;
 
@@ -109,18 +109,45 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
         p.baseX += p.vx;
         p.baseY += p.vy;
 
+        // Rebond sur les bords du canvas
         if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
         if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
+
+        // Logique de rebond spécifique pour l'hexagone rouge contre la boîte de terminal
+        if (p.isRed && avoidRect) {
+          const margin = p.size + 10; // Marge de sécurité pour le rebond
+          const left = avoidRect.x - margin;
+          const right = avoidRect.x + avoidRect.w + margin;
+          const top = avoidRect.y - margin;
+          const bottom = avoidRect.y + avoidRect.h + margin;
+
+          if (p.baseX > left && p.baseX < right && p.baseY > top && p.baseY < bottom) {
+            // Déterminer de quel côté on a tapé pour un rebond propre
+            const distLeft = Math.abs(p.baseX - left);
+            const distRight = Math.abs(p.baseX - right);
+            const distTop = Math.abs(p.baseY - top);
+            const distBottom = Math.abs(p.baseY - bottom);
+
+            const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+
+            if (minDist === distLeft || minDist === distRight) {
+              p.vx *= -1;
+              p.baseX += p.vx * 2; // Écarter un peu pour éviter de rester coincé
+            } else {
+              p.vy *= -1;
+              p.baseY += p.vy * 2;
+            }
+          }
+        }
 
         p.x = p.baseX + Math.cos(p.angle) * 10;
         p.y = p.baseY + Math.sin(p.angle) * 10;
 
-        // On expose la position de l'hexagone rouge pour la ligne de la boîte
         if (p.isRed && onRedHexPos) {
           onRedHexPos({ x: p.x, y: p.y });
         }
 
-        let opacity = 0.3; // Visibilité par défaut pour les rouges/actifs
+        let opacity = 0.3;
         
         if (mouseRef.current.active) {
           const dx = mouseRef.current.x - p.x;
@@ -139,7 +166,6 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
 
         drawHexagon(ctx, p.x, p.y, p.size, p.isRed);
 
-        // Connexions
         allParticles.forEach(p2 => {
           if (p === p2) return;
           const dx = p2.x - p.x;
@@ -148,7 +174,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
           
           if (dist < connectionLimit) {
             ctx.beginPath();
-            ctx.setLineDash(p.isRed || p2.isRed ? [5, 5] : []); // Pointillés si l'un est rouge
+            ctx.setLineDash(p.isRed || p2.isRed ? [5, 5] : []);
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             
@@ -158,7 +184,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
               ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.1})`;
             }
             ctx.stroke();
-            ctx.setLineDash([]); // Reset
+            ctx.setLineDash([]);
           }
         });
       });
@@ -181,7 +207,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [redHexActive, onRedHexPos]);
+  }, [redHexActive, onRedHexPos, avoidRect]);
 
   return <canvas ref={canvasRef} className="w-full h-full" />;
 };

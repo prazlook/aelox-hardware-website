@@ -24,6 +24,7 @@ const AppStoppedScreen = () => {
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
+  const [boxDimensions, setBoxDimensions] = useState<{ x: number, y: number, w: number, h: number } | null>(null);
   
   const boxRef = useRef<HTMLDivElement>(null);
   const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 45%\n> INJECTING MALWARE... 82%\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> INFILTRATION: 100%\n> ACCESS GRANTED.";
@@ -33,18 +34,26 @@ const AppStoppedScreen = () => {
     setRedHexPos(pos);
   }, []);
 
-  // Mettre à jour la position de l'ancre en temps réel par rapport au viewport
+  // Mettre à jour la position de l'ancre et les dimensions pour le rebond en temps réel
   useEffect(() => {
     if (step === 'struggling' || step === 'box-active') {
-      const updateAnchor = () => {
+      const updateBoxInfo = () => {
         if (boxRef.current) {
           const rect = boxRef.current.getBoundingClientRect();
           setAnchorPos({ x: rect.left, y: rect.top });
+          setBoxDimensions({
+            x: rect.left,
+            y: rect.top,
+            w: rect.width,
+            h: rect.height
+          });
         }
-        requestAnimationFrame(updateAnchor);
+        requestAnimationFrame(updateBoxInfo);
       };
-      const animId = requestAnimationFrame(updateAnchor);
+      const animId = requestAnimationFrame(updateBoxInfo);
       return () => cancelAnimationFrame(animId);
+    } else {
+      setBoxDimensions(null);
     }
   }, [step]);
 
@@ -95,6 +104,7 @@ const AppStoppedScreen = () => {
         <NeuralHexNetwork 
           redHexActive={step !== 'idle' && step !== 'morphing'} 
           onRedHexPos={handleRedHexPos}
+          avoidRect={boxDimensions}
         />
       </div>
 
@@ -105,7 +115,6 @@ const AppStoppedScreen = () => {
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
-            {/* La ligne utilise désormais anchorPos qui est l'emplacement réel de la boîte */}
             <path
               d={`M ${redHexPos.x} ${redHexPos.y} L ${anchorPos.x} ${anchorPos.y}`}
               stroke="#ef4444"
