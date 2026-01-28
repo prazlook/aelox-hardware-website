@@ -107,6 +107,10 @@ export default {
           "0%, 100%": { filter: "drop-shadow(0 0 5px rgba(34, 197, 94, 0.4))" },
           "50%": { filter: "drop-shadow(0 0 20px rgba(34, 197, 94, 0.8))" },
         },
+        "flicker": {
+          "0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%": { opacity: "0.99" },
+          "20%, 21.999%, 63%, 63.999%, 65%, 69.999%": { opacity: "0.4" },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -118,6 +122,7 @@ export default {
         "halo-alert": "halo-alert 0.8s ease-in-out infinite",
         "honeycomb-scan": "honeycomb-scan 3s linear infinite",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "flicker": "flicker 3s linear infinite",
       },
     },
   },
