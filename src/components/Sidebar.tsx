@@ -61,25 +61,25 @@ export const Sidebar = () => {
         style={triggerStartupAnimation ? { animationDelay: '0s' } : triggerShutdownAnimation ? { '--delay': '0.1s' } as React.CSSProperties : {}}
       >
         <ImagePlaceholder className="w-10 h-10" />
-        <Button
-          size="icon"
-          variant="destructive"
-          className={cn(
-            "absolute -right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full", // Removed opacity and animation classes
-            triggerShutdownAnimation && "animate-staggered-fade-out"
-          )}
-          style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
-          onClick={stopApp}
-          aria-label="Arrêter l'application"
-        >
-          <PowerOff className="w-4 h-4" />
-        </Button>
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item, index) => (
           <NavItem key={item.to} {...item} delay={0.2 + index * 0.1} />
         ))}
       </nav>
+      <Button
+        size="icon"
+        variant="destructive"
+        className={cn(
+          "mt-auto mx-auto w-12 h-12 rounded-full mb-4", // Adjusted classes for bottom positioning and larger size
+          triggerShutdownAnimation && "animate-staggered-fade-out"
+        )}
+        style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
+        onClick={stopApp}
+        aria-label="Arrêter l'application"
+      >
+        <PowerOff className="w-6 h-6" /> {/* Larger icon */}
+      </Button>
     </aside>
   );
 };
