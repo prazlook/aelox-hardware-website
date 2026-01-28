@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton from '@/components/HoneycombButton';
@@ -23,30 +23,13 @@ const AppStoppedScreen = () => {
   const [redHexPos, setRedHexPos] = useState({ x: 0, y: 0 });
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
-  const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   
-  const boxRef = useRef<HTMLDivElement>(null);
   const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 45%\n> INJECTING MALWARE... 82%\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> INFILTRATION: 100%\n> ACCESS GRANTED.";
   const typedText = useTypewriter(terminalText, 40);
 
   const handleRedHexPos = useCallback((pos: { x: number, y: number }) => {
     setRedHexPos(pos);
   }, []);
-
-  // Mettre à jour la position de l'ancre en temps réel par rapport au viewport
-  useEffect(() => {
-    if (step === 'struggling' || step === 'box-active') {
-      const updateAnchor = () => {
-        if (boxRef.current) {
-          const rect = boxRef.current.getBoundingClientRect();
-          setAnchorPos({ x: rect.left, y: rect.top });
-        }
-        requestAnimationFrame(updateAnchor);
-      };
-      const animId = requestAnimationFrame(updateAnchor);
-      return () => cancelAnimationFrame(animId);
-    }
-  }, [step]);
 
   useEffect(() => {
     if (step === 'struggling' || step === 'box-active') {
@@ -72,18 +55,27 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Séquence temporelle
+    // Début de l'infiltration
     setTimeout(() => setStep('hex-infiltrating'), 1500);
+    
+    // Phase de lutte (struggling) : beaucoup plus longue (20 secondes)
     setTimeout(() => setStep('struggling'), 5000);
     
+    // Activation du terminal après une lutte acharnée
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
     }, 25000);
     
+    // Phase finale avant le flash (20 secondes de décodage terminal)
     setTimeout(() => setStep('flash'), 45000);
     setTimeout(() => startApp(), 46500);
   };
+
+  // Calcul des coordonnées de destination pour que la ligne touche le bord de la boîte
+  // La boîte est positionnée à top: 20% et left: 50% + 150px
+  const targetX = typeof window !== 'undefined' ? window.innerWidth / 2 + 150 : 0;
+  const targetY = typeof window !== 'undefined' ? window.innerHeight * 0.2 : 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
@@ -104,24 +96,23 @@ const AppStoppedScreen = () => {
 
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
-          <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
-            {/* La ligne utilise désormais anchorPos qui est l'emplacement réel de la boîte */}
+          <svg className="w-full h-full" viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}>
+            {/* La ligne pointe désormais exactement vers le coin supérieur gauche de la boîte */}
             <path
-              d={`M ${redHexPos.x} ${redHexPos.y} L ${anchorPos.x} ${anchorPos.y}`}
+              d={`M ${redHexPos.x} ${redHexPos.y} L ${targetX} ${targetY}`}
               stroke="#ef4444"
               strokeWidth="2"
               fill="none"
-              className="animate-red-line-draw"
+              className={cn("animate-red-line-draw", step === 'struggling' && "animate-struggle")}
               filter="drop-shadow(0 0 15px red)"
             />
           </svg>
 
           <div className="absolute top-[20%] left-[calc(50%+150px)]">
             <div 
-              ref={boxRef}
               className={cn(
                 "w-80 p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
-                step === 'box-active' ? "animate-box-reveal" : ""
+                step === 'struggling' ? "animate-struggle" : "animate-box-reveal"
               )}
             >
               <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
