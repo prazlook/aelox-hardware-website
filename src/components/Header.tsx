@@ -6,7 +6,7 @@ export const Header = () => {
 
   return (
     <header className={cn(
-      "bg-theme-card h-16 flex items-center justify-end px-6 fixed bottom-0 left-0 right-0 z-50", // Changed justify-between to justify-end
+      "bg-theme-card h-16 flex items-center justify-end px-6 fixed bottom-0 left-0 right-0 z-10", // Changé z-50 à z-10
       triggerStartupAnimation && "animate-startup-fade-in-scale",
       triggerShutdownAnimation && "animate-staggered-fade-out"
     )}
