@@ -44,20 +44,7 @@
   }
 }
 
-/* Animations de lutte et glitch - Intensité réduite */
-@keyframes struggle-jitter {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  10% { transform: translate(-0.5px, 0.5px) scale(1.002); }
-  20% { transform: translate(0.5px, -0.2px) scale(0.998); }
-  30% { transform: translate(-0.8px, 0px) scale(1.005); }
-  40% { transform: translate(0.8px, 0.2px) scale(0.995); }
-  50% { transform: translate(-0.2px, -0.5px) scale(1.01); }
-  60% { transform: translate(0.2px, 0.5px) scale(0.99); }
-  70% { transform: translate(-0.5px, 0.2px) scale(1.003); }
-  80% { transform: translate(0.5px, -0.5px) scale(0.997); }
-  90% { transform: translate(-0.3px, 0px) scale(1.001); }
-}
-
+/* Animations de transition */
 @keyframes unusual-appear {
   0% { transform: scale(0) rotate(180deg); opacity: 0; filter: blur(20px) brightness(5); }
   30% { transform: scale(0.2) rotate(-90deg); opacity: 0.5; filter: blur(10px) brightness(2); }
@@ -162,9 +149,6 @@
   .animate-hex-red-orange { animation: hex-flicker-red-orange 0.3s ease-in-out infinite; }
   .animate-final-flash { animation: powerful-white-flash 0.5s ease-out forwards; }
   
-  /* Nouvelle classe de lutte */
-  .animate-struggle { animation: struggle-jitter 0.2s linear infinite; }
-
   /* Nouvelle classe de décodage */
   .animate-decoding { animation: decoding-pop 1.2s ease-in-out forwards; }
 }
