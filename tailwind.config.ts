@@ -94,13 +94,9 @@ export default {
           "from, to": { opacity: "1" },
           "50%": { opacity: "0" },
         },
-        "halo-rainbow": {
-          "0%": { "box-shadow": "0 0 15px #ef4444" },
-          "20%": { "box-shadow": "0 0 15px #f59e0b" },
-          "40%": { "box-shadow": "0 0 15px #10b981" },
-          "60%": { "box-shadow": "0 0 15px #3b82f6" },
-          "80%": { "box-shadow": "0 0 15px #a855f7" },
-          "100%": { "box-shadow": "0 0 15px #ef4444" },
+        "halo-alert": {
+          "0%, 100%": { "box-shadow": "0 0 20px #ef4444" },
+          "50%": { "box-shadow": "0 0 20px #f97316" },
         },
       },
       animation: {
@@ -110,7 +106,7 @@ export default {
         "aurora": "aurora 8s linear infinite",
         "float-particle": "float-particle 6s infinite ease-in-out",
         typewriter: "typewriter 0.5s steps(30, end) forwards",
-        "halo-rainbow": "halo-rainbow 1s linear infinite",
+        "halo-alert": "halo-alert 0.8s ease-in-out infinite",
       },
     },
   },
