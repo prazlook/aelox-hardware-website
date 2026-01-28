@@ -41,12 +41,23 @@ const HoneycombButton = ({ children, className, ...props }: HoneycombButtonProps
         </Button>
       </div>
       
-      {/* Décorations hexagonales flottantes */}
-      <div className="absolute top-24 right-24 w-16 h-16 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-150 transform group-hover:translate-x-8 group-hover:-translate-y-8">
-        <HexagonIcon className="text-green-400 w-full h-full animate-pulse" />
-      </div>
-      <div className="absolute bottom-24 left-24 w-14 h-14 opacity-0 group-hover:opacity-40 transition-all duration-1000 delay-300 transform group-hover:-translate-x-8 group-hover:translate-y-8">
-        <HexagonIcon className="text-green-500 w-full h-full animate-pulse" />
+      {/* Conteneur pour les hexagones orbitaux */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        
+        {/* Hexagone 1 (Top-Right) */}
+        <div className="absolute inset-0 animate-hexagon-orbital">
+          <div className="absolute top-24 right-24 w-16 h-16 animate-hexagon-spin-flash">
+            <HexagonIcon className="text-green-400 w-full h-full" />
+          </div>
+        </div>
+
+        {/* Hexagone 2 (Bottom-Left) */}
+        <div className="absolute inset-0 animate-hexagon-orbital" style={{ transform: 'rotate(180deg)' }}>
+          <div className="absolute bottom-24 left-24 w-14 h-14 animate-hexagon-spin-flash">
+            <HexagonIcon className="text-green-500 w-full h-full" />
+          </div>
+        </div>
+
       </div>
     </div>
   );

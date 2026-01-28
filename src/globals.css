@@ -44,6 +44,7 @@
   }
 }
 
+/* Animations existantes conservées */
 @keyframes zap-trace {
   to {
     stroke-dashoffset: 0;
@@ -87,13 +88,9 @@
 }
 
 @keyframes flicker-in {
-  0%, 10% { opacity: 0; }
-  15% { opacity: 0.8; }
-  20% { opacity: 0.3; }
-  25% { opacity: 1; }
-  40% { opacity: 0.5; }
-  45% { opacity: 1; }
-  100% { opacity: 1; }
+  0%, 100% { opacity: 1; }
+  10%, 30%, 50%, 70%, 90% { opacity: 0; }
+  20%, 40%, 60%, 80% { opacity: 1; }
 }
 
 @keyframes shutdown-wave {
@@ -108,7 +105,7 @@
   40% { opacity: 1; }
   60% { opacity: 0.2; }
   80% { opacity: 0.8; }
-  90% { opacity: 1; color: #4a5568; } /* gray-700 */
+  90% { opacity: 1; color: #4a5568; }
   100% { opacity: 0.3; color: #4a5568; }
 }
 
@@ -117,7 +114,7 @@
   25% { opacity: 0.6; }
   50% { opacity: 0.8; }
   75% { opacity: 0.4; color: #A0AEC0; }
-  100% { opacity: 0; color: #A0AEC0; pointer-events: none; } /* Modified to fully disappear */
+  100% { opacity: 0; color: #A0AEC0; pointer-events: none; }
 }
 
 @keyframes ecg-border-flow {
@@ -179,7 +176,6 @@
   }
 }
 
-/* New startup animations */
 @keyframes startup-fade-in-scale {
   from {
     opacity: 0;
@@ -226,7 +222,6 @@
   }
 }
 
-/* Global Status Indicator Animation Classes */
 @keyframes global-indicator-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -242,31 +237,24 @@
   to { stroke-dashoffset: 0; }
 }
 
-/* Removed global-indicator-spokes-rotate-in as rays are now dynamic */
-/* @keyframes global-indicator-spokes-rotate-in {
-  from { transform: rotate(0deg) scale(0); opacity: 0; }
-  to { transform: rotate(var(--final-rotation)) scale(1); opacity: 0.3; }
-} */
-
 @keyframes global-indicator-ecg-center-expand {
   0% {
-    stroke-dasharray: 0 1000; /* Start with no visible stroke */
-    stroke-dashoffset: 500; /* Center the gap */
+    stroke-dasharray: 0 1000;
+    stroke-dashoffset: 500;
     opacity: 0;
   }
   50% {
-    stroke-dasharray: 500 500; /* Expand to full length */
-    stroke-dashoffset: 0; /* Center the stroke */
+    stroke-dasharray: 500 500;
+    stroke-dashoffset: 0;
     opacity: 1;
   }
   100% {
-    stroke-dasharray: 1000 0; /* Full stroke */
+    stroke-dasharray: 1000 0;
     stroke-dashoffset: 0;
     opacity: 1;
   }
 }
 
-/* New shutdown animation for the entire app content */
 @keyframes app-shutdown {
   0% {
     filter: blur(0px) brightness(1) saturate(1);
@@ -281,11 +269,10 @@
   100% {
     filter: blur(5px) brightness(0.4) saturate(0.4);
     transform: scale(0.98);
-    opacity: 0.5; /* The background fades to 50% opacity */
+    opacity: 0.5;
   }
 }
 
-/* Fluorescent flicker for individual elements, leading to full disappearance */
 @keyframes fluorescent-flicker {
   0% {
     opacity: 1;
@@ -338,28 +325,26 @@
     transform: scale(0.92);
   }
   100% {
-    opacity: 0; /* Fully transparent */
-    filter: brightness(0) grayscale(1); /* Fully dark and grayscale */
+    opacity: 0;
+    filter: brightness(0) grayscale(1);
     transform: scale(0.9);
-    pointer-events: none; /* Ensure it's not clickable after disappearing */
+    pointer-events: none;
   }
 }
 
-/* Staggered fade-out for other elements */
 @keyframes staggered-fade-out {
   0% { opacity: 1; transform: translateY(0); pointer-events: auto; }
   100% { opacity: 0; transform: translateY(10px); pointer-events: none; }
 }
 
-/* New ASIC border draw-in animation */
 @keyframes asic-border-draw-in {
   from {
-    stroke-dasharray: 0 1000; /* Start with no visible stroke, gap of 1000 */
+    stroke-dasharray: 0 1000;
     stroke-dashoffset: 0;
     opacity: 0;
   }
   to {
-    stroke-dasharray: 1000 0; /* End with full stroke, no gap */
+    stroke-dasharray: 1000 0;
     stroke-dashoffset: 0;
     opacity: 1;
   }
@@ -374,32 +359,30 @@
   }
 }
 
-/* New hashrate glitch animation */
 @keyframes hashrate-glitch-keyframes {
   0% {
-    stroke-dasharray: 34 8; /* Dash of 34, gap of 8 */
-    stroke-dashoffset: 8;  /* Start with the gap at the beginning of the path */
+    stroke-dasharray: 34 8;
+    stroke-dashoffset: 8;
   }
   100% {
     stroke-dasharray: 34 8;
-    stroke-dashoffset: -34; /* End with the gap at the end of the path */
+    stroke-dashoffset: -34;
   }
 }
 
-/* Button build animation */
 @keyframes button-build-animation {
   0% {
-    clip-path: inset(50% 50% 50% 50%); /* 1x1px square in the center */
+    clip-path: inset(50% 50% 50% 50%);
     opacity: 0;
   }
   5% {
-    opacity: 1; /* Become visible */
+    opacity: 1;
   }
   20% {
-    clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); /* Expand horizontally to a 1px line */
+    clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%);
   }
   40% {
-    clip-path: inset(0% 0% 0% 0%); /* Expand vertically to full button */
+    clip-path: inset(0% 0% 0% 0%);
   }
   100% {
     clip-path: inset(0% 0% 0% 0%);
@@ -407,17 +390,34 @@
   }
 }
 
-/* Button content fade-in animation */
 @keyframes button-content-fade-in {
   0% { opacity: 0; }
-  60% { opacity: 0; } /* Delay text appearance until button is mostly formed */
+  60% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+/* NOUVELLES ANIMATIONS POUR LES HEXAGONES DU BOUTON */
+@keyframes hexagon-orbital-path {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(90deg); }
+  75% { transform: rotate(180deg); }
+  100% { transform: rotate(180deg); }
+}
+
+@keyframes hexagon-local-spin-and-flash {
+  0% { transform: rotate(0deg); filter: brightness(1) drop-shadow(0 0 0 white); }
+  25% { transform: rotate(0deg); filter: brightness(1) drop-shadow(0 0 0 white); }
+  50% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
+  75% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
+  85% { transform: rotate(360deg); filter: brightness(10) drop-shadow(0 0 20px white); }
+  100% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
 }
 
 
 @layer components {
   .animate-hashrate-glitch {
-    animation: hashrate-glitch-keyframes 1.4s linear infinite; /* Adjusted duration to 1.4s */
+    animation: hashrate-glitch-keyframes 1.4s linear infinite;
   }
 
   .animate-zap-trace polygon {
@@ -532,31 +532,29 @@
 
   .animate-fade-in-slide-up {
     animation: fade-in-slide-up 0.4s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
-  /* New startup animation utility classes */
   .animate-startup-fade-in-scale {
     animation: startup-fade-in-scale 0.6s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
   .animate-startup-slide-in-left {
     animation: startup-slide-in-left 0.5s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
   .animate-startup-slide-in-right {
     animation: startup-slide-in-right 0.5s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
   .animate-startup-fade-in-from-center {
     animation: startup-fade-in-from-center 1s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
-  /* Global Status Indicator Animation Classes */
   .animate-global-indicator-fade-in {
     animation: global-indicator-fade-in 0.5s ease-out forwards;
     opacity: 0;
@@ -574,13 +572,6 @@
     animation: global-indicator-waveform-draw 1s ease-out forwards;
   }
 
-  /* Removed global-indicator-spokes-rotate-in as rays are now dynamic */
-  /* .animate-global-indicator-spokes-rotate-in {
-    animation: global-indicator-spokes-rotate-in 0.8s ease-out forwards;
-    opacity: 0;
-    transform-origin: center center;
-  } */
-
   .animate-global-indicator-ecg-center-expand {
     stroke-dasharray: 0 1000;
     stroke-dashoffset: 500;
@@ -589,7 +580,7 @@
   }
 
   .animate-app-shutdown {
-    animation: app-shutdown 3s ease-out forwards; /* Longer duration for background effect */
+    animation: app-shutdown 3s ease-out forwards;
   }
 
   .animate-staggered-fade-out {
@@ -599,20 +590,30 @@
 
   .animate-asic-border-draw-in {
     animation: asic-border-draw-in 0.8s ease-out forwards;
-    stroke-dasharray: 0 1000; /* Initial state for animation */
+    stroke-dasharray: 0 1000;
     stroke-dashoffset: 0;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
-  /* Button animations */
   .animate-button-build {
     animation: button-build-animation 1s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
   }
 
   .animate-button-content-fade-in {
     animation: button-content-fade-in 0.5s ease-out forwards;
-    opacity: 0; /* Start hidden */
+    opacity: 0;
+  }
+
+  /* CLASSES D'ANIMATION POUR LES HEXAGONES ORBITAUX */
+  .animate-hexagon-orbital {
+    animation: hexagon-orbital-path 4s ease-in-out infinite;
+    transform-origin: center center;
+  }
+
+  .animate-hexagon-spin-flash {
+    animation: hexagon-local-spin-and-flash 4s ease-in-out infinite;
+    transform-origin: center center;
   }
 }
 
