@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton from '@/components/HoneycombButton';
@@ -23,6 +23,8 @@ const AppStoppedScreen = () => {
   const [redHexPos, setRedHexPos] = useState({ x: 0, y: 0 });
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [repelZone, setRepelZone] = useState<{ x: number, y: number, width: number, height: number } | undefined>(undefined);
   
   const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 45%\n> INJECTING MALWARE... 82%\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> INFILTRATION: 100%\n> ACCESS GRANTED.";
   const typedText = useTypewriter(terminalText, 40);
@@ -31,20 +33,31 @@ const AppStoppedScreen = () => {
     setRedHexPos(pos);
   }, []);
 
-  // Gérer l'apparition des boîtes de décodage
+  // Mettre à jour la zone de répulsion quand la boîte apparaît
+  useEffect(() => {
+    if (boxRef.current && (step === 'struggling' || step === 'box-active')) {
+      const rect = boxRef.current.getBoundingClientRect();
+      setRepelZone({
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height
+      });
+    }
+  }, [step]);
+
   useEffect(() => {
     if (step === 'struggling' || step === 'box-active') {
       const interval = setInterval(() => {
         const id = Math.random();
         const newBox: DecodingBox = {
           id,
-          x: (Math.random() - 0.5) * 400, // Autour du terminal
+          x: (Math.random() - 0.5) * 400,
           y: (Math.random() - 0.5) * 300,
           content: `0x${Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase()}`
         };
         setDecodingBoxes(prev => [...prev, newBox]);
         
-        // Supprimer après l'animation
         setTimeout(() => {
           setDecodingBoxes(prev => prev.filter(b => b.id !== id));
         }, 1200);
@@ -56,20 +69,12 @@ const AppStoppedScreen = () => {
 
   const handleStart = () => {
     setStep('morphing');
-    
-    // Séquence temporelle étirée
     setTimeout(() => setStep('hex-infiltrating'), 1500);
-    
-    // Début du combat
     setTimeout(() => setStep('struggling'), 4000);
-    
-    // Apparition du terminal
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
     }, 14000);
-    
-    // Finalisation
     setTimeout(() => setStep('flash'), 21000);
     setTimeout(() => startApp(), 22500);
   };
@@ -77,7 +82,6 @@ const AppStoppedScreen = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
       
-      {/* Network Neural avec l'hexagone rouge "intrus" */}
       <div className={cn(
         "fixed inset-0 transition-opacity duration-1000 pointer-events-none z-0",
         step === 'idle' ? "opacity-0" : "opacity-100"
@@ -85,19 +89,17 @@ const AppStoppedScreen = () => {
         <NeuralHexNetwork 
           redHexActive={step !== 'idle' && step !== 'morphing'} 
           onRedHexPos={handleRedHexPos}
+          repelZone={repelZone}
         />
       </div>
 
-      {/* L'éclair blanc final */}
       {step === 'flash' && (
         <div className="fixed inset-0 z-50 animate-final-flash pointer-events-none" />
       )}
 
-      {/* Éléments de transition (Boîte et Ligne) */}
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}>
-            {/* Ligne directe entre l'hexagone rouge mobile et le coin de la boîte de dialogue */}
             <path
               d={`M ${redHexPos.x} ${redHexPos.y} L ${window.innerWidth / 2 + 150} ${window.innerHeight * 0.2 + 50}`}
               stroke="#ef4444"
@@ -108,10 +110,9 @@ const AppStoppedScreen = () => {
             />
           </svg>
 
-          {/* Conteneur du Terminal et des Boîtes de Décodage */}
           <div className="absolute top-[20%] left-[calc(50%+150px)]">
-            {/* Boîte de terminal principale */}
             <div 
+              ref={boxRef}
               className={cn(
                 "w-80 p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
                 step === 'struggling' ? "animate-struggle" : "animate-box-reveal"
@@ -132,7 +133,6 @@ const AppStoppedScreen = () => {
               </pre>
             </div>
 
-            {/* Boîtes de décodage flottantes */}
             {decodingBoxes.map(box => (
               <div
                 key={box.id}
@@ -155,7 +155,6 @@ const AppStoppedScreen = () => {
         </div>
       )}
 
-      {/* UI Initiale */}
       <div className={cn(
         "text-center space-y-8 max-w-md w-full transition-opacity duration-500 z-10",
         step !== 'idle' && "opacity-0 pointer-events-none"
