@@ -12,11 +12,20 @@ interface Particle {
   speed: number;
   vx: number;
   vy: number;
+  isRogue?: boolean;
 }
 
-export const NeuralHexNetwork = () => {
+interface NeuralHexNetworkProps {
+  rogueActive?: boolean;
+  boxPos?: { x: number; y: number } | null;
+  onRoguePos?: (pos: { x: number; y: number }) => void;
+  lockingActive?: boolean;
+}
+
+export const NeuralHexNetwork = ({ rogueActive, boxPos, onRoguePos, lockingActive }: NeuralHexNetworkProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
+  const particlesRef = useRef<Particle[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -26,7 +35,6 @@ export const NeuralHexNetwork = () => {
     if (!ctx) return;
 
     let animationFrameId: number;
-    let particles: Particle[] = [];
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -35,29 +43,29 @@ export const NeuralHexNetwork = () => {
     };
 
     const initParticles = () => {
-      particles = [];
-      // Densité augmentée (diviseur plus petit = plus de particules)
       const numberOfParticles = Math.floor((canvas.width * canvas.height) / 4000);
+      const newParticles = [];
       
       for (let i = 0; i < numberOfParticles; i++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
-        particles.push({
+        newParticles.push({
           x,
           y,
           baseX: x,
           baseY: y,
-          // Variété de taille plus importante (de 1 à 12)
           size: Math.random() * 11 + 1,
           angle: Math.random() * Math.PI * 2,
           speed: Math.random() * 2 + 1,
           vx: (Math.random() - 0.5) * 2.5,
-          vy: (Math.random() - 0.5) * 2.5
+          vy: (Math.random() - 0.5) * 2.5,
+          isRogue: i === 0 // Le premier est désigné comme renégat potentiel
         });
       }
+      particlesRef.current = newParticles;
     };
 
-    const drawHexagon = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
+    const drawHexagon = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, isRogue?: boolean) => {
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
         ctx.lineTo(
@@ -66,85 +74,121 @@ export const NeuralHexNetwork = () => {
         );
       }
       ctx.closePath();
+      if (isRogue && rogueActive) {
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+        ctx.fill();
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2;
+      } else {
+        ctx.lineWidth = Math.max(0.5, size / 4);
+      }
       ctx.stroke();
     };
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      const haloRadius = 150;
-      const maxTotalDistance = 600;
-      const minSize = 1;
-      const maxSize = 12;
-      // Limite de connexion réduite pour diminuer la densité des lignes
       const connectionLimit = 80;
+      const shieldRadius = 180;
 
-      particles.forEach(p => {
+      particlesRef.current.forEach(p => {
         p.angle += 0.05;
+        
+        // Physique spécifique du renégat
+        if (p.isRogue && rogueActive) {
+          if (lockingActive) {
+            // Ralentit quand verrouillé
+            p.vx *= 0.95;
+            p.vy *= 0.95;
+          } else {
+            // Mouvement erratique mais attiré par le réseau
+            p.vx += (Math.random() - 0.5) * 0.5;
+            p.vy += (Math.random() - 0.5) * 0.5;
+            
+            // Répulsion de la boîte (bouclier)
+            if (boxPos) {
+              const dx = p.x - boxPos.x;
+              const dy = p.y - boxPos.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < shieldRadius) {
+                const force = (shieldRadius - dist) / shieldRadius;
+                p.vx += (dx / dist) * force * 15;
+                p.vy += (dy / dist) * force * 15;
+                
+                // Dessiner l'effet de bouclier
+                ctx.save();
+                ctx.strokeStyle = `rgba(239, 68, 68, ${force})`;
+                ctx.lineWidth = 2;
+                drawHexagon(ctx, boxPos.x, boxPos.y, shieldRadius, false);
+                ctx.restore();
+              }
+            }
+          }
+          
+          if (onRoguePos) onRoguePos({ x: p.x, y: p.y });
+        }
+
         p.baseX += p.vx;
         p.baseY += p.vy;
 
+        // Limites du canvas
         if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
         if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
 
-        const currentX = p.baseX + Math.cos(p.angle) * 10;
-        const currentY = p.baseY + Math.sin(p.angle) * 10;
-        p.x = currentX;
-        p.y = currentY;
+        p.x = p.baseX + Math.cos(p.angle) * 10;
+        p.y = p.baseY + Math.sin(p.angle) * 10;
 
-        let opacity = 0;
+        let opacity = mouseRef.current.active ? 0 : 0.4;
         
         if (mouseRef.current.active) {
-          const dx = mouseRef.current.x - currentX;
-          const dy = mouseRef.current.y - currentY;
+          const dx = mouseRef.current.x - p.x;
+          const dy = mouseRef.current.y - p.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < haloRadius) {
-            opacity = 1;
-          } else {
-            const sizeFactor = (maxSize - p.size) / (maxSize - minSize);
-            const availableRange = maxTotalDistance - haloRadius;
-            const minPersistence = availableRange / 2;
-            const maxPersistence = availableRange;
-            
-            const allowedPersistenceDistance = minPersistence + (sizeFactor * (maxPersistence - minPersistence));
-            const limit = haloRadius + allowedPersistenceDistance;
-
-            if (distance < limit) {
-              opacity = 1 - (distance - haloRadius) / (limit - haloRadius);
-            }
-          }
+          if (distance < 300) opacity = 1 - distance / 300;
         }
 
-        if (opacity > 0) {
-          ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.6})`;
-          ctx.lineWidth = Math.max(0.5, p.size / 4);
-          drawHexagon(ctx, currentX, currentY, p.size);
+        if (p.isRogue && rogueActive) opacity = 1;
 
-          particles.forEach(p2 => {
+        if (opacity > 0) {
+          ctx.strokeStyle = p.isRogue && rogueActive ? `rgba(239, 68, 68, ${opacity})` : `rgba(34, 197, 94, ${opacity * 0.6})`;
+          drawHexagon(ctx, p.x, p.y, p.size, p.isRogue && rogueActive);
+
+          // Connexions
+          particlesRef.current.forEach(p2 => {
             if (p === p2) return;
-            const dx = p2.x - currentX;
-            const dy = p2.y - currentY;
+            const dx = p2.x - p.x;
+            const dy = p2.y - p.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             
             if (dist < connectionLimit) {
-              const isDying = dist > connectionLimit * 0.8;
-              
               ctx.beginPath();
-              ctx.moveTo(currentX, currentY);
-              ctx.lineTo(p2.x, p2.y);
+              ctx.save();
               
-              if (isDying) {
-                const flashIntensity = (dist - connectionLimit * 0.8) / (connectionLimit * 0.2);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * flashIntensity * 0.8})`;
-                ctx.lineWidth = 1.5;
+              if (p.isRogue && rogueActive) {
+                ctx.setLineDash([4, 4]); // Pointillés pour le renégat
+                ctx.strokeStyle = `rgba(239, 68, 68, ${opacity * 0.4})`;
               } else {
                 ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.15})`;
-                ctx.lineWidth = 0.5;
               }
+              
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
               ctx.stroke();
+              ctx.restore();
             }
           });
+
+          // Ligne solide vers la boîte si c'est le renégat
+          if (p.isRogue && rogueActive && boxPos) {
+            ctx.beginPath();
+            ctx.save();
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 1.5;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(boxPos.x, boxPos.y);
+            ctx.stroke();
+            ctx.restore();
+          }
         }
       });
 
@@ -166,12 +210,7 @@ export const NeuralHexNetwork = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [rogueActive, boxPos, lockingActive]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-    />
-  );
+  return <canvas ref={canvasRef} className="w-full h-full" />;
 };

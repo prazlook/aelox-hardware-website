@@ -448,6 +448,23 @@
   100% { opacity: 0; }
 }
 
+/* ANIMATIONS POUR LE VISEUR */
+@keyframes crosshair-draw {
+  0% { stroke-dashoffset: 100; opacity: 0; transform: scale(2); }
+  100% { stroke-dashoffset: 0; opacity: 1; transform: scale(1); }
+}
+
+@keyframes crosshair-lock {
+  0% { transform: scale(1); border-color: white; }
+  50% { transform: scale(0.8); border-color: #ef4444; }
+  100% { transform: scale(0.7); border-color: #ef4444; box-shadow: 0 0 30px #ef4444; }
+}
+
+@keyframes shield-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.1); opacity: 0.3; }
+}
+
 @layer components {
   .animate-hashrate-glitch {
     animation: hashrate-glitch-keyframes 1.4s linear infinite;
@@ -673,6 +690,19 @@
 
   .animate-final-flash {
     animation: powerful-white-flash 0.5s ease-out forwards;
+  }
+
+  .animate-crosshair-draw {
+    stroke-dasharray: 100;
+    animation: crosshair-draw 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  }
+
+  .animate-crosshair-lock {
+    animation: crosshair-lock 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .animate-shield-pulse {
+    animation: shield-pulse 1s ease-in-out infinite;
   }
 }
 
