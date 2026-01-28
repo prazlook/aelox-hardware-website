@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import logoImage from '@/assets/Gemini_Generated_Image_6t21s96t21s96t21-removebg-preview (1) (1).png';
+import logoImage from '@/assets/aelox-logo.png';
 
 interface LogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   className?: string;
