@@ -94,10 +94,6 @@ export default {
           "from, to": { opacity: "1" },
           "50%": { opacity: "0" },
         },
-        "neon-pulse": {
-          "0%, 100%": { "text-shadow": "0 0 5px var(--neon-color), 0 0 10px var(--neon-color), 0 0 15px var(--neon-color)" },
-          "50%": { "text-shadow": "0 0 8px var(--neon-color), 0 0 15px var(--neon-color), 0 0 25px var(--neon-color)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -106,7 +102,6 @@ export default {
         "aurora": "aurora 8s linear infinite",
         "float-particle": "float-particle 6s infinite ease-in-out",
         typewriter: "typewriter 0.5s steps(30, end) forwards",
-        "neon-pulse": "neon-pulse 2s ease-in-out infinite alternate",
       },
     },
   },

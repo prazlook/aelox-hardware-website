@@ -31,10 +31,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-
-    /* Define neon colors as CSS variables */
-    --neon-cyan: #00F0FF;
-    --neon-blue: #3B82F6;
   }
 }
 
@@ -46,17 +42,6 @@
   body {
     @apply bg-theme-dark text-theme-text-primary;
   }
-}
-
-/* Custom neon text classes */
-.text-neon-cyan {
-  --neon-color: var(--neon-cyan);
-  color: var(--neon-cyan);
-}
-
-.text-neon-blue {
-  --neon-color: var(--neon-blue);
-  color: var(--neon-blue);
 }
 
 @keyframes zap-trace {
