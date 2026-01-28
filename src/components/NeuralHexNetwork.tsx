@@ -36,7 +36,8 @@ export const NeuralHexNetwork = () => {
 
     const initParticles = () => {
       particles = [];
-      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 7000);
+      // Densité augmentée (diviseur plus petit = plus de particules)
+      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 4000);
       
       for (let i = 0; i < numberOfParticles; i++) {
         const x = Math.random() * canvas.width;
@@ -46,11 +47,12 @@ export const NeuralHexNetwork = () => {
           y,
           baseX: x,
           baseY: y,
-          size: Math.random() * 6 + 2,
+          // Variété de taille plus importante (de 1 à 12)
+          size: Math.random() * 11 + 1,
           angle: Math.random() * Math.PI * 2,
-          speed: Math.random() * 2 + 1, // Vitesse augmentée
-          vx: (Math.random() - 0.5) * 2,
-          vy: (Math.random() - 0.5) * 2
+          speed: Math.random() * 2 + 1,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: (Math.random() - 0.5) * 2.5
         });
       }
     };
@@ -72,17 +74,16 @@ export const NeuralHexNetwork = () => {
       
       const haloRadius = 150;
       const maxTotalDistance = 600;
-      const minSize = 2;
-      const maxSize = 8;
-      const connectionLimit = 110;
+      const minSize = 1;
+      const maxSize = 12;
+      // Limite de connexion réduite pour diminuer la densité des lignes
+      const connectionLimit = 80;
 
       particles.forEach(p => {
-        // Mouvement plus dynamique et rapide
         p.angle += 0.05;
         p.baseX += p.vx;
         p.baseY += p.vy;
 
-        // Rebond sur les bords
         if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
         if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
 
@@ -117,10 +118,9 @@ export const NeuralHexNetwork = () => {
 
         if (opacity > 0) {
           ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.6})`;
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = Math.max(0.5, p.size / 4);
           drawHexagon(ctx, currentX, currentY, p.size);
 
-          // Connexions dynamiques
           particles.forEach(p2 => {
             if (p === p2) return;
             const dx = p2.x - currentX;
@@ -128,21 +128,19 @@ export const NeuralHexNetwork = () => {
             const dist = Math.sqrt(dx * dx + dy * dy);
             
             if (dist < connectionLimit) {
-              // Effet d'éclair blanc : si la connexion approche de la limite de rupture
-              const isDying = dist > connectionLimit * 0.85;
+              const isDying = dist > connectionLimit * 0.8;
               
               ctx.beginPath();
               ctx.moveTo(currentX, currentY);
               ctx.lineTo(p2.x, p2.y);
               
               if (isDying) {
-                // Flash blanc
-                const flashIntensity = (dist - connectionLimit * 0.85) / (connectionLimit * 0.15);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * flashIntensity})`;
-                ctx.lineWidth = 2;
+                const flashIntensity = (dist - connectionLimit * 0.8) / (connectionLimit * 0.2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * flashIntensity * 0.8})`;
+                ctx.lineWidth = 1.5;
               } else {
-                ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.2})`;
-                ctx.lineWidth = 1;
+                ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.15})`;
+                ctx.lineWidth = 0.5;
               }
               ctx.stroke();
             }
