@@ -72,7 +72,7 @@ export const Sidebar = () => {
         variant="destructive"
         className={cn(
           "mt-auto mx-auto w-12 h-12 rounded-full mb-4 group transition-all duration-300 ease-in-out",
-          "hover:scale-110 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)]",
+          "hover:scale-110 hover:animate-halo-rainbow",
           triggerShutdownAnimation && "animate-staggered-fade-out"
         )}
         style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
