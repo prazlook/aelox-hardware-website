@@ -1,33 +1,34 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton, { HexagonIcon } from '@/components/HoneycombButton';
 import { useTypewriter } from '@/hooks/useTypewriter';
 import { cn } from '@/lib/utils';
 
-type TransitionState = 'idle' | 'morphing' | 'hex-line' | 'box-typing' | 'flash' | 'complete';
+type TransitionState = 'idle' | 'morphing' | 'hex-appear' | 'hex-line' | 'conflict' | 'flash' | 'complete';
 
 const AppStoppedScreen = () => {
   const { startApp } = useAppStatus();
   const [step, setStep] = useState<TransitionState>('idle');
   const [terminalText, setTerminalText] = useState('');
   
-  const textToType = "> INITIALIZING CORE SYSTEMS...\n> LOADING NEURAL NETWORK...\n> CONNECTING TO ASIC NODES...\n> SECURITY HANDSHAKE: OK.\n> SYSTEM READY.";
-  const typedText = useTypewriter(terminalText, 25);
+  const textToType = "> CRITICAL INTERFERENCE DETECTED...\n> ATTEMPTING TO STABILIZE CORE...\n> CONFLICT RESOLUTION IN PROGRESS...\n> SYSTEM OVERRIDE: SUCCESSFUL.\n> BOOTING INTERFACE.";
+  const typedText = useTypewriter(terminalText, 20);
 
   const handleStart = () => {
     setStep('morphing');
     
-    // Séquence temporelle
-    setTimeout(() => setStep('hex-line'), 1000);
+    // Séquence temporelle allongée
+    setTimeout(() => setStep('hex-appear'), 1200);
+    setTimeout(() => setStep('hex-line'), 2500);
     setTimeout(() => {
-      setStep('box-typing');
+      setStep('conflict');
       setTerminalText(textToType);
-    }, 2000);
-    setTimeout(() => setStep('flash'), 4500);
-    setTimeout(() => startApp(), 5000);
+    }, 4000);
+    setTimeout(() => setStep('flash'), 8500); // Combat dure 4.5 secondes
+    setTimeout(() => startApp(), 9000);
   };
 
   return (
@@ -39,39 +40,42 @@ const AppStoppedScreen = () => {
       )}
 
       {/* Séquence de transition SVG */}
-      {step !== 'idle' && step !== 'morphing' && (
+      {(step !== 'idle' && step !== 'morphing') && (
         <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
           <svg className="w-full h-full max-w-4xl max-h-[600px]" viewBox="0 0 800 600">
-            {/* Hexagone rouge au centre (là où était le bouton) */}
-            <g className={cn("animate-red-hex-appear", step === 'flash' && "opacity-0")}>
+            {/* Hexagone rouge avec apparition inhabituelle */}
+            <g className={cn(step === 'hex-appear' ? "animate-red-hex-unusual" : "", step === 'flash' && "opacity-0")}>
               <foreignObject x="360" y="260" width="80" height="80">
-                <div className={cn("w-full h-full text-red-500", step === 'box-typing' && "animate-hex-red-orange")}>
-                  <HexagonIcon className="w-full h-full fill-red-500/20" />
+                <div className={cn(
+                  "w-full h-full text-red-500 transition-colors duration-300", 
+                  (step === 'conflict' || step === 'hex-line') && "animate-hex-red-orange"
+                )}>
+                  <HexagonIcon className="w-full h-full fill-red-500/10" />
                 </div>
               </foreignObject>
             </g>
 
-            {/* Ligne de connexion rouge */}
-            {(step === 'hex-line' || step === 'box-typing') && (
+            {/* Ligne de connexion rouge en POINTILLÉS */}
+            {(step === 'hex-line' || step === 'conflict') && (
               <path
                 d="M 440 300 L 550 300 L 550 200"
                 stroke="#ef4444"
                 strokeWidth="2"
                 fill="none"
-                className="animate-red-line-draw"
+                className="animate-red-line-dotted"
                 filter="drop-shadow(0 0 5px red)"
               />
             )}
           </svg>
 
-          {/* Boîte de terminal rouge futuriste */}
-          {step === 'box-typing' && (
-            <div className="absolute top-[120px] left-[550px] w-80 p-4 border-2 border-red-500 bg-red-950/40 backdrop-blur-md animate-box-reveal shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+          {/* Boîte de terminal qui "se bat" (secousses violentes) */}
+          {step === 'conflict' && (
+            <div className="absolute top-[120px] left-[550px] w-80 p-4 border-2 border-red-500 bg-red-950/40 backdrop-blur-md animate-box-conflict shadow-[0_0_30px_rgba(239,68,68,0.5)]">
               <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
-                <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest">System Monitor</span>
+                <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest">Conflict Monitor</span>
                 <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500/30" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
                 </div>
               </div>
               <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor">

@@ -46,9 +46,7 @@
 
 /* Animations existantes conservées */
 @keyframes zap-trace {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 
 @keyframes server-blink {
@@ -59,32 +57,18 @@
 }
 
 @keyframes marching-ants {
-  from {
-    stroke-dashoffset: 0;
-  }
-  to {
-    stroke-dashoffset: 36;
-  }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 36; }
 }
 
 @keyframes slide-in-item {
-  from {
-    opacity: 0;
-    transform: translateX(-15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-15px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes draw-border {
-  from {
-    stroke-dashoffset: 500;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+  from { stroke-dashoffset: 500; }
+  to { stroke-dashoffset: 0; }
 }
 
 @keyframes flicker-in {
@@ -94,9 +78,7 @@
 }
 
 @keyframes shutdown-wave {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 
 @keyframes flicker-and-fade {
@@ -118,9 +100,7 @@
 }
 
 @keyframes ecg-border-flow {
-  to {
-    stroke-dashoffset: -48;
-  }
+  to { stroke-dashoffset: -48; }
 }
 
 @keyframes standby-scan {
@@ -134,92 +114,46 @@
 }
 
 @keyframes boot-up-item {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes aurora {
-  from {
-    background-position: 0% 50%;
-  }
-  to {
-    background-position: 200% 50%;
-  }
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
 }
 
 @keyframes chart-draw-animation {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 
 @keyframes chart-wipe-animation {
-    to {
-        clip-path: inset(0 0 0 0);
-    }
+    to { clip-path: inset(0 0 0 0); }
 }
 
 @keyframes fade-in-slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes startup-fade-in-scale {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes startup-slide-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes startup-slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes startup-fade-in-from-center {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-    filter: blur(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0px);
-  }
+  from { opacity: 0; transform: scale(0.8); filter: blur(10px); }
+  to { opacity: 1; transform: scale(1); filter: blur(0px); }
 }
 
 @keyframes global-indicator-fade-in {
@@ -238,98 +172,29 @@
 }
 
 @keyframes global-indicator-ecg-center-expand {
-  0% {
-    stroke-dasharray: 0 1000;
-    stroke-dashoffset: 500;
-    opacity: 0;
-  }
-  50% {
-    stroke-dasharray: 500 500;
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  100% {
-    stroke-dasharray: 1000 0;
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
+  0% { stroke-dasharray: 0 1000; stroke-dashoffset: 500; opacity: 0; }
+  50% { stroke-dasharray: 500 500; stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dasharray: 1000 0; stroke-dashoffset: 0; opacity: 1; }
 }
 
 @keyframes app-shutdown {
-  0% {
-    filter: blur(0px) brightness(1) saturate(1);
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    filter: blur(2px) brightness(0.7) saturate(0.7);
-    transform: scale(0.99);
-    opacity: 0.8;
-  }
-  100% {
-    filter: blur(5px) brightness(0.4) saturate(0.4);
-    transform: scale(0.98);
-    opacity: 0.5;
-  }
+  0% { filter: blur(0px) brightness(1) saturate(1); transform: scale(1); opacity: 1; }
+  50% { filter: blur(2px) brightness(0.7) saturate(0.7); transform: scale(0.99); opacity: 0.8; }
+  100% { filter: blur(5px) brightness(0.4) saturate(0.4); transform: scale(0.98); opacity: 0.5; }
 }
 
 @keyframes fluorescent-flicker {
-  0% {
-    opacity: 1;
-    filter: brightness(1) grayscale(0);
-    transform: scale(1);
-  }
-  10% {
-    opacity: 0.1;
-    filter: brightness(0.3) grayscale(1);
-    transform: scale(0.98);
-  }
-  20% {
-    opacity: 0.7;
-    filter: brightness(1.1) grayscale(0);
-    transform: scale(1.01);
-  }
-  30% {
-    opacity: 0.2;
-    filter: brightness(0.4) grayscale(1);
-    transform: scale(0.97);
-  }
-  40% {
-    opacity: 0.9;
-    filter: brightness(1.05) grayscale(0);
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.15;
-    filter: brightness(0.35) grayscale(1);
-    transform: scale(0.96);
-  }
-  60% {
-    opacity: 0.6;
-    filter: brightness(0.9) grayscale(0);
-    transform: scale(0.99);
-  }
-  70% {
-    opacity: 0.05;
-    filter: brightness(0.2) grayscale(1);
-    transform: scale(0.95);
-  }
-  80% {
-    opacity: 0.3;
-    filter: brightness(0.5) grayscale(1);
-    transform: scale(0.93);
-  }
-  90% {
-    opacity: 0.02;
-    filter: brightness(0.1) grayscale(1);
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 0;
-    filter: brightness(0) grayscale(1);
-    transform: scale(0.9);
-    pointer-events: none;
-  }
+  0% { opacity: 1; filter: brightness(1) grayscale(0); transform: scale(1); }
+  10% { opacity: 0.1; filter: brightness(0.3) grayscale(1); transform: scale(0.98); }
+  20% { opacity: 0.7; filter: brightness(1.1) grayscale(0); transform: scale(1.01); }
+  30% { opacity: 0.2; filter: brightness(0.4) grayscale(1); transform: scale(0.97); }
+  40% { opacity: 0.9; filter: brightness(1.05) grayscale(0); transform: scale(1); }
+  50% { opacity: 0.15; filter: brightness(0.35) grayscale(1); transform: scale(0.96); }
+  60% { opacity: 0.6; filter: brightness(0.9) grayscale(0); transform: scale(0.99); }
+  70% { opacity: 0.05; filter: brightness(0.2) grayscale(1); transform: scale(0.95); }
+  80% { opacity: 0.3; filter: brightness(0.5) grayscale(1); transform: scale(0.93); }
+  90% { opacity: 0.02; filter: brightness(0.1) grayscale(1); transform: scale(0.92); }
+  100% { opacity: 0; filter: brightness(0) grayscale(1); transform: scale(0.9); pointer-events: none; }
 }
 
 @keyframes staggered-fade-out {
@@ -338,56 +203,26 @@
 }
 
 @keyframes asic-border-draw-in {
-  from {
-    stroke-dasharray: 0 1000;
-    stroke-dashoffset: 0;
-    opacity: 0;
-  }
-  to {
-    stroke-dasharray: 1000 0;
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
+  from { stroke-dasharray: 0 1000; stroke-dashoffset: 0; opacity: 0; }
+  to { stroke-dasharray: 1000 0; stroke-dashoffset: 0; opacity: 1; }
 }
 
 @keyframes card-fill-from-top {
-  from {
-    clip-path: inset(100% 0 0 0);
-  }
-  to {
-    clip-path: inset(0% 0 0 0);
-  }
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0% 0 0 0); }
 }
 
 @keyframes hashrate-glitch-keyframes {
-  0% {
-    stroke-dasharray: 34 8;
-    stroke-dashoffset: 8;
-  }
-  100% {
-    stroke-dasharray: 34 8;
-    stroke-dashoffset: -34;
-  }
+  0% { stroke-dasharray: 34 8; stroke-dashoffset: 8; }
+  100% { stroke-dasharray: 34 8; stroke-dashoffset: -34; }
 }
 
 @keyframes button-build-animation {
-  0% {
-    clip-path: inset(50% 50% 50% 50%);
-    opacity: 0;
-  }
-  5% {
-    opacity: 1;
-  }
-  20% {
-    clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%);
-  }
-  40% {
-    clip-path: inset(0% 0% 0% 0%);
-  }
-  100% {
-    clip-path: inset(0% 0% 0% 0%);
-    opacity: 1;
-  }
+  0% { clip-path: inset(50% 50% 50% 50%); opacity: 0; }
+  5% { opacity: 1; }
+  20% { clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); }
+  40% { clip-path: inset(0% 0% 0% 0%); }
+  100% { clip-path: inset(0% 0% 0% 0%); opacity: 1; }
 }
 
 @keyframes button-content-fade-in {
@@ -396,45 +231,38 @@
   100% { opacity: 1; }
 }
 
-/* NOUVELLES ANIMATIONS POUR LES HEXAGONES DU BOUTON */
-@keyframes hexagon-orbital-path {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(90deg); }
-  50% { transform: rotate(90deg); }
-  75% { transform: rotate(180deg); }
-  100% { transform: rotate(180deg); }
-}
-
-@keyframes hexagon-local-spin-and-flash {
-  0% { transform: rotate(0deg); filter: brightness(1) drop-shadow(0 0 0 white); }
-  25% { transform: rotate(0deg); filter: brightness(1) drop-shadow(0 0 0 white); }
-  50% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
-  75% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
-  85% { transform: rotate(360deg); filter: brightness(10) drop-shadow(0 0 20px white); }
-  100% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); }
-}
-
-/* NOUVELLES ANIMATIONS DE TRANSITION Honeycomb */
+/* Honeycomb Transitions */
 @keyframes button-morph-to-hex {
   0% { border-radius: 9999px; transform: rotate(0deg) scale(1); }
   50% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: rotate(180deg) scale(1.1); }
   100% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: rotate(360deg) scale(0); opacity: 0; }
 }
 
-@keyframes red-hex-appear {
-  0% { transform: scale(0) rotate(-45deg); opacity: 0; filter: drop-shadow(0 0 0 red); }
-  50% { transform: scale(1.2) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 20px red); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; filter: drop-shadow(0 0 10px red); }
+@keyframes red-hex-unusual-appear {
+  0% { transform: scale(0) skewX(20deg); opacity: 0; clip-path: inset(0 100% 0 0); }
+  20% { opacity: 1; clip-path: inset(0 50% 0 0); }
+  40% { transform: scale(1.2) skewX(-10deg); opacity: 0.5; }
+  60% { opacity: 1; clip-path: inset(0 0 0 0); }
+  80% { transform: scale(0.9) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-@keyframes red-line-draw {
+@keyframes terminal-conflict-shake {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  10% { transform: translate(-5px, 2px) scale(1.02); filter: brightness(1.5); }
+  20% { transform: translate(4px, -3px) scale(0.98); }
+  30% { transform: translate(-8px, 0px) scale(1.05); color: #f97316; }
+  40% { transform: translate(6px, 4px) scale(0.95); }
+  50% { transform: translate(-2px, -6px) scale(1.1); filter: contrast(2); }
+  60% { transform: translate(10px, 2px) scale(0.9); }
+  70% { transform: translate(-4px, 8px) scale(1.02); }
+  80% { transform: translate(8px, -4px) scale(0.97); }
+  90% { transform: translate(-6px, -2px) scale(1.03); }
+}
+
+@keyframes red-line-dotted-draw {
   from { stroke-dashoffset: 400; }
   to { stroke-dashoffset: 0; }
-}
-
-@keyframes terminal-box-reveal {
-  0% { transform: scaleX(0); opacity: 0; }
-  100% { transform: scaleX(1); opacity: 1; }
 }
 
 @keyframes hex-flicker-red-orange {
@@ -449,222 +277,23 @@
 }
 
 @layer components {
-  .animate-hashrate-glitch {
-    animation: hashrate-glitch-keyframes 1.4s linear infinite;
-  }
-
-  .animate-zap-trace polygon {
-    stroke-dasharray: 60;
-    stroke-dashoffset: 60;
-    animation: zap-trace 2.5s linear infinite;
-    fill: none;
-  }
-
-  .animate-server-blink .light-1 {
-    animation: server-blink 1.5s infinite;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-2 {
-    animation: server-blink 1.5s infinite 0.5s;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-3 {
-    animation: server-blink 1.5s infinite 0.2s;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-4 {
-    animation: server-blink 1.5s infinite 0.7s;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-5 {
-    animation: server-blink 1.5s infinite 0.4s;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-6 {
-    animation: server-blink 1.5s infinite 0.9s;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-7 {
-    animation: server-blink 1.5s infinite 0.1s;
-    stroke-width: 3;
-  }
-  .animate-server-blink .light-8 {
-    animation: server-blink 1.5s infinite 0.6s;
-    stroke-width: 3;
-  }
-  
-  .animate-marching-ants {
-    stroke-dasharray: 12 24;
-    animation: marching-ants 1s linear infinite;
-  }
-
-  .animate-slide-in-item {
-    animation: slide-in-item 0.3s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-draw-border {
-    animation: draw-border 0.5s ease-out forwards;
-    animation-delay: inherit;
-  }
-
-  .animate-flicker-in {
-    animation: flicker-in 0.8s ease-in-out forwards;
-    animation-delay: inherit;
-    opacity: 0;
-  }
-
-  .group:hover .animate-ecg-on-hover {
-    stroke-dasharray: 8 4 2 4 2 4;
-    animation: ecg-border-flow 0.75s linear infinite;
-  }
-
-  .animate-shutdown-wave {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: shutdown-wave 0.8s ease-out forwards;
-  }
-
-  .animate-flicker-and-fade {
-    animation: flicker-and-fade 1.5s forwards;
-    animation-delay: inherit;
-  }
-
-  .animate-gentle-shutdown {
-    animation: gentle-shutdown-flicker 1.2s ease-out forwards;
-    animation-delay: inherit;
-  }
-
-  .animate-standby-scan {
-    animation: standby-scan 4s ease-in-out infinite;
-  }
-  .animate-idle-pulse {
-    stroke-dasharray: 50 1150;
-    animation: idle-pulse 8s linear infinite;
-  }
-
-  .animate-boot-up-item {
-    animation: boot-up-item 0.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-aurora {
-    animation: aurora 6s linear infinite;
-  }
-
-  .chart-line-draw .recharts-area-curve {
-    stroke-dasharray: 2000;
-    stroke-dashoffset: 2000;
-    animation: chart-draw-animation 1.5s ease-out forwards;
-  }
-
-  .chart-area-draw .recharts-area-path {
-      clip-path: inset(0 100% 0 0);
-      animation: chart-wipe-animation 1.5s ease-out forwards;
-  }
-
-  .animate-fade-in-slide-up {
-    animation: fade-in-slide-up 0.4s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-startup-fade-in-scale {
-    animation: startup-fade-in-scale 0.6s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-startup-slide-in-left {
-    animation: startup-slide-in-left 0.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-startup-slide-in-right {
-    animation: startup-slide-in-right 0.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-startup-fade-in-from-center {
-    animation: startup-fade-in-from-center 1s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-global-indicator-fade-in {
-    animation: global-indicator-fade-in 0.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-global-indicator-bars-grow {
-    animation: global-indicator-bars-grow 0.6s ease-out forwards;
-    transform-origin: center bottom;
-    opacity: 0;
-  }
-
-  .animate-global-indicator-waveform-draw {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: global-indicator-waveform-draw 1s ease-out forwards;
-  }
-
-  .animate-global-indicator-ecg-center-expand {
-    stroke-dasharray: 0 1000;
-    stroke-dashoffset: 500;
-    animation: global-indicator-ecg-center-expand 1.2s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-app-shutdown {
-    animation: app-shutdown 3s ease-out forwards;
-  }
-
-  .animate-staggered-fade-out {
-    animation: staggered-fade-out 0.5s ease-out forwards;
-    animation-delay: var(--delay, 0s);
-  }
-
-  .animate-asic-border-draw-in {
-    animation: asic-border-draw-in 0.8s ease-out forwards;
-    stroke-dasharray: 0 1000;
-    stroke-dashoffset: 0;
-    opacity: 0;
-  }
-
-  .animate-button-build {
-    animation: button-build-animation 1s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-button-content-fade-in {
-    animation: button-content-fade-in 0.5s ease-out forwards;
-    opacity: 0;
-  }
-
-  .animate-hexagon-orbital {
-    animation: hexagon-orbital-path 4s ease-in-out infinite;
-    transform-origin: center center;
-  }
-
-  .animate-hexagon-spin-flash {
-    animation: hexagon-local-spin-and-flash 4s ease-in-out infinite;
-    transform-origin: center center;
-  }
-
   .animate-button-morph-hex {
     animation: button-morph-to-hex 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
-  .animate-red-hex-appear {
-    animation: red-hex-appear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  .animate-red-hex-unusual {
+    animation: red-hex-unusual-appear 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
   }
 
-  .animate-red-line-draw {
-    stroke-dasharray: 400;
+  .animate-red-line-dotted {
+    stroke-dasharray: 4 6;
     stroke-dashoffset: 400;
-    animation: red-line-draw 0.8s ease-out forwards;
+    animation: red-line-dotted-draw 1.5s linear forwards;
   }
 
-  .animate-box-reveal {
-    animation: terminal-box-reveal 0.4s ease-out forwards;
-    transform-origin: left;
+  .animate-box-conflict {
+    animation: terminal-conflict-shake 0.15s ease-in-out infinite;
+    transform-origin: center;
   }
 
   .animate-hex-red-orange {
