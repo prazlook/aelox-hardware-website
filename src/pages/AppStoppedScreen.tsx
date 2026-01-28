@@ -58,24 +58,24 @@ const AppStoppedScreen = () => {
     // Début de l'infiltration
     setTimeout(() => setStep('hex-infiltrating'), 1500);
     
-    // Phase de lutte (struggling)
+    // Phase de lutte (struggling) : beaucoup plus longue (20 secondes)
     setTimeout(() => setStep('struggling'), 5000);
     
-    // Activation du terminal
+    // Activation du terminal après une lutte acharnée
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
     }, 25000);
     
-    // Phase finale avant le flash
+    // Phase finale avant le flash (20 secondes de décodage terminal)
     setTimeout(() => setStep('flash'), 45000);
     setTimeout(() => startApp(), 46500);
   };
 
-  // Coordonnées cibles pour les deux points d'ancrage sur la boîte
+  // Calcul des coordonnées de destination pour que la ligne touche le bord de la boîte
+  // La boîte est positionnée à top: 20% et left: 50% + 150px
   const targetX = typeof window !== 'undefined' ? window.innerWidth / 2 + 150 : 0;
-  const targetYTop = typeof window !== 'undefined' ? window.innerHeight * 0.2 : 0;
-  const targetYBottom = targetYTop + 200; // Ancrage plus bas sur la boîte
+  const targetY = typeof window !== 'undefined' ? window.innerHeight * 0.2 : 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
@@ -97,24 +97,14 @@ const AppStoppedScreen = () => {
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}>
-            {/* Première liaison : point d'ancrage Haut-Gauche */}
+            {/* La ligne pointe désormais exactement vers le coin supérieur gauche de la boîte */}
             <path
-              d={`M ${redHexPos.x} ${redHexPos.y} L ${targetX} ${targetYTop}`}
+              d={`M ${redHexPos.x} ${redHexPos.y} L ${targetX} ${targetY}`}
               stroke="#ef4444"
               strokeWidth="2"
               fill="none"
               className={cn("animate-red-line-draw", step === 'struggling' && "animate-struggle")}
-              filter="drop-shadow(0 0 10px red)"
-            />
-            {/* Deuxième liaison : point d'ancrage Milieu-Gauche pour assurer le contact visuel */}
-            <path
-              d={`M ${redHexPos.x} ${redHexPos.y} L ${targetX} ${targetYTop + 100}`}
-              stroke="#ef4444"
-              strokeWidth="1"
-              fill="none"
-              className={cn("animate-red-line-draw opacity-50", step === 'struggling' && "animate-struggle")}
-              style={{ animationDelay: '0.2s' }}
-              filter="drop-shadow(0 0 5px red)"
+              filter="drop-shadow(0 0 15px red)"
             />
           </svg>
 
