@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppStatus } from "@/context/AppStatusContext";
+import ImagePlaceholder from "./ImagePlaceholder"; // Import the new component
 
 const navItems = [
   { to: "/", icon: Home, label: "Accueil" }, // New Home link
@@ -63,8 +64,8 @@ export const Sidebar = () => {
         onMouseEnter={() => setShowStopButton(true)}
         onMouseLeave={() => setShowStopButton(false)}
       >
-        {/* Changed Activity icon to a more generic logo placeholder or company initial */}
-        <span className="text-3xl font-bold text-theme-cyan">A</span> 
+        {/* Replaced the span with the ImagePlaceholder component */}
+        <ImagePlaceholder className="w-10 h-10" />
         {showStopButton && (
           <Button
             size="icon"
