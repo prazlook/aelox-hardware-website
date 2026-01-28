@@ -7,7 +7,7 @@ const Layout = () => {
     <div className="flex min-h-screen bg-theme-dark text-theme-text-primary">
       <Sidebar />
       <div className="flex flex-col flex-1">
-        <main className="flex-1 p-6 pb-16"> {/* Ajout de pb-16 pour compenser le header fixe */}
+        <main className="flex-1 p-6 pb-16 pl-20"> {/* Ajout de pl-20 pour décaler le contenu du sidebar */}
           <Outlet />
         </main>
       </div>
