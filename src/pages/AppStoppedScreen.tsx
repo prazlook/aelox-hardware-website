@@ -26,14 +26,13 @@ const AppStoppedScreen = () => {
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   
   const boxRef = useRef<HTMLDivElement>(null);
-  const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 45%\n> INJECTING MALWARE... 82%\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> INFILTRATION: 100%\n> ACCESS GRANTED.";
-  const typedText = useTypewriter(terminalText, 40);
+  const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> ACCESS GRANTED.";
+  const typedText = useTypewriter(terminalText, 30);
 
   const handleRedHexPos = useCallback((pos: { x: number, y: number }) => {
     setRedHexPos(pos);
   }, []);
 
-  // Mettre à jour la position de l'ancre en temps réel par rapport au viewport
   useEffect(() => {
     if (step === 'struggling' || step === 'box-active') {
       const updateAnchor = () => {
@@ -62,8 +61,8 @@ const AppStoppedScreen = () => {
         
         setTimeout(() => {
           setDecodingBoxes(prev => prev.filter(b => b.id !== id));
-        }, 1200);
-      }, 400);
+        }, 1000);
+      }, 300);
 
       return () => clearInterval(interval);
     }
@@ -72,17 +71,17 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Séquence temporelle
-    setTimeout(() => setStep('hex-infiltrating'), 1500);
-    setTimeout(() => setStep('struggling'), 5000);
+    // Séquence temporelle raccourcie
+    setTimeout(() => setStep('hex-infiltrating'), 1000);
+    setTimeout(() => setStep('struggling'), 3000);
     
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
-    }, 25000);
+    }, 10000); // Déclenchement du terminal après 10s au lieu de 25s
     
-    setTimeout(() => setStep('flash'), 45000);
-    setTimeout(() => startApp(), 46500);
+    setTimeout(() => setStep('flash'), 18000); // Flash à 18s au lieu de 45s
+    setTimeout(() => startApp(), 19000);
   };
 
   return (
@@ -105,7 +104,6 @@ const AppStoppedScreen = () => {
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
-            {/* La ligne utilise désormais anchorPos qui est l'emplacement réel de la boîte */}
             <path
               d={`M ${redHexPos.x} ${redHexPos.y} L ${anchorPos.x} ${anchorPos.y}`}
               stroke="#ef4444"
