@@ -23,7 +23,6 @@ const AppStoppedScreen = () => {
   const [redHexPos, setRedHexPos] = useState({ x: 0, y: 0 });
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
-  const [boxRect, setBoxRect] = useState<{ left: number, top: number, width: number, height: number } | null>(null);
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   
   const boxRef = useRef<HTMLDivElement>(null);
@@ -34,23 +33,17 @@ const AppStoppedScreen = () => {
     setRedHexPos(pos);
   }, []);
 
-  // Mettre à jour la position et les dimensions de la boîte en temps réel
+  // Mettre à jour la position de l'ancre en temps réel par rapport au viewport
   useEffect(() => {
     if (step === 'struggling' || step === 'box-active') {
-      const updateBoxInfo = () => {
+      const updateAnchor = () => {
         if (boxRef.current) {
           const rect = boxRef.current.getBoundingClientRect();
-          setBoxRect({
-            left: rect.left,
-            top: rect.top,
-            width: rect.width,
-            height: rect.height
-          });
           setAnchorPos({ x: rect.left, y: rect.top });
         }
-        requestAnimationFrame(updateBoxInfo);
+        requestAnimationFrame(updateAnchor);
       };
-      const animId = requestAnimationFrame(updateBoxInfo);
+      const animId = requestAnimationFrame(updateAnchor);
       return () => cancelAnimationFrame(animId);
     }
   }, [step]);
@@ -102,7 +95,6 @@ const AppStoppedScreen = () => {
         <NeuralHexNetwork 
           redHexActive={step !== 'idle' && step !== 'morphing'} 
           onRedHexPos={handleRedHexPos}
-          boxRect={boxRect}
         />
       </div>
 
@@ -113,6 +105,7 @@ const AppStoppedScreen = () => {
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
+            {/* La ligne utilise désormais anchorPos qui est l'emplacement réel de la boîte */}
             <path
               d={`M ${redHexPos.x} ${redHexPos.y} L ${anchorPos.x} ${anchorPos.y}`}
               stroke="#ef4444"
