@@ -31,20 +31,18 @@ const AppStoppedScreen = () => {
     setRedHexPos(pos);
   }, []);
 
-  // Gérer l'apparition des boîtes de décodage
   useEffect(() => {
     if (step === 'struggling' || step === 'box-active') {
       const interval = setInterval(() => {
         const id = Math.random();
         const newBox: DecodingBox = {
           id,
-          x: (Math.random() - 0.5) * 400, // Autour du terminal
+          x: (Math.random() - 0.5) * 400,
           y: (Math.random() - 0.5) * 300,
           content: `0x${Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase()}`
         };
         setDecodingBoxes(prev => [...prev, newBox]);
         
-        // Supprimer après l'animation
         setTimeout(() => {
           setDecodingBoxes(prev => prev.filter(b => b.id !== id));
         }, 1200);
@@ -57,27 +55,31 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Séquence temporelle étirée
+    // Début de l'infiltration
     setTimeout(() => setStep('hex-infiltrating'), 1500);
     
-    // Début du combat
-    setTimeout(() => setStep('struggling'), 4000);
+    // Phase de lutte (struggling) : beaucoup plus longue (20 secondes)
+    setTimeout(() => setStep('struggling'), 5000);
     
-    // Apparition du terminal
+    // Activation du terminal après une lutte acharnée
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
-    }, 14000);
+    }, 25000);
     
-    // Finalisation
-    setTimeout(() => setStep('flash'), 21000);
-    setTimeout(() => startApp(), 22500);
+    // Phase finale avant le flash (20 secondes de décodage terminal)
+    setTimeout(() => setStep('flash'), 45000);
+    setTimeout(() => startApp(), 46500);
   };
+
+  // Calcul des coordonnées de destination pour que la ligne touche le bord de la boîte
+  // La boîte est positionnée à top: 20% et left: 50% + 150px
+  const targetX = typeof window !== 'undefined' ? window.innerWidth / 2 + 150 : 0;
+  const targetY = typeof window !== 'undefined' ? window.innerHeight * 0.2 : 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
       
-      {/* Network Neural avec l'hexagone rouge "intrus" */}
       <div className={cn(
         "fixed inset-0 transition-opacity duration-1000 pointer-events-none z-0",
         step === 'idle' ? "opacity-0" : "opacity-100"
@@ -88,18 +90,16 @@ const AppStoppedScreen = () => {
         />
       </div>
 
-      {/* L'éclair blanc final */}
       {step === 'flash' && (
         <div className="fixed inset-0 z-50 animate-final-flash pointer-events-none" />
       )}
 
-      {/* Éléments de transition (Boîte et Ligne) */}
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${window.innerWidth} ${window.innerHeight}`}>
-            {/* Ligne directe entre l'hexagone rouge mobile et le coin de la boîte de dialogue */}
+            {/* La ligne pointe désormais exactement vers le coin supérieur gauche de la boîte */}
             <path
-              d={`M ${redHexPos.x} ${redHexPos.y} L ${window.innerWidth / 2 + 150} ${window.innerHeight * 0.2 + 50}`}
+              d={`M ${redHexPos.x} ${redHexPos.y} L ${targetX} ${targetY}`}
               stroke="#ef4444"
               strokeWidth="2"
               fill="none"
@@ -108,9 +108,7 @@ const AppStoppedScreen = () => {
             />
           </svg>
 
-          {/* Conteneur du Terminal et des Boîtes de Décodage */}
           <div className="absolute top-[20%] left-[calc(50%+150px)]">
-            {/* Boîte de terminal principale */}
             <div 
               className={cn(
                 "w-80 p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
@@ -132,7 +130,6 @@ const AppStoppedScreen = () => {
               </pre>
             </div>
 
-            {/* Boîtes de décodage flottantes */}
             {decodingBoxes.map(box => (
               <div
                 key={box.id}
@@ -155,7 +152,6 @@ const AppStoppedScreen = () => {
         </div>
       )}
 
-      {/* UI Initiale */}
       <div className={cn(
         "text-center space-y-8 max-w-md w-full transition-opacity duration-500 z-10",
         step !== 'idle' && "opacity-0 pointer-events-none"
