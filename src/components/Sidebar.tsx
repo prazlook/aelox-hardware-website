@@ -1,14 +1,13 @@
 import { NavLink } from "react-router-dom";
-import { Home, LayoutDashboard, BarChart2, Wallet, Server, Settings, Code, PowerOff } from "lucide-react"; // Added Home icon
+import { Home, LayoutDashboard, BarChart2, Wallet, Server, Settings, Code, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAppStatus } from "@/context/AppStatusContext";
-import ImagePlaceholder from "./ImagePlaceholder"; // Import the new component
+import ImagePlaceholder from "./ImagePlaceholder";
 
 const navItems = [
-  { to: "/", icon: Home, label: "Accueil" }, // New Home link
-  { to: "/dashboard", icon: LayoutDashboard, label: "Tableau de Bord" }, // Old Index, now Dashboard
+  { to: "/", icon: Home, label: "Accueil" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Tableau de Bord" },
   { to: "/statistics", icon: BarChart2, label: "Statistiques" },
   { to: "/wallet", icon: Wallet, label: "Portefeuille" },
   { to: "/asic-management", icon: Server, label: "Gestion ASICs" },
@@ -49,7 +48,6 @@ const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay:
 };
 
 export const Sidebar = () => {
-  const [showStopButton, setShowStopButton] = useState(false);
   const { stopApp, triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
 
   return (
@@ -61,26 +59,21 @@ export const Sidebar = () => {
           triggerShutdownAnimation && "animate-staggered-fade-out"
         )}
         style={triggerStartupAnimation ? { animationDelay: '0s' } : triggerShutdownAnimation ? { '--delay': '0.1s' } as React.CSSProperties : {}}
-        onMouseEnter={() => setShowStopButton(true)}
-        onMouseLeave={() => setShowStopButton(false)}
       >
-        {/* Replaced the span with the ImagePlaceholder component */}
         <ImagePlaceholder className="w-10 h-10" />
-        {showStopButton && (
-          <Button
-            size="icon"
-            variant="destructive"
-            className={cn(
-              "absolute -right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full opacity-0 animate-fade-in-slide-up",
-              triggerShutdownAnimation && "animate-staggered-fade-out"
-            )}
-            style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
-            onClick={stopApp}
-            aria-label="Arrêter l'application"
-          >
-            <PowerOff className="w-4 h-4" />
-          </Button>
-        )}
+        <Button
+          size="icon"
+          variant="destructive"
+          className={cn(
+            "absolute -right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full", // Removed opacity and animation classes
+            triggerShutdownAnimation && "animate-staggered-fade-out"
+          )}
+          style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
+          onClick={stopApp}
+          aria-label="Arrêter l'application"
+        >
+          <PowerOff className="w-4 h-4" />
+        </Button>
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item, index) => (
