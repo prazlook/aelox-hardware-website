@@ -395,10 +395,10 @@
   5% {
     opacity: 1; /* Become visible */
   }
-  30% { /* Increased from 20% to 30% */
+  20% {
     clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); /* Expand horizontally to a 1px line */
   }
-  50% { /* Increased from 40% to 50% */
+  40% {
     clip-path: inset(0% 0% 0% 0%); /* Expand vertically to full button */
   }
   100% {
@@ -407,30 +407,11 @@
   }
 }
 
-/* Removed button-content-fade-in as it's replaced by typewriter effect */
-/* @keyframes button-content-fade-in {
+/* Button content fade-in animation */
+@keyframes button-content-fade-in {
   0% { opacity: 0; }
-  60% { opacity: 0; }
+  60% { opacity: 0; } /* Delay text appearance until button is mostly formed */
   100% { opacity: 1; }
-} */
-
-/* New cursor blink animation for button text */
-@keyframes button-text-cursor-blink {
-  0%   { opacity: 1; } /* Start visible */
-  15%  { opacity: 0; } /* Blink 1: off */
-  20%  { opacity: 1; } /* Blink 1: on */
-  35%  { opacity: 0; } /* Blink 2: off */
-  40%  { opacity: 1; } /* Blink 2: on */
-  55%  { opacity: 0; } /* Blink 3: off */
-  60%  { opacity: 1; } /* Blink 3: on */
-  75%  { opacity: 0; } /* Disappear */
-  100% { opacity: 0; } /* Stay disappeared */
-}
-
-/* Infinite blink for cursor while typing */
-@keyframes blink-infinite {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
 }
 
 
@@ -629,11 +610,10 @@
     opacity: 0; /* Start hidden */
   }
 
-  /* Removed button-content-fade-in as it's replaced by typewriter effect */
-  /* .animate-button-content-fade-in {
+  .animate-button-content-fade-in {
     animation: button-content-fade-in 0.5s ease-out forwards;
-    opacity: 0;
-  } */
+    opacity: 0; /* Start hidden */
+  }
 }
 
 @layer utilities {

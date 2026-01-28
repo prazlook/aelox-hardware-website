@@ -136,7 +136,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const [isOverheatAlertOpen, setIsOverheatAlertOpen] = useState(false);
   const [comment, setComment] = useState(getLocalAIComment(asic));
   const prevStatusRef = useRef<ASICStatus>();
-  const { displayedText: typedComment } = useTypewriter(comment || '', 30); // Destructure displayedText
+  const typedComment = useTypewriter(comment || '', 30);
   const { triggerStartupAnimation: globalTriggerStartupAnimation } = useAppStatus(); // Get global animation trigger
 
   useEffect(() => {
