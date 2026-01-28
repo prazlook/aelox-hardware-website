@@ -18,9 +18,10 @@ interface Particle {
 interface NeuralHexNetworkProps {
   redHexActive?: boolean;
   onRedHexPos?: (pos: { x: number, y: number }) => void;
+  boxRect?: { left: number, top: number, width: number, height: number } | null;
 }
 
-export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetworkProps) => {
+export const NeuralHexNetwork = ({ redHexActive, onRedHexPos, boxRect }: NeuralHexNetworkProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
   const redHexRef = useRef<Particle | null>(null);
@@ -70,9 +71,9 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
           baseY: canvas.height / 2,
           size: 20,
           angle: 0,
-          speed: 2,
-          vx: (Math.random() - 0.5) * 1.5,
-          vy: (Math.random() - 0.5) * 1.5,
+          speed: 2.5,
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
           isRed: true
         };
       } else {
@@ -100,7 +101,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const haloRadius = 150;
-      const connectionLimit = 120; // Un peu plus large pour l'interaction
+      const connectionLimit = 120;
 
       const allParticles = redHexRef.current ? [...particles, redHexRef.current] : particles;
 
@@ -109,18 +110,52 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
         p.baseX += p.vx;
         p.baseY += p.vy;
 
+        // Rebond sur les bords de l'écran
         if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
         if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
+
+        // Logique spécifique de rebond sur la boîte pour l'hexagone rouge
+        if (p.isRed && boxRect) {
+          const margin = p.size + 5;
+          const left = boxRect.left - margin;
+          const right = boxRect.left + boxRect.width + margin;
+          const top = boxRect.top - margin;
+          const bottom = boxRect.top + boxRect.height + margin;
+
+          // Si l'hexagone est à l'intérieur de la zone d'exclusion de la boîte
+          if (p.baseX > left && p.baseX < right && p.baseY > top && p.baseY < bottom) {
+            // Calculer de quel côté il est le plus proche pour rebondir
+            const distLeft = Math.abs(p.baseX - left);
+            const distRight = Math.abs(p.baseX - right);
+            const distTop = Math.abs(p.baseY - top);
+            const distBottom = Math.abs(p.baseY - bottom);
+
+            const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+
+            if (minDist === distLeft) {
+              p.vx = -Math.abs(p.vx);
+              p.baseX = left;
+            } else if (minDist === distRight) {
+              p.vx = Math.abs(p.vx);
+              p.baseX = right;
+            } else if (minDist === distTop) {
+              p.vy = -Math.abs(p.vy);
+              p.baseY = top;
+            } else if (minDist === distBottom) {
+              p.vy = Math.abs(p.vy);
+              p.baseY = bottom;
+            }
+          }
+        }
 
         p.x = p.baseX + Math.cos(p.angle) * 10;
         p.y = p.baseY + Math.sin(p.angle) * 10;
 
-        // On expose la position de l'hexagone rouge pour la ligne de la boîte
         if (p.isRed && onRedHexPos) {
           onRedHexPos({ x: p.x, y: p.y });
         }
 
-        let opacity = 0.3; // Visibilité par défaut pour les rouges/actifs
+        let opacity = 0.3;
         
         if (mouseRef.current.active) {
           const dx = mouseRef.current.x - p.x;
@@ -148,7 +183,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
           
           if (dist < connectionLimit) {
             ctx.beginPath();
-            ctx.setLineDash(p.isRed || p2.isRed ? [5, 5] : []); // Pointillés si l'un est rouge
+            ctx.setLineDash(p.isRed || p2.isRed ? [5, 5] : []);
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             
@@ -158,7 +193,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
               ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.1})`;
             }
             ctx.stroke();
-            ctx.setLineDash([]); // Reset
+            ctx.setLineDash([]);
           }
         });
       });
@@ -181,7 +216,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [redHexActive, onRedHexPos]);
+  }, [redHexActive, onRedHexPos, boxRect]);
 
   return <canvas ref={canvasRef} className="w-full h-full" />;
 };
