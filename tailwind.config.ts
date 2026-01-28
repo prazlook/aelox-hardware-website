@@ -107,15 +107,6 @@ export default {
           "0%, 100%": { filter: "drop-shadow(0 0 5px rgba(34, 197, 94, 0.4))" },
           "50%": { filter: "drop-shadow(0 0 20px rgba(34, 197, 94, 0.8))" },
         },
-        "neural-flicker": {
-          "0%, 100%": { opacity: "1", stroke: "#4ade80" },
-          "50%": { opacity: "0.3", stroke: "#22c55e" },
-        },
-        "neural-death": {
-          "0%": { stroke: "#94a3b8", "stroke-width": "1" },
-          "50%": { stroke: "#ffffff", "stroke-width": "3", filter: "blur(2px)" },
-          "100%": { stroke: "#ffffff", "stroke-width": "0", opacity: "0" },
-        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -127,8 +118,6 @@ export default {
         "halo-alert": "halo-alert 0.8s ease-in-out infinite",
         "honeycomb-scan": "honeycomb-scan 3s linear infinite",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
-        "neural-flicker": "neural-flicker 0.2s ease-in-out infinite",
-        "neural-death": "neural-death 0.5s ease-out forwards",
       },
     },
   },
