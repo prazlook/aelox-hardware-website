@@ -65,12 +65,6 @@
   100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1); }
 }
 
-@keyframes mini-box-pop {
-  0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
 /* Animations existantes conservées */
 @keyframes zap-trace { to { stroke-dashoffset: 0; } }
 @keyframes server-blink { 0%, 100% { opacity: 1; } 25% { opacity: 0.2; } 50% { opacity: 0.8; } 75% { opacity: 0.4; } }
@@ -163,7 +157,6 @@
   
   /* Nouvelle classe de lutte */
   .animate-struggle { animation: struggle-jitter 0.2s linear infinite; }
-  .animate-mini-box-pop { animation: mini-box-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 }
 
 @layer utilities {
