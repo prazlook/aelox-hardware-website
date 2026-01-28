@@ -14,6 +14,7 @@ interface Particle {
   life: number;
   isDying: boolean;
   flashOpacity: number;
+  lineWidth: number; // Nouvelle propriété pour varier l'épaisseur
 }
 
 interface Connection {
@@ -42,23 +43,26 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
 
     const createParticle = (centerX: number, centerY: number, forceInside = false): Particle => {
       const angle = Math.random() * Math.PI * 2;
-      // Zone plus large si fullScreen
       const maxDist = fullScreen ? Math.max(canvas.width, canvas.height) * 0.5 : 150;
       const dist = forceInside ? Math.random() * (maxDist * 0.6) : Math.random() * maxDist;
-      const size = Math.random() * 3 + (fullScreen ? 2 : 3);
+      
+      // Taille beaucoup plus variée : de 2 à 15 pixels
+      const size = Math.random() * (fullScreen ? 12 : 10) + 2;
       
       return {
         x: centerX + Math.cos(angle) * dist,
         y: centerY + Math.sin(angle) * dist,
-        vx: (Math.random() - 0.5) * (fullScreen ? 0.4 : 0.8),
-        vy: (Math.random() - 0.5) * (fullScreen ? 0.4 : 0.8),
+        vx: (Math.random() - 0.5) * (fullScreen ? 0.3 : 0.6),
+        vy: (Math.random() - 0.5) * (fullScreen ? 0.3 : 0.6),
         size: size,
         baseSize: size,
         rotation: Math.random() * Math.PI,
-        vRotation: (Math.random() - 0.5) * 0.015,
+        vRotation: (Math.random() - 0.5) * 0.012,
         life: 1,
         isDying: false,
-        flashOpacity: 0
+        flashOpacity: 0,
+        // Épaisseur proportionnelle à la taille pour des traits plus prononcés
+        lineWidth: Math.max(1, size / 4)
       };
     };
 
@@ -68,11 +72,11 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
       const cx = canvas.width / 2;
       const cy = canvas.height / 2;
       
-      const count = fullScreen ? 100 : 60;
+      const count = fullScreen ? 80 : 50; // Un peu moins pour éviter la surcharge visuelle avec les traits épais
       particles.current = Array.from({ length: count }, () => createParticle(cx, cy, true));
     };
 
-    const drawHex = (x: number, y: number, size: number, rotation: number, color: string, opacity: number) => {
+    const drawHex = (x: number, y: number, size: number, rotation: number, color: string, opacity: number, lineWidth: number) => {
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
         const angle = rotation + (i * Math.PI) / 3;
@@ -83,7 +87,7 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
       }
       ctx.closePath();
       ctx.strokeStyle = color.replace('opacity', opacity.toString());
-      ctx.lineWidth = fullScreen ? 0.8 : 1;
+      ctx.lineWidth = lineWidth;
       ctx.stroke();
     };
 
@@ -92,7 +96,6 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
       const cx = canvas.width / 2;
       const cy = canvas.height / 2;
       
-      // Halo fluide : limite floue
       const maxHaloRadius = fullScreen 
         ? Math.max(canvas.width, canvas.height) * 0.45 
         : Math.min(canvas.width, canvas.height) * 0.4;
@@ -109,9 +112,9 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
         }
 
         if (p.isDying) {
-          p.life -= 0.04;
+          p.life -= 0.035;
           p.flashOpacity = p.life > 0.5 ? (1 - p.life) * 2 : p.life * 2;
-          p.size = p.baseSize * (1 + (1 - p.life) * 1.5);
+          p.size = p.baseSize * (1 + (1 - p.life) * 1.8);
         }
 
         if (p.life <= 0) {
@@ -119,31 +122,31 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
           return;
         }
 
-        // Opacité dégradée vers les bords du halo (limite floue)
-        const baseOpacity = fullScreen ? 0.3 : 0.6;
+        const baseOpacity = fullScreen ? 0.35 : 0.65;
         const opacity = p.isDying 
-          ? p.life * 0.4 
+          ? p.life * 0.5 
           : Math.max(0, (1 - dist / maxHaloRadius)) * baseOpacity;
         
         const color = p.isDying ? `rgba(255, 255, 255, opacity)` : `rgba(34, 197, 94, opacity)`;
         
-        drawHex(p.x, p.y, p.size, p.rotation, color, opacity);
+        // On dessine l'hexagone avec son épaisseur spécifique
+        drawHex(p.x, p.y, p.size, p.rotation, color, opacity, p.lineWidth);
 
         if (p.isDying) {
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 12;
           ctx.shadowColor = "white";
-          drawHex(p.x, p.y, p.size, p.rotation, `rgba(255, 255, 255, ${p.flashOpacity})`, p.flashOpacity);
+          drawHex(p.x, p.y, p.size, p.rotation, `rgba(255, 255, 255, ${p.flashOpacity})`, p.flashOpacity, p.lineWidth * 1.5);
           ctx.shadowBlur = 0;
         }
       });
 
       // Connections
-      if (Math.random() > (fullScreen ? 0.92 : 0.90)) {
+      if (Math.random() > (fullScreen ? 0.94 : 0.91)) {
         const p1 = Math.floor(Math.random() * particles.current.length);
         const p2 = Math.floor(Math.random() * particles.current.length);
         const dist = Math.hypot(particles.current[p1].x - particles.current[p2].x, particles.current[p1].y - particles.current[p2].y);
         
-        const maxConnDist = fullScreen ? 200 : 150;
+        const maxConnDist = fullScreen ? 250 : 180;
         if (dist < maxConnDist && p1 !== p2 && !particles.current[p1].isDying && !particles.current[p2].isDying) {
           connections.current.push({ p1, p2, life: 1, status: 'scintillating' });
         }
@@ -164,16 +167,18 @@ export const NeuralHexNetwork = ({ fullScreen = false }: NeuralHexNetworkProps) 
         ctx.lineTo(p2.x, p2.y);
 
         if (c.status === 'scintillating') {
-          ctx.setLineDash([3, 6]);
+          ctx.setLineDash([4, 8]);
           ctx.lineDashOffset = Date.now() / 35;
-          ctx.strokeStyle = `rgba(34, 197, 94, ${Math.random() * (fullScreen ? 0.4 : 0.7)})`;
+          ctx.strokeStyle = `rgba(34, 197, 94, ${Math.random() * (fullScreen ? 0.45 : 0.75)})`;
+          ctx.lineWidth = 1.2;
         } else if (c.status === 'graying') {
           ctx.setLineDash([]);
-          ctx.strokeStyle = `rgba(100, 116, 139, ${c.life * (fullScreen ? 0.3 : 0.6)})`;
+          ctx.strokeStyle = `rgba(100, 116, 139, ${c.life * (fullScreen ? 0.35 : 0.65)})`;
+          ctx.lineWidth = 1;
         } else {
           ctx.setLineDash([]);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${c.life * (fullScreen ? 2 : 4)})`;
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${c.life * 5})`;
+          ctx.lineWidth = 2;
         }
 
         ctx.stroke();
