@@ -448,6 +448,18 @@
   100% { opacity: 0; }
 }
 
+/* VISEUR / RETICLE */
+@keyframes reticle-draw {
+  0% { stroke-dashoffset: 200; transform: scale(2) rotate(45deg); opacity: 0; }
+  100% { stroke-dashoffset: 0; transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes reticle-lock {
+  0%, 80% { transform: scale(1); border-color: #ef4444; }
+  90% { transform: scale(0.9); border-color: white; }
+  100% { transform: scale(1); border-color: #ef4444; box-shadow: 0 0 30px #ef4444; }
+}
+
 @layer components {
   .animate-hashrate-glitch {
     animation: hashrate-glitch-keyframes 1.4s linear infinite;
@@ -673,6 +685,17 @@
 
   .animate-final-flash {
     animation: powerful-white-flash 0.5s ease-out forwards;
+  }
+
+  .animate-reticle-draw {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: reticle-draw 0.8s ease-out forwards;
+  }
+
+  .animate-reticle-lock {
+    animation: reticle-lock 1s ease-in-out forwards;
+    animation-delay: 0.8s;
   }
 }
 
