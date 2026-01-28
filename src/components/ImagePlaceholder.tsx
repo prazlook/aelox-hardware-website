@@ -9,15 +9,14 @@ interface ImagePlaceholderProps {
 
 const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({ className }) => {
   return (
-    <div
+    <img
+      src="/mainicon.png"
+      alt="Aelox Hardware Logo"
       className={cn(
-        "w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-medium",
+        "w-10 h-10 object-contain", // Use object-contain to ensure the image fits without cropping
         className
       )}
-      aria-label="Image Placeholder"
-    >
-      IMG
-    </div>
+    />
   );
 };
 
