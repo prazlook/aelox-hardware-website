@@ -44,18 +44,18 @@
   }
 }
 
-/* Animations de lutte et glitch */
+/* Animations de lutte et glitch - Intensité réduite */
 @keyframes struggle-jitter {
   0%, 100% { transform: translate(0, 0) scale(1); }
-  10% { transform: translate(-2px, 2px) scale(1.02); }
-  20% { transform: translate(2px, -1px) scale(0.98); }
-  30% { transform: translate(-3px, 0px) scale(1.05); }
-  40% { transform: translate(3px, 1px) scale(0.95); }
-  50% { transform: translate(-1px, -2px) scale(1.1); }
-  60% { transform: translate(1px, 2px) scale(0.9); }
-  70% { transform: translate(-2px, 1px) scale(1.03); }
-  80% { transform: translate(2px, -2px) scale(0.97); }
-  90% { transform: translate(-1px, 0px) scale(1.01); }
+  10% { transform: translate(-0.5px, 0.5px) scale(1.002); }
+  20% { transform: translate(0.5px, -0.2px) scale(0.998); }
+  30% { transform: translate(-0.8px, 0px) scale(1.005); }
+  40% { transform: translate(0.8px, 0.2px) scale(0.995); }
+  50% { transform: translate(-0.2px, -0.5px) scale(1.01); }
+  60% { transform: translate(0.2px, 0.5px) scale(0.99); }
+  70% { transform: translate(-0.5px, 0.2px) scale(1.003); }
+  80% { transform: translate(0.5px, -0.5px) scale(0.997); }
+  90% { transform: translate(-0.3px, 0px) scale(1.001); }
 }
 
 @keyframes unusual-appear {
