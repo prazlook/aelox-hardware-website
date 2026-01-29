@@ -89,7 +89,7 @@ const AppStoppedScreen = () => {
       
       <div className={cn(
         "fixed inset-0 transition-opacity duration-1000 pointer-events-none z-0",
-        step === 'idle' ? "opacity-0" : "opacity-100"
+        step === 'idle' ? "opacity-30" : "opacity-100"
       )}>
         <NeuralHexNetwork 
           redHexActive={step !== 'idle' && step !== 'morphing'} 
