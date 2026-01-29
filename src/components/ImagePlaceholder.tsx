@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
+import mainIcon from '/mainicon.png';
 
 interface ImagePlaceholderProps {
   className?: string;
@@ -10,10 +11,10 @@ interface ImagePlaceholderProps {
 const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({ className }) => {
   return (
     <img
-      src="/mainicon.png"
+      src={mainIcon}
       alt="Aelox Hardware Logo"
       className={cn(
-        "w-10 h-10 object-contain", // Use object-contain to ensure the image fits without cropping
+        "w-10 h-10 object-contain",
         className
       )}
     />
