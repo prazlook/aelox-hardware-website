@@ -22,21 +22,26 @@ import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
 import { cn } from "./lib/utils"; // Import cn for conditional classNames
 
 const queryClient = new QueryClient();
-
 const AppContent = () => {
   const { isAppRunning, triggerShutdownAnimation } = useAppStatus();
 
-  if (!isAppRunning && !triggerShutdownAnimation) { // Only show stopped screen if not running AND not animating shutdown
+  // On force le titre ici
+  useEffect(() => {
+    document.title = "Aelox Hardware"; // <--- METS TON TITRE ICI
+  }, []);
+
+  if (!isAppRunning && !triggerShutdownAnimation) {
     return <AppStoppedScreen />;
   }
 
   return (
     <div className={cn(triggerShutdownAnimation && "animate-app-shutdown")}>
-      <BrowserRouter>
+      {/* N'oublie pas le basename sinon ton site va re-planter ! */}
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route element={<Layout />}>
-            <Route path="/" element={<Index />} /> {/* New HomePage */}
-            <Route path="/dashboard" element={<DashboardPage />} /> {/* Old Index page, now Dashboard */}
+            <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/wallet" element={<WalletPage />} />
             <Route path="/asic-management" element={<AsicManagementPage />} />
