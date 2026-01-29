@@ -26,7 +26,7 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 };
 
 export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
-  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem<boolean>('isAppRunning', true));
+  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem<boolean>('isAppRunning', false));
   const [triggerStartupAnimation, setTriggerStartupAnimation] = useState(false);
   const [triggerShutdownAnimation, setTriggerShutdownAnimation] = useState(false); // Initialize new state
   const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
