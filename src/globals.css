@@ -44,24 +44,7 @@
   }
 }
 
-/* --- Launch Sequence Animations --- */
-
-/* Rotation accélérée (0-3s) + Dérive centrifuge (3-5s) */
-@keyframes orbital-launch-sequence {
-  0% { transform: rotate(0deg); }
-  60% { transform: rotate(1080deg); } /* Accélération rapide sur 3s (60% de 5s) */
-  100% { transform: rotate(1800deg) translateY(-40px); } /* Dérive sur les 2s restantes */
-}
-
-/* Flash CRT et effondrement (à 5s) */
-@keyframes crt-extinguish-flash {
-  0% { transform: scale(1); filter: brightness(1); opacity: 1; }
-  90% { transform: scale(1.1) scaleY(1.1); filter: brightness(2); opacity: 1; }
-  95% { transform: scale(1.5) scaleY(0.02); filter: brightness(10); opacity: 1; background: white; }
-  100% { transform: scale(0); filter: brightness(10); opacity: 0; }
-}
-
-/* Animation d'apparition inhabituelle pour l'hexagone rouge */
+/* Animations de transition */
 @keyframes unusual-appear {
   0% { transform: scale(0) rotate(180deg); opacity: 0; filter: blur(20px) brightness(5); }
   30% { transform: scale(0.2) rotate(-90deg); opacity: 0.5; filter: blur(10px) brightness(2); }
@@ -69,7 +52,14 @@
   100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px) brightness(1); }
 }
 
-/* --- Existing Animations --- */
+@keyframes decoding-pop {
+  0% { transform: scale(0.5) translate(0, 0); opacity: 0; }
+  20% { transform: scale(1.1) translate(-2px, -2px); opacity: 1; }
+  80% { transform: scale(1) translate(2px, 2px); opacity: 1; }
+  100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
+}
+
+/* Animations existantes conservées */
 @keyframes zap-trace { to { stroke-dashoffset: 0; } }
 @keyframes server-blink { 0%, 100% { opacity: 1; } 25% { opacity: 0.2; } 50% { opacity: 0.8; } 75% { opacity: 0.4; } }
 @keyframes marching-ants { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 36; } }
@@ -93,7 +83,7 @@
 @keyframes startup-fade-in-from-center { from { opacity: 0; transform: scale(0.8); filter: blur(10px); } to { opacity: 1; transform: scale(1); filter: blur(0px); } }
 @keyframes global-indicator-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes global-indicator-bars-grow { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
-@keyframes global-indicator-waveform-draw { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: global-indicator-waveform-draw 1s ease-out forwards; }
+@keyframes global-indicator-waveform-draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
 @keyframes global-indicator-ecg-center-expand { 0% { stroke-dasharray: 0 1000; stroke-dashoffset: 500; opacity: 0; } 50% { stroke-dasharray: 500 500; stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dasharray: 1000 0; stroke-dashoffset: 0; opacity: 1; } }
 @keyframes app-shutdown { 0% { filter: blur(0px) brightness(1) saturate(1); transform: scale(1); opacity: 1; } 50% { filter: blur(2px) brightness(0.7) saturate(0.7); transform: scale(0.99); opacity: 0.8; } 100% { filter: blur(5px) brightness(0.4) saturate(0.4); transform: scale(0.98); opacity: 0.5; } }
 @keyframes fluorescent-flicker { 0% { opacity: 1; filter: brightness(1) grayscale(0); transform: scale(1); } 10% { opacity: 0.1; filter: brightness(0.3) grayscale(1); transform: scale(0.98); } 20% { opacity: 0.7; filter: brightness(1.1) grayscale(0); transform: scale(1.01); } 30% { opacity: 0.2; filter: brightness(0.4) grayscale(1); transform: scale(0.97); } 40% { opacity: 0.9; filter: brightness(1.05) grayscale(0); transform: scale(1); } 50% { opacity: 0.15; filter: brightness(0.35) grayscale(1); transform: scale(0.96); } 60% { opacity: 0.6; filter: brightness(0.9) grayscale(0); transform: scale(0.99); } 70% { opacity: 0.05; filter: brightness(0.2) grayscale(1); transform: scale(0.95); } 80% { opacity: 0.3; filter: brightness(0.5) grayscale(1); transform: scale(0.93); } 90% { opacity: 0.02; filter: brightness(0.1) grayscale(1); transform: scale(0.92); } 100% { opacity: 0; filter: brightness(0) grayscale(1); transform: scale(0.9); pointer-events: none; } }
@@ -110,6 +100,12 @@
 @keyframes terminal-box-reveal { 0% { transform: scaleX(0); opacity: 0; } 100% { transform: scaleX(1); opacity: 1; } }
 @keyframes hex-flicker-red-orange { 0%, 100% { color: #ef4444; filter: drop-shadow(0 0 10px #ef4444); } 50% { color: #f97316; filter: drop-shadow(0 0 20px #f97316); } }
 @keyframes powerful-white-flash { 0% { opacity: 0; } 50% { opacity: 1; background-color: white; } 100% { opacity: 0; } }
+
+/* Nouvelle animation pour le dessin des circuits */
+@keyframes circuit-draw {
+  0% { stroke-dasharray: 0 100; stroke-dashoffset: 0; }
+  100% { stroke-dasharray: 100 0; stroke-dashoffset: 0; }
+}
 
 @layer components {
   .animate-hashrate-glitch { animation: hashrate-glitch-keyframes 1.4s linear infinite; }
@@ -159,10 +155,12 @@
   .animate-hex-red-orange { animation: hex-flicker-red-orange 0.3s ease-in-out infinite; }
   .animate-final-flash { animation: powerful-white-flash 0.5s ease-out forwards; }
   
-  /* Séquence de lancement appliquée */
-  .animate-orbital-launch { animation: orbital-launch-sequence 5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-  .animate-halo-launch { animation: crt-extinguish-flash 5.2s ease-in forwards; }
   .animate-decoding { animation: decoding-pop 1.2s ease-in-out forwards; }
+  
+  /* Application de l'animation de circuit */
+  .group:hover .animate-circuit-draw {
+    animation: circuit-draw 0.6s ease-out forwards;
+  }
 }
 
 @layer utilities {

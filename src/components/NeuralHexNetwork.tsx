@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef } from 'react';
-import { cn } from "@/lib/utils";
 
 interface Particle {
   x: number;
@@ -184,5 +183,5 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
     };
   }, [redHexActive, onRedHexPos]);
 
-  return <canvas ref={canvasRef} className={cn("w-full h-full", redHexActive && "animate-red-hex-appear")} />;
+  return <canvas ref={canvasRef} className="w-full h-full" />;
 };

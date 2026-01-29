@@ -69,21 +69,19 @@ const AppStoppedScreen = () => {
   }, [step]);
 
   const handleStart = () => {
-    setStep('morphing'); // 0-5s: Animation de lancement (rotation + drift + flash)
+    setStep('morphing');
     
-    // Après 5 secondes (moment du flash CRT), on injecte l'hexagone rouge
-    setTimeout(() => setStep('hex-infiltrating'), 5000);
-    
-    // Suite de la séquence
-    setTimeout(() => setStep('struggling'), 8000);
+    // Séquence temporelle raccourcie
+    setTimeout(() => setStep('hex-infiltrating'), 1000);
+    setTimeout(() => setStep('struggling'), 3000);
     
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
-    }, 15000);
+    }, 10000); // Déclenchement du terminal après 10s au lieu de 25s
     
-    setTimeout(() => setStep('flash'), 23000);
-    setTimeout(() => startApp(), 24000);
+    setTimeout(() => setStep('flash'), 18000); // Flash à 18s au lieu de 45s
+    setTimeout(() => startApp(), 19000);
   };
 
   return (
