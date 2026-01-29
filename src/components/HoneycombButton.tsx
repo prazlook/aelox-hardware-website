@@ -13,18 +13,18 @@ interface HoneycombButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 const HoneycombButton = ({ children, className, isClicked, ...props }: HoneycombButtonProps) => {
   return (
     <div className="relative group p-48">
-      {/* Réseau neuronal d'hexagones étendu à toute la page */}
+      {/* Réseau neuronal d'hexagones - visible par défaut à 30% d'opacité */}
       <div className={cn(
-        "fixed inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-0",
-        isClicked && "opacity-100" // Garder visible si cliqué
+        "fixed inset-0 opacity-30 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-0",
+        isClicked && "opacity-100"
       )}>
         <NeuralHexNetwork />
       </div>
 
-      {/* Halo multi-couches */}
+      {/* Halo multi-couches - visible par défaut */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className={cn(
-          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse",
+          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse",
           isClicked && "opacity-0"
         )} />
       </div>
@@ -49,7 +49,7 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
         </Button>
       </div>
       
-      {/* Hexagones orbitaux */}
+      {/* Hexagones orbitaux - SEULS éléments invisibles sans survol */}
       <div className={cn(
         "absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500",
         isClicked && "opacity-0"
