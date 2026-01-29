@@ -71,36 +71,22 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Attendre la fin de l'animation du bouton (1s) pour activer l'hexagone rouge
-    setTimeout(() => {
-      setStep('hex-infiltrating');
-    }, 1000);
-
-    // Début de la lutte système
-    setTimeout(() => {
-      setStep('struggling');
-    }, 3000);
+    // Séquence temporelle raccourcie
+    setTimeout(() => setStep('hex-infiltrating'), 1000);
+    setTimeout(() => setStep('struggling'), 3000);
     
-    // Apparition du terminal
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
-    }, 5000);
+    }, 10000); // Déclenchement du terminal après 10s au lieu de 25s
     
-    // Flash final et démarrage
-    setTimeout(() => {
-      setStep('flash');
-    }, 10000);
-
-    setTimeout(() => {
-      startApp();
-    }, 11000);
+    setTimeout(() => setStep('flash'), 18000); // Flash à 18s au lieu de 45s
+    setTimeout(() => startApp(), 19000);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
       
-      {/* Réseau de fond */}
       <div className={cn(
         "fixed inset-0 transition-opacity duration-1000 pointer-events-none z-0",
         step === 'idle' ? "opacity-30" : "opacity-100"
@@ -111,12 +97,10 @@ const AppStoppedScreen = () => {
         />
       </div>
 
-      {/* Flash CRT final */}
       {step === 'flash' && (
         <div className="fixed inset-0 z-50 animate-final-flash pointer-events-none" />
       )}
 
-      {/* Éléments de piratage (Terminal & Ligne Rouge) */}
       {(step === 'box-active' || step === 'struggling') && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
@@ -130,7 +114,6 @@ const AppStoppedScreen = () => {
             />
           </svg>
 
-          {/* Terminal Box */}
           <div className="absolute top-[20%] left-[calc(50%+150px)]">
             <div 
               ref={boxRef}
@@ -154,7 +137,6 @@ const AppStoppedScreen = () => {
               </pre>
             </div>
 
-            {/* Particules de décodage */}
             {decodingBoxes.map(box => (
               <div
                 key={box.id}
@@ -177,7 +159,6 @@ const AppStoppedScreen = () => {
         </div>
       )}
 
-      {/* Titre Accueil */}
       <div className={cn(
         "text-center space-y-8 max-w-md w-full transition-opacity duration-500 z-10",
         step !== 'idle' && "opacity-0 pointer-events-none"
@@ -192,7 +173,6 @@ const AppStoppedScreen = () => {
         </div>
       </div>
 
-      {/* Bouton Honeycomb */}
       <div className="flex justify-center items-center py-10 relative z-10">
         <HoneycombButton
           onClick={handleStart}
