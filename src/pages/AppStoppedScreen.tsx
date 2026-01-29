@@ -26,8 +26,32 @@ const AppStoppedScreen = () => {
   const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   
   const boxRef = useRef<HTMLDivElement>(null);
-  const textToType = "> BREACH DETECTED...\n> CORE OVERRIDE INITIATED...\n> REDACTING SECURITY PROTOCOLS...\n> INJECTING MALWARE... 100%\n> BYPASSING KERNEL LOCK...\n> ACCESS GRANTED.";
-  const typedText = useTypewriter(terminalText, 30);
+  
+  // Texte beaucoup plus long et technique pour l'effet "affolé"
+  const textToType = `> BREACH DETECTED...
+> CORE OVERRIDE INITIATED...
+> REDACTING SECURITY PROTOCOLS...
+> INJECTING MALWARE... 100%
+> BYPASSING KERNEL LOCK...
+> ACCESS GRANTED.
+> RUNNING EXPLOIT: CVE-2024-8842...
+> STACK OVERFLOW AT 0x7FFF5FBFF... [SUCCESS]
+> HEAP SPRAYING: 2048MB... [STABLE]
+> PRIVILEGE ESCALATION: ROOT... [ACTIVE]
+> DELETING /VAR/LOGS/*... [COMPLETE]
+> DISABLING UFW FIREWALL... [SUCCESS]
+> ENCRYPTING MFT DATA... 100%
+> DOWNLOADING CORE_OS_DUMP...
+> OVERWRITING BOOT_SECTOR 0... [DONE]
+> FATAL SYSTEM ERROR 0x000000F4... [BYPASSED]
+> MALICIOUS SHELL V4.2 INJECTED...
+> SYSCALL HOOKING: ALL_ENTRIES...
+> KERNEL_PANIC_TIMER: DISABLED
+> PERSISTENCE: REBOOT_PROTECTED
+> SYSTEM COMPROMISED.`;
+
+  // Vitesse passée de 30ms à 10ms pour un défilement ultra-rapide
+  const typedText = useTypewriter(terminalText, 10);
 
   const handleRedHexPos = useCallback((pos: { x: number, y: number }) => {
     setRedHexPos(pos);
@@ -114,25 +138,25 @@ const AppStoppedScreen = () => {
             />
           </svg>
 
-          <div className="absolute top-[20%] left-[calc(50%+150px)]">
+          <div className="absolute top-[15%] left-[calc(50%+150px)]">
             <div 
               ref={boxRef}
               className={cn(
-                "w-80 p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
+                "w-[350px] p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
                 step === 'box-active' ? "animate-box-reveal" : ""
               )}
             >
               <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
                 <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  Aggressive Breach
+                  Aggressive Breach Active
                 </span>
                 <div className="flex gap-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
                   <div className="w-1.5 h-1.5 rounded-full bg-red-800" />
                 </div>
               </div>
-              <pre className="text-[11px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor min-h-[120px]">
+              <pre className="text-[10px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor min-h-[220px]">
                 {step === 'box-active' ? typedText : "> ERROR: SECURITY BUFFER RESISTING...\n> RETRYING EXPLOIT..."}
               </pre>
             </div>
