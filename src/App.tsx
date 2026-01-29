@@ -1,11 +1,11 @@
-import { useEffect } from "react"; // <--- AJOUTE CET IMPORT
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index"; // This is now the new HomePage
-import DashboardPage from "./pages/DashboardPage"; // The old Index page
+import Index from "./pages/Index";
+import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import WalletPage from "./pages/Wallet";
@@ -13,30 +13,24 @@ import ConfigurationPage from "./pages/Configuration";
 import StatisticsPage from "./pages/Statistics";
 import AsicManagementPage from "./pages/AsicManagement";
 import DevOptionsPage from "./pages/DevOptions";
-import AppStoppedScreen from "./pages/AppStoppedScreen";
 import { SoundProvider } from "./context/SoundContext";
 import { AsicProvider } from "./context/AsicContext";
 import { AnimationProvider } from "./context/AnimationContext";
 import { DevOptionsProvider } from "./context/DevOptionsContext";
 import { AppStatusProvider, useAppStatus } from "./context/AppStatusContext";
-import { cn } from "./lib/utils"; // Import cn for conditional classNames
+import { cn } from "./lib/utils";
 
 const queryClient = new QueryClient();
+
 const AppContent = () => {
-  const { isAppRunning, triggerShutdownAnimation } = useAppStatus();
+  const { triggerShutdownAnimation } = useAppStatus();
 
-  // On force le titre ici
   useEffect(() => {
-    document.title = "Aelox Hardware"; // <--- METS TON TITRE ICI
+    document.title = "Aelox Hardware";
   }, []);
-
-  if (!isAppRunning && !triggerShutdownAnimation) {
-    return <AppStoppedScreen />;
-  }
 
   return (
     <div className={cn(triggerShutdownAnimation && "animate-app-shutdown")}>
-      {/* N'oublie pas le basename sinon ton site va re-planter ! */}
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route element={<Layout />}>
