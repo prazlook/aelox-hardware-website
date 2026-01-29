@@ -101,6 +101,12 @@
 @keyframes hex-flicker-red-orange { 0%, 100% { color: #ef4444; filter: drop-shadow(0 0 10px #ef4444); } 50% { color: #f97316; filter: drop-shadow(0 0 20px #f97316); } }
 @keyframes powerful-white-flash { 0% { opacity: 0; } 50% { opacity: 1; background-color: white; } 100% { opacity: 0; } }
 
+/* Nouvelle animation pour le dessin des circuits */
+@keyframes circuit-draw {
+  0% { stroke-dasharray: 0 100; stroke-dashoffset: 0; }
+  100% { stroke-dasharray: 100 0; stroke-dashoffset: 0; }
+}
+
 @layer components {
   .animate-hashrate-glitch { animation: hashrate-glitch-keyframes 1.4s linear infinite; }
   .animate-zap-trace polygon { stroke-dasharray: 60; stroke-dashoffset: 60; animation: zap-trace 2.5s linear infinite; fill: none; }
@@ -149,8 +155,12 @@
   .animate-hex-red-orange { animation: hex-flicker-red-orange 0.3s ease-in-out infinite; }
   .animate-final-flash { animation: powerful-white-flash 0.5s ease-out forwards; }
   
-  /* Nouvelle classe de décodage */
   .animate-decoding { animation: decoding-pop 1.2s ease-in-out forwards; }
+  
+  /* Application de l'animation de circuit */
+  .group:hover .animate-circuit-draw {
+    animation: circuit-draw 0.6s ease-out forwards;
+  }
 }
 
 @layer utilities {
