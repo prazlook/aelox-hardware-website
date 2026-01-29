@@ -21,11 +21,18 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
         <NeuralHexNetwork />
       </div>
 
-      {/* Halo multi-couches - visible par défaut */}
+      {/* Flash CRT lors de la fusion */}
+      {isClicked && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+          <div className="w-full h-1 bg-white animate-crt-flash shadow-[0_0_20px_white]" />
+        </div>
+      )}
+
+      {/* Halo multi-couches */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className={cn(
-          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse",
-          isClicked && "opacity-0"
+          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] transition-opacity duration-1000",
+          isClicked ? "animate-halo-concentrate" : "group-hover:opacity-100 animate-glow-pulse"
         )} />
       </div>
 
@@ -49,17 +56,17 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
         </Button>
       </div>
       
-      {/* Hexagones orbitaux - SEULS éléments invisibles sans survol */}
+      {/* Hexagones orbitaux */}
       <div className={cn(
-        "absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-        isClicked && "opacity-0"
+        "absolute inset-0 pointer-events-none transition-opacity duration-500",
+        isClicked ? "opacity-100" : "opacity-0 group-hover:opacity-100"
       )}>
-        <div className="absolute inset-0 animate-hexagon-orbital">
+        <div className={cn("absolute inset-0", isClicked ? "animate-orbit-accelerate" : "animate-hexagon-orbital")}>
           <div className="absolute top-24 right-24 w-16 h-16 animate-hexagon-spin-flash">
             <HexagonIcon className="text-green-400 w-full h-full" />
           </div>
         </div>
-        <div className="absolute inset-0 animate-hexagon-orbital" style={{ transform: 'rotate(180deg)' }}>
+        <div className={cn("absolute inset-0", isClicked ? "animate-orbit-accelerate" : "animate-hexagon-orbital")} style={{ transform: isClicked ? undefined : 'rotate(180deg)' }}>
           <div className="absolute bottom-24 left-24 w-14 h-14 animate-hexagon-spin-flash">
             <HexagonIcon className="text-green-500 w-full h-full" />
           </div>
