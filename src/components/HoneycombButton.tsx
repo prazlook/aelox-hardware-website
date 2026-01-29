@@ -13,7 +13,7 @@ interface HoneycombButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 const HoneycombButton = ({ children, className, isClicked, ...props }: HoneycombButtonProps) => {
   return (
     <div className="relative group p-48">
-      {/* Réseau neuronal d'hexagones - visible par défaut à 30% d'opacité */}
+      {/* Réseau neuronal d'hexagones */}
       <div className={cn(
         "fixed inset-0 opacity-30 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-0",
         isClicked && "opacity-100"
@@ -21,15 +21,15 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
         <NeuralHexNetwork />
       </div>
 
-      {/* Halo multi-couches - visible par défaut */}
+      {/* Halo */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className={cn(
-          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse",
-          isClicked && "opacity-0"
+          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] transition-all duration-1000 animate-glow-pulse",
+          isClicked && "opacity-0 scale-150 blur-0"
         )} />
       </div>
 
-      {/* Le bouton central */}
+      {/* Bouton central */}
       <div className="relative flex justify-center items-center">
         <Button
           className={cn(
@@ -49,10 +49,11 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
         </Button>
       </div>
       
-      {/* Hexagones orbitaux - SEULS éléments invisibles sans survol */}
+      {/* Hexagones orbitaux */}
       <div className={cn(
-        "absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-        isClicked && "opacity-0"
+        "absolute inset-0 pointer-events-none transition-opacity duration-500",
+        !isClicked && "opacity-0 group-hover:opacity-100",
+        isClicked && "animate-spin-out-snap"
       )}>
         <div className="absolute inset-0 animate-hexagon-orbital">
           <div className="absolute top-24 right-24 w-16 h-16 animate-hexagon-spin-flash">
