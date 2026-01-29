@@ -25,6 +25,16 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
   const mouseRef = useRef({ x: 0, y: 0, active: false });
   const particlesRef = useRef<Particle[]>([]);
   const redHexRef = useRef<Particle | null>(null);
+  
+  // Utilisation de refs pour les props afin que la boucle d'animation
+  // puisse y accéder sans avoir besoin de redémarrer l'effet.
+  const redHexActiveRef = useRef(redHexActive);
+  const onRedHexPosRef = useRef(onRedHexPos);
+
+  useEffect(() => {
+    redHexActiveRef.current = redHexActive;
+    onRedHexPosRef.current = onRedHexPos;
+  }, [redHexActive, onRedHexPos]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -35,19 +45,15 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
 
     let animationFrameId: number;
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    };
-
     const initParticles = () => {
-      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 4000);
+      if (particlesRef.current.length > 0) return; // Ne pas réinitialiser si déjà présents
+
+      const numberOfParticles = Math.floor((window.innerWidth * window.innerHeight) / 4000);
       const newParticles: Particle[] = [];
       
       for (let i = 0; i < numberOfParticles; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
         newParticles.push({
           x,
           y,
@@ -61,6 +67,13 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
         });
       }
       particlesRef.current = newParticles;
+    };
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // On ne réinitialise pas les particules au resize pour éviter les sauts, 
+      // on laisse juste le canvas s'adapter.
     };
 
     const drawHexagon = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, isRed?: boolean) => {
@@ -85,8 +98,8 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
       const haloRadius = 150;
       const connectionLimit = 120;
 
-      // Gestion dynamique de l'hexagone rouge sans réinitialiser les autres particules
-      if (redHexActive && !redHexRef.current) {
+      // Gestion de l'hexagone rouge via la Ref persistante
+      if (redHexActiveRef.current && !redHexRef.current) {
         redHexRef.current = {
           x: canvas.width / 2,
           y: canvas.height / 2,
@@ -99,7 +112,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
           vy: (Math.random() - 0.5) * 1.5,
           isRed: true
         };
-      } else if (!redHexActive) {
+      } else if (!redHexActiveRef.current) {
         redHexRef.current = null;
       }
 
@@ -110,14 +123,16 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
         p.baseX += p.vx;
         p.baseY += p.vy;
 
-        if (p.baseX < 0 || p.baseX > canvas.width) p.vx *= -1;
-        if (p.baseY < 0 || p.baseY > canvas.height) p.vy *= -1;
+        if (p.baseX < 0) p.baseX = canvas.width;
+        if (p.baseX > canvas.width) p.baseX = 0;
+        if (p.baseY < 0) p.baseY = canvas.height;
+        if (p.baseY > canvas.height) p.baseY = 0;
 
         p.x = p.baseX + Math.cos(p.angle) * 10;
         p.y = p.baseY + Math.sin(p.angle) * 10;
 
-        if (p.isRed && onRedHexPos) {
-          onRedHexPos({ x: p.x, y: p.y });
+        if (p.isRed && onRedHexPosRef.current) {
+          onRedHexPosRef.current({ x: p.x, y: p.y });
         }
 
         let opacity = 0.3;
@@ -173,6 +188,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
     window.addEventListener('mousemove', handleMouseMove);
     
     resize();
+    initParticles();
     animate();
 
     return () => {
@@ -180,7 +196,7 @@ export const NeuralHexNetwork = ({ redHexActive, onRedHexPos }: NeuralHexNetwork
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [redHexActive, onRedHexPos]);
+  }, []); // L'effet ne s'exécute qu'une seule fois au montage
 
   return <canvas ref={canvasRef} className="w-full h-full" />;
 };
