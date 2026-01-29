@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Dashboard from './pages/Dashboard';
 import About from './pages/About';
@@ -35,7 +35,9 @@ const AppContent = () => {
 function App() {
   return (
     <AppStatusProvider>
-      <AppContent />
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
     </AppStatusProvider>
   );
 }
