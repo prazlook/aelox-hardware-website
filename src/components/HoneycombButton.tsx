@@ -13,7 +13,7 @@ interface HoneycombButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 const HoneycombButton = ({ children, className, isClicked, ...props }: HoneycombButtonProps) => {
   return (
     <div className="relative group p-48">
-      {/* Réseau neuronal d'hexagones - visible par défaut à 30% d'opacité */}
+      {/* Réseau neuronal d'hexagones */}
       <div className={cn(
         "fixed inset-0 opacity-30 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-0",
         isClicked && "opacity-100"
@@ -56,17 +56,24 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
         </Button>
       </div>
       
-      {/* Hexagones orbitaux */}
+      {/* Hexagones orbitaux - Utilisation de clés pour un changement d'état fluide */}
       <div className={cn(
         "absolute inset-0 pointer-events-none transition-opacity duration-500",
         isClicked ? "opacity-100" : "opacity-0 group-hover:opacity-100"
       )}>
-        <div className={cn("absolute inset-0", isClicked ? "animate-orbit-accelerate" : "animate-hexagon-orbital")}>
+        <div 
+          key={isClicked ? 'accel-1' : 'idle-1'}
+          className={cn("absolute inset-0", isClicked ? "animate-orbit-accelerate" : "animate-hexagon-orbital")}
+        >
           <div className="absolute top-24 right-24 w-16 h-16 animate-hexagon-spin-flash">
             <HexagonIcon className="text-green-400 w-full h-full" />
           </div>
         </div>
-        <div className={cn("absolute inset-0", isClicked ? "animate-orbit-accelerate" : "animate-hexagon-orbital")} style={{ transform: isClicked ? undefined : 'rotate(180deg)' }}>
+        <div 
+          key={isClicked ? 'accel-2' : 'idle-2'}
+          className={cn("absolute inset-0", isClicked ? "animate-orbit-accelerate" : "animate-hexagon-orbital")} 
+          style={{ transform: isClicked ? undefined : 'rotate(180deg)' }}
+        >
           <div className="absolute bottom-24 left-24 w-14 h-14 animate-hexagon-spin-flash">
             <HexagonIcon className="text-green-500 w-full h-full" />
           </div>

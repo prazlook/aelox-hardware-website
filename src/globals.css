@@ -59,29 +59,42 @@
   100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
 }
 
-/* Nouvelles animations de transition pour le bouton - CALIBRÉES SUR 5 SECONDES */
+/* ACCÉLÉRATION FLUIDE - Courbe de Bézier unique pour éviter les saccades */
 @keyframes orbit-accelerate-expand {
   0% { transform: rotate(0deg) scale(1); opacity: 1; }
-  60% { transform: rotate(1080deg) scale(1.1); opacity: 1; } /* Accélération progressive (3s) */
-  95% { transform: rotate(2880deg) scale(1.6); opacity: 1; } /* Écartement maximal et vitesse folle (2s) */
-  98% { transform: rotate(3240deg) scale(0); opacity: 1; } /* Snap au centre pour fusion */
-  100% { transform: rotate(3240deg) scale(0); opacity: 0; }
+  90% { transform: rotate(3600deg) scale(2); opacity: 1; }
+  100% { transform: rotate(4000deg) scale(0); opacity: 0; }
 }
 
 @keyframes halo-concentrate {
   0% { transform: scale(1); opacity: 0.3; }
-  60% { transform: scale(1.2); opacity: 0.5; }
-  95% { transform: scale(2.2); opacity: 1; }
-  98% { transform: scale(0); opacity: 1; }
+  90% { transform: scale(3); opacity: 0.8; }
   100% { transform: scale(0); opacity: 0; }
 }
 
 @keyframes crt-flash {
-  0% { opacity: 0; transform: scaleY(0); }
-  97% { opacity: 0; transform: scaleY(0); }
+  0%, 97% { opacity: 0; transform: scaleY(0); }
   98% { opacity: 1; transform: scaleY(1); background: white; }
   99% { opacity: 1; transform: scaleY(0.02); background: white; }
   100% { opacity: 0; transform: scaleY(0); }
+}
+
+/* Orbite continue sans pauses */
+@keyframes hexagon-orbital-path {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes hexagon-local-spin-and-flash {
+  0% { transform: rotate(0deg); filter: brightness(1); }
+  50% { transform: rotate(180deg); filter: brightness(1.5); }
+  100% { transform: rotate(360deg); filter: brightness(1); }
+}
+
+@keyframes button-morph-to-hex {
+  0% { border-radius: 9999px; transform: scale(1); }
+  90% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: scale(1.1); }
+  100% { transform: scale(0); opacity: 0; }
 }
 
 /* Animations existantes conservées */
@@ -117,15 +130,12 @@
 @keyframes hashrate-glitch-keyframes { 0% { stroke-dasharray: 34 8; stroke-dashoffset: 8; } 100% { stroke-dasharray: 34 8; stroke-dashoffset: -34; } }
 @keyframes button-build-animation { 0% { clip-path: inset(50% 50% 50% 50%); opacity: 0; } 5% { opacity: 1; } 20% { clip-path: inset(calc(50% - 0.5px) 0% calc(50% - 0.5px) 0%); } 40% { clip-path: inset(0% 0% 0% 0%); } 100% { clip-path: inset(0% 0% 0% 0%); opacity: 1; } }
 @keyframes button-content-fade-in { 0% { opacity: 0; } 60% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes hexagon-orbital-path { 0% { transform: rotate(0deg); } 25% { transform: rotate(90deg); } 50% { transform: rotate(90deg); } 75% { transform: rotate(180deg); } 100% { transform: rotate(180deg); } }
-@keyframes hexagon-local-spin-and-flash { 0% { transform: rotate(0deg); filter: brightness(1) drop-shadow(0 0 0 white); } 25% { transform: rotate(0deg); filter: brightness(1) drop-shadow(0 0 0 white); } 50% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); } 75% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); } 85% { transform: rotate(360deg); filter: brightness(10) drop-shadow(0 0 20px white); } 100% { transform: rotate(360deg); filter: brightness(1) drop-shadow(0 0 0 white); } }
-@keyframes button-morph-to-hex { 0% { border-radius: 9999px; transform: rotate(0deg) scale(1); } 50% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: rotate(180deg) scale(1.1); } 100% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: rotate(360deg) scale(0); opacity: 0; } }
 @keyframes red-line-draw { from { stroke-dashoffset: 400; } to { stroke-dashoffset: 0; } }
 @keyframes terminal-box-reveal { 0% { transform: scaleX(0); opacity: 0; } 100% { transform: scaleX(1); opacity: 1; } }
 @keyframes hex-flicker-red-orange { 0%, 100% { color: #ef4444; filter: drop-shadow(0 0 10px #ef4444); } 50% { color: #f97316; filter: drop-shadow(0 0 20px #f97316); } }
 @keyframes powerful-white-flash { 0% { opacity: 0; } 50% { opacity: 1; background-color: white; } 100% { opacity: 0; } }
 
-/* Nouvelle animation pour le dessin des circuits */
+/* Animation pour le dessin des circuits */
 @keyframes circuit-draw {
   0% { stroke-dasharray: 0 100; stroke-dashoffset: 0; }
   100% { stroke-dasharray: 100 0; stroke-dashoffset: 0; }
@@ -170,9 +180,9 @@
   .animate-asic-border-draw-in { animation: asic-border-draw-in 0.8s ease-out forwards; stroke-dasharray: 0 1000; stroke-dashoffset: 0; opacity: 0; }
   .animate-button-build { animation: button-build-animation 1s ease-out forwards; opacity: 0; }
   .animate-button-content-fade-in { animation: button-content-fade-in 0.5s ease-out forwards; opacity: 0; }
-  .animate-hexagon-orbital { animation: hexagon-orbital-path 4s ease-in-out infinite; transform-origin: center center; }
-  .animate-hexagon-spin-flash { animation: hexagon-local-spin-and-flash 4s ease-in-out infinite; transform-origin: center center; }
-  .animate-button-morph-hex { animation: button-morph-to-hex 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .animate-hexagon-orbital { animation: hexagon-orbital-path 8s linear infinite; transform-origin: center center; }
+  .animate-hexagon-spin-flash { animation: hexagon-local-spin-and-flash 4s linear infinite; transform-origin: center center; }
+  .animate-button-morph-hex { animation: button-morph-to-hex 5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
   .animate-red-hex-appear { animation: unusual-appear 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
   .animate-red-line-draw { stroke-dasharray: 400; stroke-dashoffset: 400; animation: red-line-draw 0.8s ease-out forwards; }
   .animate-box-reveal { animation: terminal-box-reveal 0.4s ease-out forwards; transform-origin: left; }
@@ -181,14 +191,12 @@
   
   .animate-decoding { animation: decoding-pop 1.2s ease-in-out forwards; }
   
-  /* Application de l'animation de circuit */
   .group:hover .animate-circuit-draw {
     animation: circuit-draw 0.6s ease-out forwards;
   }
 
-  /* Nouvelles classes utilitaires pour la transition du bouton - DURÉE PASSÉE À 5S */
-  .animate-orbit-accelerate { animation: orbit-accelerate-expand 5s cubic-bezier(0.7, 0, 1, 0.5) forwards; transform-origin: center center; }
-  .animate-halo-concentrate { animation: halo-concentrate 5s cubic-bezier(0.7, 0, 1, 0.5) forwards; }
+  .animate-orbit-accelerate { animation: orbit-accelerate-expand 5s cubic-bezier(0.5, 0, 0.7, 1) forwards; transform-origin: center center; }
+  .animate-halo-concentrate { animation: halo-concentrate 5s cubic-bezier(0.5, 0, 0.7, 1) forwards; }
   .animate-crt-flash { animation: crt-flash 5s ease-out forwards; }
 }
 
