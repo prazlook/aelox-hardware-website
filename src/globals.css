@@ -105,6 +105,12 @@
   50% { opacity: 0.2; filter: drop-shadow(0 0 0px #ef4444); }
 }
 
+@keyframes line-flash-eliminate {
+  0% { background-color: transparent; opacity: 1; }
+  20% { background-color: white; opacity: 1; }
+  100% { background-color: white; opacity: 0; transform: scaleY(0); }
+}
+
 /* Animations existantes conservées */
 @keyframes zap-trace { to { stroke-dashoffset: 0; } }
 @keyframes server-blink { 0%, 100% { opacity: 1; } 25% { opacity: 0.2; } 50% { opacity: 0.8; } 75% { opacity: 0.4; } }
@@ -207,6 +213,7 @@
   .animate-halo-concentrate { animation: halo-concentrate 20s cubic-bezier(0.9, 0, 1, 1) forwards; }
   .animate-crt-flash { animation: crt-flash 20s ease-out forwards; }
   .animate-led-blink-red { animation: led-blink-red 1s ease-in-out infinite; }
+  .animate-line-eliminate { animation: line-flash-eliminate 1s ease-out forwards; }
 }
 
 @layer utilities {

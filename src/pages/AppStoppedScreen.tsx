@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton from '@/components/HoneycombButton';
@@ -17,13 +17,41 @@ interface DecodingBox {
   content: string;
 }
 
+interface TerminalLine {
+  id: string;
+  text: string;
+  isGlitching: boolean;
+  isEliminating: boolean;
+}
+
+const GlitchyText = ({ text, isGlitching }: { text: string; isGlitching: boolean }) => {
+  if (!isGlitching) return <span>{text}</span>;
+
+  return (
+    <>
+      {text.split('').map((char, i) => {
+        const shouldGlitch = Math.random() > 0.7;
+        return (
+          <span 
+            key={i} 
+            className={cn(shouldGlitch && "text-orange-500 animate-pulse font-bold")}
+          >
+            {char}
+          </span>
+        );
+      })}
+    </>
+  );
+};
+
 const AppStoppedScreen = () => {
   const { startApp } = useAppStatus();
   const [step, setStep] = useState<TransitionState>('idle');
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
+  const [activeLines, setActiveLines] = useState<TerminalLine[]>([]);
   
-  const textToType = `> BREACH DETECTED...
+  const textToType = useMemo(() => `> BREACH DETECTED...
 > CORE OVERRIDE INITIATED...
 > REDACTING SECURITY PROTOCOLS...
 > INJECTING MALWARE... 100%
@@ -90,9 +118,74 @@ const AppStoppedScreen = () => {
 > SYSTEM CORE TEMPERATURE RISING...
 > STRESSING VOLTAGE REGULATORS...
 > CRITICAL SYSTEM BREACH CONFIRMED.
-> INITIALIZING FINAL PAYLOAD...`;
+> INITIALIZING FINAL PAYLOAD...`, []);
 
   const typedText = useTypewriter(terminalText, 10);
+
+  // Synchronisation des lignes actives avec le texte tapé
+  useEffect(() => {
+    const rawLines = typedText.split('\n');
+    setActiveLines(prev => {
+      // On garde les lignes déjà existantes qui ne sont pas en cours d'élimination
+      const existing = prev.filter(l => !l.isEliminating);
+      
+      // On ajoute les nouvelles lignes détectées
+      const newLines: TerminalLine[] = [];
+      rawLines.forEach((text, i) => {
+        const id = `line-${i}`;
+        if (!existing.find(l => l.id === id)) {
+          newLines.push({ id, text, isGlitching: false, isEliminating: false });
+        } else {
+          // Mise à jour du texte pour la ligne en cours de frappe
+          const idx = existing.findIndex(l => l.id === id);
+          if (idx !== -1) existing[idx].text = text;
+        }
+      });
+
+      return [...existing, ...newLines];
+    });
+  }, [typedText]);
+
+  // Logique d'élimination aléatoire
+  useEffect(() => {
+    if (step === 'idle' || step === 'morphing' || step === 'flash') return;
+
+    const interval = setInterval(() => {
+      setActiveLines(prev => {
+        // Ne touche pas à la dernière ligne (en cours de frappe) et seulement si on a assez de lignes
+        if (prev.length < 5) return prev;
+        
+        const candidates = prev.filter(l => !l.isGlitching && !l.isEliminating && l !== prev[prev.length - 1]);
+        if (candidates.length === 0) return prev;
+
+        // Probabilité d'élimination pour éviter de tout vider d'un coup
+        if (Math.random() > 0.4) return prev;
+
+        const target = candidates[Math.floor(Math.random() * candidates.length)];
+        
+        return prev.map(l => l.id === target.id ? { ...l, isGlitching: true } : l);
+      });
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [step]);
+
+  // Cycle de vie d'une ligne glitchée
+  useEffect(() => {
+    const glitching = activeLines.find(l => l.isGlitching && !l.isEliminating);
+    if (glitching) {
+      const timer = setTimeout(() => {
+        setActiveLines(prev => prev.map(l => l.id === glitching.id ? { ...l, isEliminating: true } : l));
+        
+        // Suppression définitive après le flash blanc (1s)
+        setTimeout(() => {
+          setActiveLines(prev => prev.filter(l => l.id !== glitching.id));
+        }, 1000);
+      }, 800); // 0.8s de glitch orange avant le flash
+
+      return () => clearTimeout(timer);
+    }
+  }, [activeLines]);
 
   useEffect(() => {
     if (step === 'box-active' || step === 'struggling' || step === 'hex-infiltrating') {
@@ -165,11 +258,20 @@ const AppStoppedScreen = () => {
                     <div className="w-1.5 h-1.5 rounded-full bg-red-800 animate-led-blink-red" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
-                <pre 
-                  className="text-[10px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor overflow-hidden"
-                >
-                  {typedText || "> INITIALIZING EXPLOIT..."}
-                </pre>
+                <div className="text-[10px] font-mono text-red-400 leading-relaxed overflow-hidden flex flex-col">
+                  {activeLines.map((line) => (
+                    <div 
+                      key={line.id} 
+                      className={cn(
+                        "transition-all duration-300",
+                        line.isEliminating && "animate-line-eliminate"
+                      )}
+                    >
+                      <GlitchyText text={line.text} isGlitching={line.isGlitching} />
+                    </div>
+                  ))}
+                  <span className="typewriter-cursor" />
+                </div>
               </div>
 
               {decodingBoxes.map(box => (
