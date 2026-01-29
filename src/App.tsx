@@ -31,7 +31,7 @@ const AppContent = () => {
 
   return (
     <div className={cn(triggerShutdownAnimation && "animate-app-shutdown")}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} /> {/* New HomePage */}
