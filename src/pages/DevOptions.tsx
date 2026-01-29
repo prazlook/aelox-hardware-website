@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,9 +10,8 @@ import { useAsics } from "@/context/AsicContext";
 import { ASIC, ASICStatus } from "@/components/ASICStatusCard";
 import { useDevOptions } from "@/context/DevOptionsContext";
 
-const ALL_STATUSES: ASICStatus[] = ['online', 'offline', 'booting up', 'shutting down', 'overclocked', 'overheat', 'error', 'idle', 'standby'];
-
 const DevOptionsPage = () => {
+  const ALL_STATUSES: ASICStatus[] = ['online', 'offline', 'booting up', 'shutting down', 'overclocked', 'overheat', 'error', 'idle', 'standby'];
   const { asics, setAsics } = useAsics();
   const { preventOverheat, setPreventOverheat, preventErrors, setPreventErrors } = useDevOptions();
 
@@ -80,7 +81,7 @@ const DevOptionsPage = () => {
                   <SelectTrigger id={`status-${asic.id}`}>
                     <SelectValue placeholder="Choisir un statut" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" className="bg-gray-900 border-gray-700 text-white">
                     {ALL_STATUSES.map(status => (
                       <SelectItem key={status} value={status}>{status}</SelectItem>
                     ))}
