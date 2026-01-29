@@ -71,17 +71,17 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Attendre la fin de l'accélération et le flash CRT (3.5s) avant d'activer l'hexagone rouge
-    setTimeout(() => setStep('hex-infiltrating'), 3200);
-    setTimeout(() => setStep('struggling'), 6000);
+    // Le flash CRT et la fusion se produisent à 5000ms
+    setTimeout(() => setStep('hex-infiltrating'), 4900);
+    setTimeout(() => setStep('struggling'), 7500);
     
     setTimeout(() => {
       setStep('box-active');
       setTerminalText(textToType);
-    }, 12000);
+    }, 13000);
     
-    setTimeout(() => setStep('flash'), 18000);
-    setTimeout(() => startApp(), 19000);
+    setTimeout(() => setStep('flash'), 19000);
+    setTimeout(() => startApp(), 20000);
   };
 
   return (

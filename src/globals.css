@@ -59,30 +59,29 @@
   100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
 }
 
-/* Nouvelles animations de transition pour le bouton */
+/* Nouvelles animations de transition pour le bouton - CALIBRÉES SUR 5 SECONDES */
 @keyframes orbit-accelerate-expand {
-  0% { transform: rotate(0deg); }
-  60% { transform: rotate(720deg) scale(1.2); } /* Accélération et écartement (2s/3s) */
-  85% { transform: rotate(1440deg) scale(1.4); opacity: 1; }
-  90% { transform: rotate(1800deg) scale(0); opacity: 1; } /* Snap au centre */
-  100% { transform: rotate(1800deg) scale(0); opacity: 0; }
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  60% { transform: rotate(1080deg) scale(1.1); opacity: 1; } /* Accélération progressive (3s) */
+  95% { transform: rotate(2880deg) scale(1.6); opacity: 1; } /* Écartement maximal et vitesse folle (2s) */
+  98% { transform: rotate(3240deg) scale(0); opacity: 1; } /* Snap au centre pour fusion */
+  100% { transform: rotate(3240deg) scale(0); opacity: 0; }
 }
 
 @keyframes halo-concentrate {
   0% { transform: scale(1); opacity: 0.3; }
-  60% { transform: scale(1.5); opacity: 0.6; }
-  85% { transform: scale(2); opacity: 1; }
-  90% { transform: scale(0); opacity: 1; }
+  60% { transform: scale(1.2); opacity: 0.5; }
+  95% { transform: scale(2.2); opacity: 1; }
+  98% { transform: scale(0); opacity: 1; }
   100% { transform: scale(0); opacity: 0; }
 }
 
 @keyframes crt-flash {
   0% { opacity: 0; transform: scaleY(0); }
-  89% { opacity: 0; transform: scaleY(0); }
-  90% { opacity: 1; transform: scaleY(1); background: white; }
-  92% { opacity: 1; transform: scaleY(0.02); background: white; }
-  95% { opacity: 0; transform: scaleY(0); }
-  100% { opacity: 0; }
+  97% { opacity: 0; transform: scaleY(0); }
+  98% { opacity: 1; transform: scaleY(1); background: white; }
+  99% { opacity: 1; transform: scaleY(0.02); background: white; }
+  100% { opacity: 0; transform: scaleY(0); }
 }
 
 /* Animations existantes conservées */
@@ -187,10 +186,10 @@
     animation: circuit-draw 0.6s ease-out forwards;
   }
 
-  /* Nouvelles classes utilitaires pour la transition du bouton */
-  .animate-orbit-accelerate { animation: orbit-accelerate-expand 3.5s cubic-bezier(0.55, 0, 1, 0.45) forwards; transform-origin: center center; }
-  .animate-halo-concentrate { animation: halo-concentrate 3.5s cubic-bezier(0.55, 0, 1, 0.45) forwards; }
-  .animate-crt-flash { animation: crt-flash 3.5s ease-out forwards; }
+  /* Nouvelles classes utilitaires pour la transition du bouton - DURÉE PASSÉE À 5S */
+  .animate-orbit-accelerate { animation: orbit-accelerate-expand 5s cubic-bezier(0.7, 0, 1, 0.5) forwards; transform-origin: center center; }
+  .animate-halo-concentrate { animation: halo-concentrate 5s cubic-bezier(0.7, 0, 1, 0.5) forwards; }
+  .animate-crt-flash { animation: crt-flash 5s ease-out forwards; }
 }
 
 @layer utilities {
