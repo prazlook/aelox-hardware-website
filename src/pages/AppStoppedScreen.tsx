@@ -157,12 +157,12 @@ const AppStoppedScreen = () => {
               >
                 <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
                   <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-led-blink-red" />
                     Aggressive Breach Active
                   </span>
                   <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-800" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-led-blink-red" style={{ animationDelay: '0.2s' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-800 animate-led-blink-red" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
                 <pre 
