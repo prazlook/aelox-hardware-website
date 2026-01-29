@@ -25,7 +25,7 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className={cn(
           "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse",
-          isClicked && "opacity-0"
+          isClicked && "animate-crt-shutdown"
         )} />
       </div>
 
@@ -52,7 +52,7 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
       {/* Hexagones orbitaux - SEULS éléments invisibles sans survol */}
       <div className={cn(
         "absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-        isClicked && "opacity-0"
+        isClicked && "animate-crt-shutdown"
       )}>
         <div className="absolute inset-0 animate-hexagon-orbital">
           <div className="absolute top-24 right-24 w-16 h-16 animate-hexagon-spin-flash">
