@@ -56,7 +56,7 @@ const AppStoppedScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (step !== 'idle' && step !== 'flash') {
+    if (step !== 'idle' && step !== 'morphing' && step !== 'flash') {
       const updateAnchor = () => {
         if (boxRef.current) {
           const rect = boxRef.current.getBoundingClientRect();
@@ -93,14 +93,14 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // On fait apparaître la boîte et le texte beaucoup plus tôt
+    // Le terminal n'apparaît qu'APRÈS la fin de l'accélération (5s)
     setTimeout(() => {
       setStep('hex-infiltrating');
       setTerminalText(textToType);
-    }, 1500); // Apparaît pendant l'accélération du bouton
+    }, 5000); // Synchronisé avec la fin de l'accélération orbitale du bouton
     
-    setTimeout(() => setStep('struggling'), 6000);
-    setTimeout(() => setStep('box-active'), 9000);
+    setTimeout(() => setStep('struggling'), 9000);
+    setTimeout(() => setStep('box-active'), 13000);
     
     setTimeout(() => setStep('flash'), 19000);
     setTimeout(() => startApp(), 20000);
@@ -173,8 +173,6 @@ const AppStoppedScreen = () => {
           </div>
         </div>
       )}
-
-      {/* Suppression de la boîte statique de titre */}
 
       <div className="flex justify-center items-center py-10 relative z-10">
         <HoneycombButton
