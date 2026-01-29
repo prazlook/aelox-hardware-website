@@ -26,6 +26,7 @@ const HomePage = () => {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
+          {/* L'effet cybernétique qui s'active au survol */}
           <CyberHoverEffect active={isHovered} />
           
           <Button asChild className="bg-theme-cyan text-black hover:bg-theme-cyan/90 px-8 py-6 text-lg rounded-xl shadow-lg relative z-10 transition-transform duration-300 group-hover:scale-105">
