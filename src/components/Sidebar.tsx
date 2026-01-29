@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Home, LayoutDashboard, BarChart2, Wallet, Server, Settings, Code, PowerOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,15 +49,9 @@ const NavItem = ({ to, icon: Icon, label, delay }: typeof navItems[0] & { delay:
 
 export const Sidebar = () => {
   const { stopApp, triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
-  const navigate = useNavigate();
-
-  const handleStop = () => {
-    stopApp();
-    navigate("/");
-  };
 
   return (
-    <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col fixed left-0 top-0 bottom-0 z-[60]">
+    <aside className="w-20 flex-shrink-0 bg-theme-card p-2 flex flex-col relative z-20">
       <div
         className={cn(
           "relative flex items-center justify-center h-16 mb-4 flex-shrink-0",
@@ -82,7 +76,7 @@ export const Sidebar = () => {
           triggerShutdownAnimation && "animate-staggered-fade-out"
         )}
         style={triggerStartupAnimation ? { animationDelay: '0.1s' } : triggerShutdownAnimation ? { '--delay': '0.3s' } as React.CSSProperties : {}}
-        onClick={handleStop}
+        onClick={stopApp}
         aria-label="Arrêter l'application"
       >
         <PowerOff className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
