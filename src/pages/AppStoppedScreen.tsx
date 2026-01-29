@@ -23,8 +23,6 @@ const AppStoppedScreen = () => {
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
   
-  const preRef = useRef<HTMLPreElement>(null);
-  
   const textToType = `> BREACH DETECTED...
 > CORE OVERRIDE INITIATED...
 > REDACTING SECURITY PROTOCOLS...
@@ -96,13 +94,6 @@ const AppStoppedScreen = () => {
 
   const typedText = useTypewriter(terminalText, 10);
 
-  // Auto-scroll pour le terminal
-  useEffect(() => {
-    if (preRef.current) {
-      preRef.current.scrollTop = preRef.current.scrollHeight;
-    }
-  }, [typedText]);
-
   useEffect(() => {
     if (step === 'box-active' || step === 'struggling' || step === 'hex-infiltrating') {
       const interval = setInterval(() => {
@@ -156,43 +147,44 @@ const AppStoppedScreen = () => {
       )}
 
       {step !== 'idle' && step !== 'morphing' && step !== 'flash' && (
-        <div className="absolute inset-0 z-30 pointer-events-none">
-          <div className="absolute top-[15%] left-[calc(50%+150px)]">
-            <div 
-              className={cn(
-                "w-[350px] p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10 animate-box-reveal"
-              )}
-            >
-              <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
-                <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  Aggressive Breach Active
-                </span>
-                <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-800" />
+        <div className="absolute inset-0 z-30 pointer-events-none overflow-y-auto pt-20 pb-20">
+          <div className="flex justify-center items-start min-h-full">
+            <div className="relative left-[150px]">
+              <div 
+                className={cn(
+                  "w-[350px] p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10 animate-box-reveal h-auto"
+                )}
+              >
+                <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
+                  <span className="text-[10px] font-mono text-red-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    Aggressive Breach Active
+                  </span>
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-800" />
+                  </div>
                 </div>
+                <pre 
+                  className="text-[10px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor overflow-hidden"
+                >
+                  {typedText || "> INITIALIZING EXPLOIT..."}
+                </pre>
               </div>
-              <pre 
-                ref={preRef}
-                className="text-[10px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor h-[220px] overflow-y-auto scrollbar-hide"
-              >
-                {typedText || "> INITIALIZING EXPLOIT..."}
-              </pre>
-            </div>
 
-            {decodingBoxes.map(box => (
-              <div
-                key={box.id}
-                className="absolute w-20 p-1 border border-red-500 bg-red-900/80 text-[8px] font-mono text-red-200 animate-decoding flex items-center justify-center backdrop-blur-sm shadow-lg z-20"
-                style={{
-                  left: box.x,
-                  top: box.y,
-                }}
-              >
-                {box.content}
-              </div>
-            ))}
+              {decodingBoxes.map(box => (
+                <div
+                  key={box.id}
+                  className="absolute w-20 p-1 border border-red-500 bg-red-900/80 text-[8px] font-mono text-red-200 animate-decoding flex items-center justify-center backdrop-blur-sm shadow-lg z-20"
+                  style={{
+                    left: box.x,
+                    top: box.y,
+                  }}
+                >
+                  {box.content}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
