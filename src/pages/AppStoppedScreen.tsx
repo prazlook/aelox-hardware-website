@@ -5,6 +5,7 @@ import { Power } from 'lucide-react';
 import { useAppStatus } from '@/context/AppStatusContext';
 import HoneycombButton from '@/components/HoneycombButton';
 import { NeuralHexNetwork } from '@/components/NeuralHexNetwork';
+import TerminalLineItem from '@/components/TerminalLineItem';
 import { cn } from '@/lib/utils';
 
 type TransitionState = 'idle' | 'morphing' | 'hex-infiltrating' | 'struggling' | 'box-active' | 'flash' | 'complete';
@@ -101,14 +102,13 @@ const AppStoppedScreen = () => {
     "> INITIALIZING FINAL PAYLOAD..."
   ];
 
-  // Logic pour ajouter les lignes une par une
   useEffect(() => {
     if (step === 'hex-infiltrating' || step === 'struggling' || step === 'box-active') {
       let index = 0;
       const interval = setInterval(() => {
         if (index < textToType.length) {
           const newLineId = lineCounter.current++;
-          const shouldGlitch = Math.random() > 0.7; // 30% de chance d'élimination
+          const shouldGlitch = Math.random() > 0.7;
           
           const newLine: TerminalLine = {
             id: newLineId,
@@ -121,23 +121,20 @@ const AppStoppedScreen = () => {
           index++;
 
           if (shouldGlitch) {
-            // Planifie le glitch après un court délai
             setTimeout(() => {
               setDisplayLines(prev => prev.map(l => l.id === newLineId ? { ...l, isGlitching: true } : l));
-              // Planifie l'élimination après 1s de glitch
               setTimeout(() => {
                 setDisplayLines(prev => prev.map(l => l.id === newLineId ? { ...l, isRemoving: true } : l));
-                // Supprime définitivement du state après l'animation CSS (0.6s)
                 setTimeout(() => {
                   setDisplayLines(prev => prev.filter(l => l.id !== newLineId));
                 }, 600);
               }, 1000);
-            }, 500);
+            }, 1500); // On attend que la ligne ait fini de s'écrire avant de glitcher
           }
         } else {
           clearInterval(interval);
         }
-      }, 150);
+      }, 200); // Léger ralentissement pour laisser le temps à l'effet typewriter de s'exprimer
       return () => clearInterval(interval);
     }
   }, [step]);
@@ -165,28 +162,20 @@ const AppStoppedScreen = () => {
 
   const handleStart = () => {
     setStep('morphing');
-    
-    setTimeout(() => {
-      setStep('hex-infiltrating');
-    }, 5000); 
-    
+    setTimeout(() => setStep('hex-infiltrating'), 5000); 
     setTimeout(() => setStep('struggling'), 9000);
     setTimeout(() => setStep('box-active'), 13000);
-    
     setTimeout(() => setStep('flash'), 19000);
     setTimeout(() => startApp(), 20000);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-theme-dark text-theme-text-primary p-4 overflow-hidden relative">
-      
       <div className={cn(
         "fixed inset-0 transition-opacity duration-1000 pointer-events-none z-0",
         step === 'idle' ? "opacity-30" : "opacity-100"
       )}>
-        <NeuralHexNetwork 
-          redHexActive={step !== 'idle' && step !== 'morphing'} 
-        />
+        <NeuralHexNetwork redHexActive={step !== 'idle' && step !== 'morphing'} />
       </div>
 
       {step === 'flash' && (
@@ -214,16 +203,12 @@ const AppStoppedScreen = () => {
               <div className="text-[10px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed overflow-hidden flex flex-col-reverse">
                 <div className="flex flex-col">
                   {displayLines.map((line) => (
-                    <div 
-                      key={line.id} 
-                      className={cn(
-                        "transition-all duration-300",
-                        line.isGlitching && "animate-glitch-orange",
-                        line.isRemoving && "animate-futuristic-exit"
-                      )}
-                    >
-                      {line.text}
-                    </div>
+                    <TerminalLineItem 
+                      key={line.id}
+                      text={line.text}
+                      isGlitching={line.isGlitching}
+                      isRemoving={line.isRemoving}
+                    />
                   ))}
                   {displayLines.length === 0 && <div className="typewriter-cursor">{"> INITIALIZING EXPLOIT..."}</div>}
                 </div>
