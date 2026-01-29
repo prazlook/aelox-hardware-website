@@ -1,19 +1,21 @@
-import { Outlet } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { Header } from "./Header";
+"use client";
 
-const Layout = () => {
+import React from "react";
+import { Sidebar } from "./Sidebar";
+
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="flex min-h-screen bg-theme-dark text-theme-text-primary">
+    <div className="flex min-h-screen bg-theme-dark">
       <Sidebar />
-      <div className="flex flex-col flex-1">
-        <main className="flex-1 p-6 pb-16 pl-20"> {/* Ajout de pl-20 pour décaler le contenu du sidebar */}
-          <Outlet />
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 p-6 overflow-auto">
+          {children}
         </main>
       </div>
-      <Header /> {/* Le Header est maintenant un sibling direct et est fixe */}
     </div>
   );
 };
-
-export default Layout;
