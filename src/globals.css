@@ -59,23 +59,26 @@
   100% { transform: scale(0.8) translate(0, 0); opacity: 0; }
 }
 
-/* ACCÉLÉRATION SOUS PRESSION - Implosion finale brutale */
+/* ACCÉLÉRATION SYNCHRONISÉE (20s) - Supprime les hoquets lors des changements d'états */
 @keyframes orbit-accelerate-expand {
   0% { transform: rotate(0deg) scale(1); opacity: 1; }
-  98% { transform: rotate(4000deg) scale(1.8); opacity: 1; }
-  100% { transform: rotate(4200deg) scale(0); opacity: 0; }
+  24% { transform: rotate(2000deg) scale(1.5); opacity: 1; }
+  25% { transform: rotate(2200deg) scale(0); opacity: 0; }
+  100% { transform: rotate(2200deg) scale(0); opacity: 0; }
 }
 
 @keyframes halo-concentrate {
   0% { transform: scale(1); opacity: 0.3; filter: blur(120px); }
-  98% { transform: scale(3.5); opacity: 1; filter: blur(60px); }
+  24% { transform: scale(3.5); opacity: 1; filter: blur(60px); }
+  25% { transform: scale(0); opacity: 0; filter: blur(0px); }
   100% { transform: scale(0); opacity: 0; filter: blur(0px); }
 }
 
 @keyframes crt-flash {
-  0%, 98% { opacity: 0; transform: scaleY(0); }
-  99% { opacity: 1; transform: scaleY(1); background: white; }
-  100% { opacity: 1; transform: scaleY(0.01); background: white; }
+  0%, 24% { opacity: 0; transform: scaleY(0); }
+  24.5% { opacity: 1; transform: scaleY(1); background: white; }
+  25% { opacity: 1; transform: scaleY(0.01); background: white; }
+  100% { opacity: 0; }
 }
 
 /* Orbite continue sans pauses */
@@ -92,7 +95,8 @@
 
 @keyframes button-morph-to-hex {
   0% { border-radius: 9999px; transform: scale(1); }
-  98% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: scale(1.1); opacity: 1; }
+  24% { border-radius: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transform: scale(1.1); opacity: 1; }
+  25% { transform: scale(0); opacity: 0; }
   100% { transform: scale(0); opacity: 0; }
 }
 
@@ -181,7 +185,7 @@
   .animate-button-content-fade-in { animation: button-content-fade-in 0.5s ease-out forwards; opacity: 0; }
   .animate-hexagon-orbital { animation: hexagon-orbital-path 8s linear infinite; transform-origin: center center; }
   .animate-hexagon-spin-flash { animation: hexagon-local-spin-and-flash 4s linear infinite; transform-origin: center center; }
-  .animate-button-morph-hex { animation: button-morph-to-hex 5s cubic-bezier(0.9, 0, 1, 1) forwards; }
+  .animate-button-morph-hex { animation: button-morph-to-hex 20s cubic-bezier(0.9, 0, 1, 1) forwards; }
   .animate-red-hex-appear { animation: unusual-appear 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
   .animate-red-line-draw { stroke-dasharray: 400; stroke-dashoffset: 400; animation: red-line-draw 0.8s ease-out forwards; }
   .animate-box-reveal { animation: terminal-box-reveal 0.4s ease-out forwards; transform-origin: left; }
@@ -194,9 +198,9 @@
     animation: circuit-draw 0.6s ease-out forwards;
   }
 
-  .animate-orbit-accelerate { animation: orbit-accelerate-expand 5s cubic-bezier(0.9, 0, 1, 1) forwards; transform-origin: center center; }
-  .animate-halo-concentrate { animation: halo-concentrate 5s cubic-bezier(0.9, 0, 1, 1) forwards; }
-  .animate-crt-flash { animation: crt-flash 5s ease-out forwards; }
+  .animate-orbit-accelerate { animation: orbit-accelerate-expand 20s cubic-bezier(0.9, 0, 1, 1) forwards; transform-origin: center center; }
+  .animate-halo-concentrate { animation: halo-concentrate 20s cubic-bezier(0.9, 0, 1, 1) forwards; }
+  .animate-crt-flash { animation: crt-flash 20s ease-out forwards; }
 }
 
 @layer utilities {

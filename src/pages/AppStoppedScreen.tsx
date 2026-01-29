@@ -23,7 +23,6 @@ const AppStoppedScreen = () => {
   const [redHexPos, setRedHexPos] = useState({ x: 0, y: 0 });
   const [terminalText, setTerminalText] = useState('');
   const [decodingBoxes, setDecodingBoxes] = useState<DecodingBox[]>([]);
-  const [anchorPos, setAnchorPos] = useState({ x: 0, y: 0 });
   
   const boxRef = useRef<HTMLDivElement>(null);
   
@@ -56,20 +55,6 @@ const AppStoppedScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (step !== 'idle' && step !== 'morphing' && step !== 'flash') {
-      const updateAnchor = () => {
-        if (boxRef.current) {
-          const rect = boxRef.current.getBoundingClientRect();
-          setAnchorPos({ x: rect.left, y: rect.top });
-        }
-        requestAnimationFrame(updateAnchor);
-      };
-      const animId = requestAnimationFrame(updateAnchor);
-      return () => cancelAnimationFrame(animId);
-    }
-  }, [step]);
-
-  useEffect(() => {
     if (step === 'box-active' || step === 'struggling' || step === 'hex-infiltrating') {
       const interval = setInterval(() => {
         const id = Math.random();
@@ -93,11 +78,11 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Le terminal n'apparaît qu'APRÈS la fin de l'accélération (5s)
+    // Le terminal n'apparaît qu'APRÈS la fin de l'accélération initiale (5s)
     setTimeout(() => {
       setStep('hex-infiltrating');
       setTerminalText(textToType);
-    }, 5000); // Synchronisé avec la fin de l'accélération orbitale du bouton
+    }, 5000); 
     
     setTimeout(() => setStep('struggling'), 9000);
     setTimeout(() => setStep('box-active'), 13000);
@@ -125,17 +110,6 @@ const AppStoppedScreen = () => {
 
       {step !== 'idle' && step !== 'morphing' && step !== 'flash' && (
         <div className="absolute inset-0 z-30 pointer-events-none">
-          <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
-            <path
-              d={`M ${redHexPos.x} ${redHexPos.y} L ${anchorPos.x} ${anchorPos.y}`}
-              stroke="#ef4444"
-              strokeWidth="2"
-              fill="none"
-              className="animate-red-line-draw"
-              filter="drop-shadow(0 0 15px red)"
-            />
-          </svg>
-
           <div className="absolute top-[15%] left-[calc(50%+150px)]">
             <div 
               ref={boxRef}
