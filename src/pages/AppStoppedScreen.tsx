@@ -27,7 +27,6 @@ const AppStoppedScreen = () => {
   
   const boxRef = useRef<HTMLDivElement>(null);
   
-  // Texte beaucoup plus long et technique pour l'effet "affolé"
   const textToType = `> BREACH DETECTED...
 > CORE OVERRIDE INITIATED...
 > REDACTING SECURITY PROTOCOLS...
@@ -50,7 +49,6 @@ const AppStoppedScreen = () => {
 > PERSISTENCE: REBOOT_PROTECTED
 > SYSTEM COMPROMISED.`;
 
-  // Vitesse passée de 30ms à 10ms pour un défilement ultra-rapide
   const typedText = useTypewriter(terminalText, 10);
 
   const handleRedHexPos = useCallback((pos: { x: number, y: number }) => {
@@ -58,7 +56,7 @@ const AppStoppedScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (step === 'struggling' || step === 'box-active') {
+    if (step !== 'idle' && step !== 'flash') {
       const updateAnchor = () => {
         if (boxRef.current) {
           const rect = boxRef.current.getBoundingClientRect();
@@ -72,7 +70,7 @@ const AppStoppedScreen = () => {
   }, [step]);
 
   useEffect(() => {
-    if (step === 'struggling' || step === 'box-active') {
+    if (step === 'box-active' || step === 'struggling' || step === 'hex-infiltrating') {
       const interval = setInterval(() => {
         const id = Math.random();
         const newBox: DecodingBox = {
@@ -95,14 +93,14 @@ const AppStoppedScreen = () => {
   const handleStart = () => {
     setStep('morphing');
     
-    // Le flash CRT et la fusion se produisent à 5000ms
-    setTimeout(() => setStep('hex-infiltrating'), 4900);
-    setTimeout(() => setStep('struggling'), 7500);
-    
+    // On fait apparaître la boîte et le texte beaucoup plus tôt
     setTimeout(() => {
-      setStep('box-active');
+      setStep('hex-infiltrating');
       setTerminalText(textToType);
-    }, 13000);
+    }, 1500); // Apparaît pendant l'accélération du bouton
+    
+    setTimeout(() => setStep('struggling'), 6000);
+    setTimeout(() => setStep('box-active'), 9000);
     
     setTimeout(() => setStep('flash'), 19000);
     setTimeout(() => startApp(), 20000);
@@ -125,7 +123,7 @@ const AppStoppedScreen = () => {
         <div className="fixed inset-0 z-50 animate-final-flash pointer-events-none" />
       )}
 
-      {(step === 'box-active' || step === 'struggling') && (
+      {step !== 'idle' && step !== 'morphing' && step !== 'flash' && (
         <div className="absolute inset-0 z-30 pointer-events-none">
           <svg className="w-full h-full" viewBox={`0 0 ${typeof window !== 'undefined' ? window.innerWidth : 1920} ${typeof window !== 'undefined' ? window.innerHeight : 1080}`}>
             <path
@@ -142,8 +140,7 @@ const AppStoppedScreen = () => {
             <div 
               ref={boxRef}
               className={cn(
-                "w-[350px] p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10",
-                step === 'box-active' ? "animate-box-reveal" : ""
+                "w-[350px] p-4 border-2 border-red-500 bg-red-950/70 backdrop-blur-2xl shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-500 relative z-10 animate-box-reveal"
               )}
             >
               <div className="flex items-center justify-between mb-2 border-b border-red-500/30 pb-1">
@@ -157,7 +154,7 @@ const AppStoppedScreen = () => {
                 </div>
               </div>
               <pre className="text-[10px] font-mono text-red-400 whitespace-pre-wrap leading-relaxed typewriter-cursor min-h-[220px]">
-                {step === 'box-active' ? typedText : "> ERROR: SECURITY BUFFER RESISTING...\n> RETRYING EXPLOIT..."}
+                {typedText || "> INITIALIZING EXPLOIT..."}
               </pre>
             </div>
 
@@ -174,28 +171,10 @@ const AppStoppedScreen = () => {
               </div>
             ))}
           </div>
-
-          {step === 'struggling' && (
-            <div className="absolute top-[50%] left-[calc(50%+150px)] w-80 mt-4 text-[10px] text-red-500 animate-pulse font-bold text-center">
-              SYSTEM UNDER ATTACK
-            </div>
-          )}
         </div>
       )}
 
-      <div className={cn(
-        "text-center space-y-8 max-w-md w-full transition-opacity duration-500 z-10",
-        step !== 'idle' && "opacity-0 pointer-events-none"
-      )}>
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600">
-            Aelox Core
-          </h1>
-          <p className="text-theme-text-secondary text-lg">
-            Initialisez la séquence de déploiement
-          </p>
-        </div>
-      </div>
+      {/* Suppression de la boîte statique de titre */}
 
       <div className="flex justify-center items-center py-10 relative z-10">
         <HoneycombButton
