@@ -24,8 +24,9 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
       {/* Halo multi-couches - visible par défaut */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className={cn(
-          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] group-hover:opacity-100 transition-opacity duration-1000 animate-glow-pulse",
-          isClicked && "opacity-0"
+          "w-[300px] h-[300px] rounded-full bg-green-500/5 blur-[120px] transition-opacity duration-1000 animate-glow-pulse",
+          !isClicked && "group-hover:opacity-100",
+          isClicked && "animate-halo-launch"
         )} />
       </div>
 
@@ -52,14 +53,17 @@ const HoneycombButton = ({ children, className, isClicked, ...props }: Honeycomb
       {/* Hexagones orbitaux - SEULS éléments invisibles sans survol */}
       <div className={cn(
         "absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-        isClicked && "opacity-0"
+        isClicked && "opacity-100"
       )}>
-        <div className="absolute inset-0 animate-hexagon-orbital">
+        <div className={cn("absolute inset-0", !isClicked ? "animate-hexagon-orbital" : "animate-orbital-launch")}>
           <div className="absolute top-24 right-24 w-16 h-16 animate-hexagon-spin-flash">
             <HexagonIcon className="text-green-400 w-full h-full" />
           </div>
         </div>
-        <div className="absolute inset-0 animate-hexagon-orbital" style={{ transform: 'rotate(180deg)' }}>
+        <div 
+          className={cn("absolute inset-0", !isClicked ? "animate-hexagon-orbital" : "animate-orbital-launch")} 
+          style={!isClicked ? { transform: 'rotate(180deg)' } : { animationDelay: '0.1s' }}
+        >
           <div className="absolute bottom-24 left-24 w-14 h-14 animate-hexagon-spin-flash">
             <HexagonIcon className="text-green-500 w-full h-full" />
           </div>
