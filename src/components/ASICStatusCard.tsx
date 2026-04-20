@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AnimatedHashrateIcon } from "./AnimatedHashrateIcon";
+import { AnimatedSpeedIcon } from "./AnimatedSpeedIcon";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ForceStopMenuItem } from "./ForceStopMenuItem";
 import { useAnimation } from '@/context/AnimationContext';
@@ -358,7 +358,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
             {/* Stat Items */}
             <StatItem 
-              icon={isOnline ? <AnimatedHashrateIcon width={20} height={20} /> : <Activity size={20} />} 
+              icon={<AnimatedSpeedIcon size={20} isOnline={isOnline} />} 
               label="Hashrate" 
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
