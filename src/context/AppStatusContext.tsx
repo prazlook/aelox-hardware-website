@@ -1,71 +1,34 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect, useRef } from 'react';
+"use client";
+
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 interface AppStatusContextType {
   isAppRunning: boolean;
   startApp: () => void;
   stopApp: () => void;
   triggerStartupAnimation: boolean;
-  triggerShutdownAnimation: boolean; // New state for shutdown animation
+  triggerShutdownAnimation: boolean;
 }
 
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
 
-const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
-  if (typeof window !== 'undefined') {
-    const storedValue = localStorage.getItem(key);
-    if (storedValue !== null) {
-      try {
-        return JSON.parse(storedValue) as T;
-      } catch (e) {
-        console.error(`Error parsing localStorage key "${key}":`, e);
-        return defaultValue;
-      }
-    }
-  }
-  return defaultValue;
-};
-
 export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
-  const [isAppRunning, setIsAppRunning] = useState<boolean>(() => getLocalStorageItem<boolean>('isAppRunning', false));
+  // L'application est maintenant active par défaut
+  const [isAppRunning, setIsAppRunning] = useState<boolean>(true);
   const [triggerStartupAnimation, setTriggerStartupAnimation] = useState(false);
-  const [triggerShutdownAnimation, setTriggerShutdownAnimation] = useState(false); // Initialize new state
-  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const shutdownAnimationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    localStorage.setItem('isAppRunning', JSON.stringify(isAppRunning));
-  }, [isAppRunning]);
+  const [triggerShutdownAnimation, setTriggerShutdownAnimation] = useState(false);
 
   const startApp = () => {
     setIsAppRunning(true);
-    if (!triggerStartupAnimation) {
-      setTriggerStartupAnimation(true);
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
-      }
-      animationTimeoutRef.current = setTimeout(() => {
-        setTriggerStartupAnimation(false);
-      }, 3500);
-    }
   };
 
   const stopApp = () => {
-    // Trigger shutdown animation
+    // On garde la possibilité d'arrêter si besoin, mais sans la séquence de transition forcée au début
     setTriggerShutdownAnimation(true);
-    if (shutdownAnimationTimeoutRef.current) {
-      clearTimeout(shutdownAnimationTimeoutRef.current);
-    }
-    shutdownAnimationTimeoutRef.current = setTimeout(() => {
+    setTimeout(() => {
       setIsAppRunning(false);
-      setTriggerShutdownAnimation(false); // Reset after animation completes
-    }, 4000); // Duration of the shutdown animation (4 seconds)
-
-    // Clear any pending startup animation trigger if app is stopped
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
-      animationTimeoutRef.current = null;
-    }
-    setTriggerStartupAnimation(false);
+      setTriggerShutdownAnimation(false);
+    }, 1000); 
   };
 
   return (
@@ -74,7 +37,7 @@ export const AppStatusProvider = ({ children }: { children: ReactNode }) => {
       startApp,
       stopApp,
       triggerStartupAnimation,
-      triggerShutdownAnimation, // Provide new state
+      triggerShutdownAnimation,
     }}>
       {children}
     </AppStatusContext.Provider>
