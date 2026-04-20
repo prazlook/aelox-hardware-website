@@ -17,6 +17,9 @@ export interface ASIC {
   comment?: string;
   isForceStopping?: boolean;
   fixedSpeed?: number;
+  fixedTemperature?: number;
+  fixedPower?: number;
+  fixedFanSpeed?: number;
 }
 
 interface AsicContextType {
@@ -36,6 +39,9 @@ const initialAsics: ASIC[] = [
     fanSpeed: 80,
     isFanOn: true,
     fixedSpeed: 500,
+    fixedTemperature: 260,
+    fixedPower: 350,
+    fixedFanSpeed: 80,
   },
 ];
 

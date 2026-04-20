@@ -19,7 +19,7 @@ const DevOptionsPage = () => {
     setAsics(prev =>
       prev.map(asic => {
         if (asic.id === id) {
-          const updatedValue = typeof asic[field] === 'number' ? parseFloat(value) || 0 : value;
+          const updatedValue = typeof asic[field] === 'number' || field.startsWith('fixed') ? parseFloat(value) || 0 : value;
           return { ...asic, [field]: updatedValue };
         }
         return asic;
@@ -88,45 +88,43 @@ const DevOptionsPage = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              
+              <div className="grid grid-cols-2 gap-4 border-t border-gray-800 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor={`hashrate-${asic.id}`}>Hashrate</Label>
+                  <Label className="text-theme-cyan">Vitesse Fixe</Label>
                   <Input
-                    id={`hashrate-${asic.id}`}
                     type="number"
-                    value={asic.hashrate}
-                    onChange={(e) => handleUpdate(asic.id, 'hashrate', e.target.value)}
+                    value={asic.fixedSpeed ?? asic.hashrate}
+                    onChange={(e) => handleUpdate(asic.id, 'fixedSpeed', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`temp-${asic.id}`}>Température</Label>
+                  <Label className="text-theme-cyan">Temp. Fixe</Label>
                   <Input
-                    id={`temp-${asic.id}`}
                     type="number"
-                    value={asic.temperature}
-                    onChange={(e) => handleUpdate(asic.id, 'temperature', e.target.value)}
+                    value={asic.fixedTemperature ?? asic.temperature}
+                    onChange={(e) => handleUpdate(asic.id, 'fixedTemperature', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`power-${asic.id}`}>Puissance</Label>
+                  <Label className="text-theme-cyan">Puis. Fixe</Label>
                   <Input
-                    id={`power-${asic.id}`}
                     type="number"
-                    value={asic.power}
-                    onChange={(e) => handleUpdate(asic.id, 'power', e.target.value)}
+                    value={asic.fixedPower ?? asic.power}
+                    onChange={(e) => handleUpdate(asic.id, 'fixedPower', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`fan-${asic.id}`}>Ventilateur (%)</Label>
+                  <Label className="text-theme-cyan">Vent. Fixe (%)</Label>
                   <Input
-                    id={`fan-${asic.id}`}
                     type="number"
-                    value={asic.fanSpeed}
-                    onChange={(e) => handleUpdate(asic.id, 'fanSpeed', e.target.value)}
+                    value={asic.fixedFanSpeed ?? asic.fanSpeed}
+                    onChange={(e) => handleUpdate(asic.id, 'fixedFanSpeed', e.target.value)}
                   />
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+
+              <div className="flex items-center space-x-2 pt-2">
                 <Switch
                   id={`fan-on-${asic.id}`}
                   checked={asic.isFanOn}
