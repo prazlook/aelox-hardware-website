@@ -10,7 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getLocalAIComment } from '@/lib/localAiComments';
 import { useTypewriter } from '@/hooks/useTypewriter';
-import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
+import { useAppStatus } from '@/context/AppStatusContext';
 
 export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
 
@@ -35,12 +35,12 @@ interface ASICStatusCardProps {
   onToggleFan: (asicId: string) => void;
   onToggleOverclock: (asicId: string) => void;
   onPowerAction: (asicId: string, action: 'idle' | 'stop' | 'reboot' | 'standby' | 'force-stop' | 'start-mining', event?: React.MouseEvent) => void;
-  className?: string; // Add className prop
-  style?: React.CSSProperties; // Add style prop
-  triggerShutdownAnimation: boolean; // New prop
-  triggerStartupAnimation: boolean; // New prop
-  startupDelay: number; // Base delay for this specific card
-  shutdownDelay: number; // New prop for shutdown delay
+  className?: string;
+  style?: React.CSSProperties;
+  triggerShutdownAnimation: boolean;
+  triggerStartupAnimation: boolean;
+  startupDelay: number;
+  shutdownDelay: number;
 }
 
 interface StatusBadgeProps {
@@ -137,7 +137,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const [comment, setComment] = useState(getLocalAIComment(asic));
   const prevStatusRef = useRef<ASICStatus>();
   const typedComment = useTypewriter(comment || '', 30);
-  const { triggerStartupAnimation: globalTriggerStartupAnimation } = useAppStatus(); // Get global animation trigger
+  const { triggerStartupAnimation: globalTriggerStartupAnimation } = useAppStatus();
 
   useEffect(() => {
     const prevStatus = prevStatusRef.current;
@@ -186,15 +186,12 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     }
   };
 
-  // Base delay for internal elements after border (0.8s) and fill (0.5s) animations
   const internalElementsBaseStartupDelay = cardBaseStartupDelay + 0.8 + 0.5;
 
-  // Helper to get startup animation styles for internal elements
   const getInternalStartupDelay = (offset: number) => {
     return triggerStartupAnimation ? { animationDelay: `${internalElementsBaseStartupDelay + offset}s` } : {};
   };
 
-  // Helper to get shutdown animation styles for internal elements
   const getInternalShutdownDelay = (offset: number) => {
     return triggerShutdownAnimation ? { animationDelay: `${cardBaseShutdownDelay + offset}s` } : {};
   };
@@ -208,52 +205,48 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
         className={cn(
           "relative h-full rounded-2xl overflow-hidden", 
           className,
-          triggerShutdownAnimation && "animate-staggered-fade-out" // Apply staggered fade-out to the entire card
+          triggerShutdownAnimation && "animate-staggered-fade-out"
         )} 
         style={triggerShutdownAnimation ? { '--delay': `${cardBaseShutdownDelay}s`, ...style } as React.CSSProperties : style}
       >
-        {/* Border SVG - appears first */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           <StatusBorderAnimation
             status={asic.status}
             isWarning={isWarning}
             isOverheating={isOverheating}
             triggerStartupAnimation={triggerStartupAnimation}
-            startupDelay={cardBaseStartupDelay + 0.0} // Border animation starts at cardBaseStartupDelay
+            startupDelay={cardBaseStartupDelay + 0.0}
           />
         </div>
 
-        {/* Main content with background fill - appears after border */}
         <div
           ref={cardRef}
           className={cn(
             "relative z-0 p-4 rounded-2xl flex flex-col space-y-3 transition-all duration-300 bg-theme-card h-full",
-            triggerStartupAnimation && "animate-card-fill-from-top", // Apply fill animation here
+            triggerStartupAnimation && "animate-card-fill-from-top",
             isOffline && !isTransitioning && "grayscale opacity-70"
           )}
-          style={triggerStartupAnimation ? { animationDelay: `${cardBaseStartupDelay + 0.8}s` } : {}} // Fill animation starts after border animation (0.8s)
+          style={triggerStartupAnimation ? { animationDelay: `${cardBaseStartupDelay + 0.8}s` } : {}}
         >
           {asic.isForceStopping && <ShutdownAnimation />}
           <div className="flex justify-between items-start">
-            {/* Title & Model */}
             <div 
               className={cn(
                 contentAnimationClass, 
                 triggerStartupAnimation && "animate-startup-fade-in-scale"
               )} 
-              style={getInternalStartupDelay(0.0)} // Starts immediately after fill
+              style={getInternalStartupDelay(0.0)}
             >
               <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
-              {/* CPU Button (Overclock) */}
               <div 
                 className={cn(
                   contentAnimationClass, 
                   triggerStartupAnimation && "animate-startup-fade-in-scale"
                 )} 
-                style={getInternalStartupDelay(0.8)} // Adjusted delay
+                style={getInternalStartupDelay(0.8)}
               >
                 <Button
                   size="icon"
@@ -268,13 +261,12 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   <Cpu size={16} />
                 </Button>
               </div>
-              {/* Power Button */}
               <div 
                 className={cn(
                   contentAnimationClass, 
                   triggerStartupAnimation && "animate-startup-fade-in-scale"
                 )} 
-                style={getInternalStartupDelay(0.9)} // Adjusted delay
+                style={getInternalStartupDelay(0.9)}
               >
                 <ContextMenu>
                   <ContextMenuTrigger asChild>
@@ -324,81 +316,76 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                   </ContextMenuContent>
                 </ContextMenu>
               </div>
-              {/* Status Badge */}
               <div 
                 className={cn(
                   contentAnimationClass, 
-                  // Removed startup animation class here, it's now inside StatusBadge
                 )} 
-                style={getInternalStartupDelay(1.1)} // Adjusted delay
+                style={getInternalStartupDelay(1.1)}
               >
                 <StatusBadge 
                   status={asic.status} 
                   triggerShutdownAnimation={triggerShutdownAnimation} 
-                  shutdownDelay={cardBaseShutdownDelay + 1.9} // Shutdown delay for badge
-                  triggerStartupAnimation={triggerStartupAnimation} // Pass startup prop
-                  startupDelay={internalElementsBaseStartupDelay + 1.1} // Startup delay for badge
+                  shutdownDelay={cardBaseShutdownDelay + 1.9}
+                  triggerStartupAnimation={triggerStartupAnimation}
+                  startupDelay={internalElementsBaseStartupDelay + 1.1}
                 />
               </div>
             </div>
           </div>
 
-          {/* Comment/Typewriter */}
           <div 
             className={cn(
               "text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", 
               contentAnimationClass, 
               triggerStartupAnimation && "animate-startup-fade-in-scale"
             )} 
-            style={getInternalStartupDelay(0.2)} // Adjusted delay
+            style={getInternalStartupDelay(0.2)}
           >
             <span className="typewriter-cursor">{typedComment}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
-            {/* Stat Items */}
             <StatItem 
               icon={<AnimatedSpeedIcon size={20} isOnline={isOnline} />} 
-              label="Hashrate" 
+              label="Vitesse" 
               value={asic.hashrate.toFixed(2)} 
               unit="TH/s" 
-              className={contentAnimationClass} // Shutdown animation class
+              className={contentAnimationClass}
               triggerShutdownAnimation={triggerShutdownAnimation}
-              shutdownDelay={cardBaseShutdownDelay + 0.5} // Shutdown delay
+              shutdownDelay={cardBaseShutdownDelay + 0.5}
               triggerStartupAnimation={triggerStartupAnimation}
-              startupDelay={internalElementsBaseStartupDelay + 0.3} // Adjusted delay
+              startupDelay={internalElementsBaseStartupDelay + 0.3}
             />
             <StatItem 
               icon={<Thermometer size={20} />} 
               label="Température" 
               value={asic.temperature.toFixed(2)} 
               unit="°C" 
-              className={cn(tempColor, contentAnimationClass)} // Shutdown animation class
+              className={cn(tempColor, contentAnimationClass)}
               triggerShutdownAnimation={triggerShutdownAnimation}
-              shutdownDelay={cardBaseShutdownDelay + 0.6} // Shutdown delay
+              shutdownDelay={cardBaseShutdownDelay + 0.6}
               triggerStartupAnimation={triggerStartupAnimation}
-              startupDelay={internalElementsBaseStartupDelay + 0.4} // Adjusted delay
+              startupDelay={internalElementsBaseStartupDelay + 0.4}
             />
             <StatItem 
               icon={<Zap size={20} />} 
               label="Puissance" 
               value={asic.power.toFixed(0)} 
               unit="W" 
-              className={contentAnimationClass} // Shutdown animation class
+              className={contentAnimationClass}
               triggerShutdownAnimation={triggerShutdownAnimation}
-              shutdownDelay={cardBaseShutdownDelay + 0.7} // Shutdown delay
+              shutdownDelay={cardBaseShutdownDelay + 0.7}
               triggerStartupAnimation={triggerStartupAnimation}
-              startupDelay={internalElementsBaseStartupDelay + 0.5} // Adjusted delay
+              startupDelay={internalElementsBaseStartupDelay + 0.5}
             />
             
-            {/* Fan Control */}
             <div 
               className={cn(
                 "flex items-center space-x-2", 
                 contentAnimationClass, 
                 triggerStartupAnimation && "animate-startup-fade-in-scale"
               )} 
-              style={getInternalStartupDelay(0.6)} // Adjusted delay
+              style={getInternalStartupDelay(0.6)}
             >
               <button
                 onClick={() => onToggleFan(asic.id)}
@@ -422,13 +409,12 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             </div>
           </div>
 
-          {/* View Details Button */}
           <div 
             className={cn(
               contentAnimationClass, 
               triggerStartupAnimation && "animate-startup-fade-in-scale"
             )} 
-            style={getInternalStartupDelay(1.0)} // Adjusted delay
+            style={getInternalStartupDelay(1.0)}
           >
             <Button 
               className="w-full bg-theme-cyan text-black font-bold hover:bg-theme-cyan/90 rounded-xl"
