@@ -333,7 +333,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             style={getInternalStartupDelay(0.2)}
           >
             <img 
-              src="https://files.dyad.ai/pasted-image-2026-04-20T05-52-09-598Z.png" 
+              src="/Capture d'écran 2026-04-20 080619.png" 
               alt="Activité d'impression" 
               className="w-full h-full object-cover opacity-80"
             />
