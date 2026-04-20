@@ -25,12 +25,10 @@ const playSound = (file: File | null) => {
 const ShopPage = () => {
   const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
-  const { preventOverheat, preventErrors, startupDelay, shutdownDelay } = useDevOptions();
+  const { preventErrors, startupDelay, shutdownDelay } = useDevOptions();
   const { triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
   const prevAsicsRef = useRef(asics);
   const maxTemp = 85;
-  const criticalTemp = 100;
-  const shutdownTemp = 115;
 
   const handleTogglePower = (asicId: string) => {
     const asicToToggle = asics.find(a => a.id === asicId);
@@ -47,7 +45,7 @@ const ShopPage = () => {
       setTimeout(() => {
         setAsics(prevAsics =>
           prevAsics.map(asic =>
-            asic.id === asicId ? { ...asic, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asic.temperature - 10) } : asic
+            asic.id === asicId ? { ...asic, status: 'offline', power: 0, hashrate: 0, temperature: 25 } : asic
           )
         );
       }, shutdownDelay * 1000);
@@ -61,7 +59,7 @@ const ShopPage = () => {
       setTimeout(() => {
         setAsics(prevAsics =>
           prevAsics.map(asic =>
-            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asic.temperature + 5) } : asic));
+            asic.id === asicId ? { ...asic, status: 'online', power: 3200, hashrate: 100, temperature: 55 } : asic));
         }, startupDelay * 1000);
     }
   };
@@ -74,18 +72,18 @@ const ShopPage = () => {
             case 'start-mining':
               playSound(powerOnSoundFile);
               setTimeout(() => {
-                setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asicId ? { ...asicItem, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asicItem.temperature + 5) } : asicItem));
+                setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asicId ? { ...asicItem, status: 'online', power: 3200, hashrate: 100, temperature: 55 } : asicItem));
               }, startupDelay * 1000);
               return { ...asic, status: 'booting up' };
             case 'idle':
-              return { ...asic, status: 'idle' };
+              return { ...asic, status: 'idle', temperature: 45, hashrate: 10, power: 500 };
             case 'standby':
-              return { ...asic, status: 'standby' };
+              return { ...asic, status: 'standby', temperature: 35, hashrate: 0, power: 50 };
             case 'stop':
             case 'reboot':
               playSound(powerOffSoundFile);
               setTimeout(() => {
-                setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asicItem.temperature - 10) } : asicItem));
+                setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: 25 } : asicItem));
               }, shutdownDelay * 1000);
               return { ...asic, status: 'shutting down' };
             case 'force-stop':
@@ -96,7 +94,7 @@ const ShopPage = () => {
                   status: 'offline',
                   power: 0,
                   hashrate: 0,
-                  temperature: Math.max(25, asicItem.temperature - 10),
+                  temperature: 25,
                   isForceStopping: false,
                 } : asicItem));
               }, 1500);
@@ -122,8 +120,8 @@ const ShopPage = () => {
     setAsics(prevAsics =>
       prevAsics.map(asic => {
         if (asic.id === asicId) {
-          if (asic.status === 'online') return { ...asic, status: 'overclocked' };
-          if (asic.status === 'overclocked') return { ...asic, status: 'online' };
+          if (asic.status === 'online') return { ...asic, status: 'overclocked', temperature: 75 };
+          if (asic.status === 'overclocked') return { ...asic, status: 'online', temperature: 55 };
         }
         return asic;
       })
@@ -136,7 +134,7 @@ const ShopPage = () => {
     setAsics(asics.map(asic => {
       if (asic.status === 'offline') {
         setTimeout(() => {
-          setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'online', power: 3200, hashrate: 100, temperature: Math.max(25, asicItem.temperature + 5) } : asicItem));
+          setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'online', power: 3200, hashrate: 100, temperature: 55 } : asicItem));
         }, startupDelay * 1000);
         return { ...asic, status: 'booting up' };
       }
@@ -150,7 +148,7 @@ const ShopPage = () => {
     setAsics(asics.map(asic => {
       if (['online', 'overclocked', 'overheat'].includes(asic.status)) {
         setTimeout(() => {
-          setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asicItem.temperature - 10) } : asicItem));
+          setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === asic.id ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: 25 } : asicItem));
         }, shutdownDelay * 1000);
         return { ...asic, status: 'shutting down' };
       }
@@ -160,31 +158,15 @@ const ShopPage = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const updatedAsics = asics.map((asic, index) => {
+      setAsics(currentAsics => currentAsics.map((asic) => {
         let newAsic = { ...asic };
         
         if (newAsic.isForceStopping) return newAsic;
 
-        if (!preventOverheat) {
-          if (newAsic.temperature >= shutdownTemp && newAsic.status !== 'offline' && newAsic.status !== 'shutting down') {
-            newAsic.status = 'shutting down';
-            playSound(powerOffSoundFile);
-            showError(`ARRÊT D'URGENCE: ${newAsic.name} a dépassé ${shutdownTemp}°C.`);
-            setTimeout(() => {
-              setAsics(currentAsics => currentAsics.map(asicItem => asicItem.id === newAsic.id ? { ...asicItem, status: 'offline', power: 0, hashrate: 0, temperature: Math.max(25, asicItem.temperature - 10) } : asicItem));
-            }, shutdownDelay * 1000);
-          } else if (newAsic.temperature >= criticalTemp && (newAsic.status === 'online' || newAsic.status === 'overclocked')) {
-            newAsic.status = 'overheat';
-            showError(`${newAsic.name} est en surchauffe critique. Minage suspendu.`);
-          }
-        }
+        // On enlève les changements de statut automatiques basés sur la température
+        // On garde juste une petite fluctuation cosmétique des valeurs si la machine tourne
 
-        if (newAsic.temperature >= maxTemp && newAsic.status === 'overclocked') {
-          newAsic.status = 'online';
-          showError(`Overclock désactivé sur ${newAsic.name} pour cause de surchauffe.`);
-        }
-
-        if (!preventErrors && Math.random() > 0.998 && (newAsic.status === 'online' || newAsic.status === 'overclocked')) {
+        if (!preventErrors && Math.random() > 0.999 && (newAsic.status === 'online' || newAsic.status === 'overclocked')) {
           newAsic.status = 'error';
           newAsic.power = 50;
           showError(`${newAsic.name} a rencontré une erreur critique.`);
@@ -193,94 +175,52 @@ const ShopPage = () => {
         switch (newAsic.status) {
           case 'online':
           case 'overclocked':
-            const tempIncrease = newAsic.status === 'overclocked' ? 0.8 : 0.5;
-            const fanCooling = newAsic.isFanOn ? (newAsic.fanSpeed / 100) * 1.2 : -0.1;
-            newAsic.temperature += (Math.random() - 0.5 + tempIncrease / 2 - fanCooling) * 1.5;
+            // Fluctuation cosmétique sans accumulation infinie
+            const targetTemp = newAsic.status === 'overclocked' ? 75 : 55;
+            newAsic.temperature += (targetTemp - newAsic.temperature) * 0.1 + (Math.random() - 0.5);
             
             const hashrateVariation = newAsic.status === 'overclocked' ? 1.5 : 0.5;
             newAsic.hashrate += (Math.random() - 0.5) * hashrateVariation;
             newAsic.power = newAsic.status === 'overclocked' ? 3600 + Math.random() * 100 : 3200 + Math.random() * 50;
-            
-            if (newAsic.isFanOn) {
-              if (newAsic.temperature > maxTemp - 10) {
-                newAsic.fanSpeed = Math.min(100, newAsic.fanSpeed + 5);
-              } else {
-                newAsic.fanSpeed = Math.max(70, newAsic.fanSpeed - 1);
-              }
-            } else {
-              newAsic.fanSpeed = 0;
-            }
             break;
           case 'overheat':
-            newAsic.hashrate = 0;
-            newAsic.power = Math.max(200, newAsic.power - 200);
-            newAsic.isFanOn = true;
-            newAsic.fanSpeed = 100;
-            newAsic.temperature = Math.max(25, newAsic.temperature - 1.5);
-            if (newAsic.temperature < 70) {
-                newAsic.status = 'online';
-                showSuccess(`${newAsic.name} a refroidi et reprend le minage.`);
-            }
+            newAsic.temperature = Math.max(70, newAsic.temperature - 0.5);
             break;
           case 'booting up':
             newAsic.power = Math.min(3000, newAsic.power + 300);
+            newAsic.temperature = Math.min(55, newAsic.temperature + 2);
             break;
           case 'shutting down':
             newAsic.power = Math.max(0, newAsic.power - 300);
-            newAsic.fanSpeed = Math.max(0, newAsic.fanSpeed - 15);
+            newAsic.temperature = Math.max(25, newAsic.temperature - 2);
             break;
           case 'idle':
             newAsic.hashrate = 10 + (Math.random() - 0.5) * 2;
             newAsic.power = 500 + (Math.random() - 0.5) * 50;
-            
-            const idleTempTarget = 45;
-            if (newAsic.temperature > idleTempTarget) {
-              newAsic.temperature = Math.max(idleTempTarget, newAsic.temperature - 0.5);
-            } else {
-              newAsic.temperature = Math.min(idleTempTarget, newAsic.temperature + 0.5);
-            }
-            
-            newAsic.isFanOn = true;
-            newAsic.fanSpeed = 30;
+            newAsic.temperature += (45 - newAsic.temperature) * 0.1;
             break;
           case 'standby':
             newAsic.hashrate = 0;
             newAsic.power = Math.max(50, newAsic.power - 100);
-            if (newAsic.temperature > 25) newAsic.temperature -= 1;
+            newAsic.temperature += (35 - newAsic.temperature) * 0.1;
             break;
           case 'offline':
-            if (newAsic.temperature > 25) newAsic.temperature -= 0.5;
+            newAsic.temperature += (25 - newAsic.temperature) * 0.1;
             newAsic.fanSpeed = 0;
             newAsic.isFanOn = false;
             break;
-          case 'error':
-            break;
         }
 
-        if (preventOverheat) {
-          if (newAsic.temperature > maxTemp - 15) {
-            newAsic.temperature = Math.max(maxTemp - 20, newAsic.temperature - 1);
-            newAsic.fanSpeed = Math.min(100, newAsic.fanSpeed + 10);
-          }
-        }
-
+        // Clamp des valeurs
         newAsic.power = Math.max(0, newAsic.power);
-        newAsic.hashrate = (newAsic.status === 'online' || newAsic.status === 'overclocked' || newAsic.status === 'idle') ? Math.max(0, newAsic.hashrate) : 0;
         newAsic.temperature = Math.max(25, newAsic.temperature);
         newAsic.fanSpeed = Math.max(0, Math.min(100, newAsic.fanSpeed));
 
-        const oldAsic = prevAsicsRef.current[index];
-        if (oldAsic && oldAsic.temperature < maxTemp && newAsic.temperature >= maxTemp && !preventOverheat) {
-          playSound(overheatSoundFile);
-        }
-
         return newAsic;
-      });
-      prevAsicsRef.current = asics;
-      setAsics(updatedAsics);
+      }));
     }, 500);
     return () => clearInterval(interval);
-  }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics, preventOverheat, preventErrors, startupDelay, shutdownDelay]);
+  }, [preventErrors, shutdownDelay, startupDelay, setAsics]);
 
   const summary = useMemo(() => {
     const totalAsicsCount = asics.length;
@@ -298,21 +238,6 @@ const ShopPage = () => {
     if (temp > 40) return { level: 'optimal', text: 'OPTIMAL' };
     return { level: 'faible', text: 'FAIBLE' };
   }, [summary.avgTemp]);
-
-  const surchargeAlertTriggered = useRef(false);
-  useEffect(() => {
-    if (tempStatus.level === 'surcharge' && !surchargeAlertTriggered.current && !preventOverheat) {
-      surchargeAlertTriggered.current = true;
-      showError("ALERTE SURCHARGE ! Température moyenne critique. Arrêt d'urgence dans 10 secondes.");
-      const timer = setTimeout(() => {
-        handleStopAll();
-        showSuccess("Arrêt d'urgence effectué pour cause de surchauffe.");
-      }, 10000);
-      return () => clearTimeout(timer);
-    } else if (tempStatus.level !== 'surcharge') {
-      surchargeAlertTriggered.current = false;
-    }
-  }, [tempStatus.level, handleStopAll, preventOverheat]);
 
   return (
     <div className="space-y-8">
