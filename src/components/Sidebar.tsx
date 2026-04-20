@@ -1,14 +1,19 @@
 "use client";
 
 import { NavLink } from "react-router-dom";
-import { Home, Code, ShoppingBag } from "lucide-react";
+import { Home, BarChart2, Wallet, Server, Settings, Code, ShoppingBag, AppWindow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStatus } from "@/context/AppStatusContext";
 import ImagePlaceholder from "./ImagePlaceholder";
 
 const navItems = [
   { to: "/", icon: Home, label: "Accueil" },
+  { to: "/apex", icon: AppWindow, label: "Apex" },
   { to: "/shop", icon: ShoppingBag, label: "Magasin" },
+  { to: "/statistics", icon: BarChart2, label: "Statistiques" },
+  { to: "/wallet", icon: Wallet, label: "Portefeuille" },
+  { to: "/asic-management", icon: Server, label: "Gestion ASICs" },
+  { to: "/configuration", icon: Settings, label: "Configuration" },
   { to: "/dev-options", icon: Code, label: "Options Dev" },
 ];
 
