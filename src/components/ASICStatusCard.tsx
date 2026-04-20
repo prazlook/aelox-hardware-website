@@ -230,7 +230,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               )} 
               style={getInternalStartupDelay(0.0)}
             >
-              <h3 className="text-lg font-bold leading-tight">{asic.name}</h3>
+              <h3 className="text-lg font-bold leading-tight">Aetheris-4</h3>
               <p className="text-xs text-theme-text-secondary mt-1">{asic.model}</p>
             </div>
             <div className="flex items-center space-x-2">
