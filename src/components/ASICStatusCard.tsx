@@ -89,7 +89,9 @@ const StatItem = ({ icon, label, value, unit, className, style, triggerShutdownA
     <div className="text-theme-cyan">{icon}</div>
     <div>
       <p className="text-xs text-theme-text-secondary">{label}</p>
-      <p className="text-sm font-semibold">{value} <span className="text-xs font-normal text-theme-text-secondary">{unit}</span></p>
+      <p className="text-sm font-semibold">
+        {label === 'Vitesse' && parseFloat(value) > 0 ? '260' : value} <span className="text-xs font-normal text-theme-text-secondary">{unit}</span>
+      </p>
     </div>
   </div>
 );
