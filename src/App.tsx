@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import DashboardPage from "./pages/DashboardPage";
+import ShopPage from "./pages/Shop";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import WalletPage from "./pages/Wallet";
@@ -35,7 +35,7 @@ const AppContent = () => {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/shop" element={<ShopPage />} />
             <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/wallet" element={<WalletPage />} />
             <Route path="/asic-management" element={<AsicManagementPage />} />

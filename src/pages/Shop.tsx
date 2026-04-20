@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
-import { SummaryCard, TempStatusLevel } from '@/components/SummaryCard'; // Import TempStatusLevel
+import { SummaryCard, TempStatusLevel } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
 import { Thermometer, Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
@@ -11,8 +11,8 @@ import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
 import { GlobalStatusIndicator, StatusLevel } from '@/components/GlobalStatusIndicator';
 import { useDevOptions } from '@/context/DevOptionsContext';
-import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
-import { cn } from '@/lib/utils'; // Import cn for conditional classNames
+import { useAppStatus } from '@/context/AppStatusContext';
+import { cn } from '@/lib/utils';
 
 const playSound = (file: File | null) => {
   if (file) {
@@ -20,16 +20,16 @@ const playSound = (file: File | null) => {
     const audio = new Audio(objectUrl);
     audio.play();
     audio.onended = () => {
-      URL.revokeObjectURL(objectUrl); // Libère la mémoire après la lecture
+      URL.revokeObjectURL(objectUrl);
     };
   }
 };
 
-const Index = () => {
+const ShopPage = () => {
   const { asics, setAsics } = useAsics();
   const { powerOnSoundFile, powerOffSoundFile, overheatSoundFile } = useSound();
   const { preventOverheat, preventErrors, startupDelay, shutdownDelay } = useDevOptions();
-  const { triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus(); // Get animation trigger
+  const { triggerStartupAnimation, triggerShutdownAnimation } = useAppStatus();
   const prevAsicsRef = useRef(asics);
   const maxTemp = 85;
   const criticalTemp = 100;
@@ -226,19 +226,15 @@ const Index = () => {
             }
             break;
           case 'booting up':
-            // The actual transition to 'online' is handled by a setTimeout in handleTogglePower/handlePowerAction
-            // For now, just simulate power ramp-up
             newAsic.power = Math.min(3000, newAsic.power + 300);
             break;
           case 'shutting down':
-            // The actual transition to 'offline' is handled by a setTimeout in handleTogglePower/handlePowerAction
-            // For now, just simulate power ramp-down
             newAsic.power = Math.max(0, newAsic.power - 300);
             newAsic.fanSpeed = Math.max(0, newAsic.fanSpeed - 15);
             break;
           case 'idle':
-            newAsic.hashrate = 10 + (Math.random() - 0.5) * 2; // Low hashrate around 10 TH/s
-            newAsic.power = 500 + (Math.random() - 0.5) * 50; // Low power around 500W
+            newAsic.hashrate = 10 + (Math.random() - 0.5) * 2;
+            newAsic.power = 500 + (Math.random() - 0.5) * 50;
             
             const idleTempTarget = 45;
             if (newAsic.temperature > idleTempTarget) {
@@ -248,7 +244,7 @@ const Index = () => {
             }
             
             newAsic.isFanOn = true;
-            newAsic.fanSpeed = 30; // Low fan speed
+            newAsic.fanSpeed = 30;
             break;
           case 'standby':
             newAsic.hashrate = 0;
@@ -407,8 +403,8 @@ const Index = () => {
           value={summary.totalHashrate.toFixed(2)} 
           unit="TH/s" 
           icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
-          iconColorClass={summary.isOverclockedMajority ? "text-purple-400 animate-aurora" : "text-orange-500"} // Updated prop and value
-          isOverclockedMajority={summary.isOverclockedMajority} // Pass new prop
+          iconColorClass={summary.isOverclockedMajority ? "text-purple-400 animate-aurora" : "text-orange-500"}
+          isOverclockedMajority={summary.isOverclockedMajority}
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
@@ -420,7 +416,7 @@ const Index = () => {
           value={summary.avgTemp.toFixed(2)} 
           unit="°C" 
           icon={<Thermometer className="w-8 h-8" />} 
-          iconColorClass="text-green-500" // Updated prop and value
+          iconColorClass="text-green-500"
           tempStatus={tempStatus}
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
@@ -433,7 +429,7 @@ const Index = () => {
           value={summary.totalPower.toFixed(0)} 
           unit="W" 
           icon={<AnimatedZapIcon className="w-8 h-8" />} 
-          iconColorClass="text-cyan-400" // Updated prop and value
+          iconColorClass="text-cyan-400"
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
@@ -445,7 +441,7 @@ const Index = () => {
           value={`${summary.activeAsics} / ${summary.totalAsics}`} 
           unit="" 
           icon={<AnimatedServerIcon className="w-8 h-8" />} 
-          iconColorClass="text-cyan-400" // Updated to match AnimatedZapIcon
+          iconColorClass="text-cyan-400"
           className={cn(
             triggerStartupAnimation && "animate-startup-fade-in-scale",
             triggerShutdownAnimation && "animate-staggered-fade-out"
@@ -475,12 +471,12 @@ const Index = () => {
               onToggleFan={handleToggleFan}
               onToggleOverclock={handleToggleOverclock}
               onPowerAction={handlePowerAction}
-              triggerShutdownAnimation={triggerShutdownAnimation} // Pass the prop
-              triggerStartupAnimation={triggerStartupAnimation} // Pass the prop
-              startupDelay={1.2 + index * 0.1} // Base delay for this specific card
-              shutdownDelay={1.8 + index * 0.1} // Staggered shutdown delay for each card
-              className={""} // No animation on the card wrapper itself
-              style={{}} // No animation on the card wrapper itself
+              triggerShutdownAnimation={triggerShutdownAnimation}
+              triggerStartupAnimation={triggerStartupAnimation}
+              startupDelay={1.2 + index * 0.1}
+              shutdownDelay={1.8 + index * 0.1}
+              className={""}
+              style={{}}
             />
           ))}
         </div>
@@ -489,4 +485,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default ShopPage;

@@ -9,7 +9,7 @@ import ImagePlaceholder from "./ImagePlaceholder";
 const navItems = [
   { to: "/", icon: Home, label: "Accueil" },
   { to: "/apex", icon: AppWindow, label: "Apex" },
-  { to: "/dashboard", icon: ShoppingBag, label: "Magasin" },
+  { to: "/shop", icon: ShoppingBag, label: "Magasin" },
   { to: "/statistics", icon: BarChart2, label: "Statistiques" },
   { to: "/wallet", icon: Wallet, label: "Portefeuille" },
   { to: "/asic-management", icon: Server, label: "Gestion ASICs" },
@@ -55,7 +55,7 @@ export const Sidebar = () => {
   return (
     <aside className={cn(
       "fixed top-6 left-1/2 -translate-x-1/2 h-16 max-w-[98vw] w-max px-6 bg-theme-card/40 backdrop-blur-2xl border border-white/20 flex items-center gap-4 rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] z-50 transition-all duration-500",
-      "after:absolute after:inset-0 after:rounded-2xl after:bg-white/5 after:pointer-events-none after:z-[-1]", // Couche supplémentaire pour l'effet Acrylic
+      "after:absolute after:inset-0 after:rounded-2xl after:bg-white/5 after:pointer-events-none after:z-[-1]",
       triggerShutdownAnimation && "opacity-0 translate-y-[-20px]"
     )}>
       <div

@@ -16,7 +16,7 @@ const HomePage = () => {
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
         <Button asChild className="bg-theme-cyan text-black hover:bg-theme-cyan/90 px-8 py-6 text-lg rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">
-          <Link to="/dashboard">
+          <Link to="/shop">
             Commander Aetheris-4 Gen 0, MAINTENANT
           </Link>
         </Button>
