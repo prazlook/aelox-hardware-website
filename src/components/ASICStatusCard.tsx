@@ -26,6 +26,7 @@ export interface ASIC {
   isFanOn: boolean;
   comment?: string;
   isForceStopping?: boolean;
+  fixedSpeed?: number; // Nouvelle propriété pour la vitesse fixe
 }
 
 interface ASICStatusCardProps {
@@ -199,6 +200,11 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
   const delayOffset = isIdleOrStandby ? 100 : 0;
 
+  // Utiliser la vitesse fixe si définie, sinon une valeur par défaut basée sur le hashrate actuel
+  const displaySpeed = asic.fixedSpeed !== undefined 
+    ? (isOnline ? asic.fixedSpeed : 0) 
+    : asic.hashrate;
+
   return (
     <>
       <div 
@@ -348,8 +354,8 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             <StatItem 
               icon={<AnimatedSpeedIcon size={20} isOnline={isOnline} />} 
               label="Vitesse" 
-              value={asic.hashrate.toFixed(2)} 
-              unit="TH/s" 
+              value={displaySpeed.toFixed(0)} 
+              unit="mm/s" 
               className={contentAnimationClass}
               triggerShutdownAnimation={triggerShutdownAnimation}
               shutdownDelay={cardBaseShutdownDelay + 0.5}

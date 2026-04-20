@@ -1,21 +1,56 @@
-import { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction } from 'react';
-import { ASIC } from '@/components/ASICStatusCard';
+"use client";
 
-const MOCK_ASICS: ASIC[] = [
-  { id: 'A1', name: 'Antminer S19 Pro #2', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 102.79, temperature: 69.17, power: 3338, fanSpeed: 85, isFanOn: true, comment: "Pool principal - Performance stable" },
-  { id: 'A2', name: 'Antminer S19 Pro #1', model: 'Bitmain Antminer S19 Pro', status: 'online', hashrate: 103.98, temperature: 65.26, power: 3149, fanSpeed: 71, isFanOn: true, comment: "Pool secondaire - RAS" },
-  { id: 'A3', name: 'Bitmain Antmin S23 Hyd 3U #1', model: 'Bitmain Antmin S23 Hyd 3U', status: 'offline', hashrate: 0, temperature: 25, power: 0, fanSpeed: 0, isFanOn: false, comment: "Maintenance prévue" },
-];
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { ASIC } from '@/components/ASICStatusCard';
 
 interface AsicContextType {
   asics: ASIC[];
-  setAsics: Dispatch<SetStateAction<ASIC[]>>;
+  setAsics: React.Dispatch<React.SetStateAction<ASIC[]>>;
 }
+
+const initialAsics: ASIC[] = [
+  {
+    id: '1',
+    name: 'Bambu Lab X1C',
+    model: 'X1-Carbon',
+    status: 'online',
+    hashrate: 500,
+    temperature: 55,
+    power: 350,
+    fanSpeed: 80,
+    isFanOn: true,
+    fixedSpeed: 500, // Vitesse fixe définie individuellement
+  },
+  {
+    id: '2',
+    name: 'Prusa MK4',
+    model: 'Original MK4',
+    status: 'idle',
+    hashrate: 200,
+    temperature: 30,
+    power: 100,
+    fanSpeed: 0,
+    isFanOn: false,
+    fixedSpeed: 200, // Vitesse fixe définie individuellement
+  },
+  {
+    id: '3',
+    name: 'Voron 2.4',
+    model: 'Custom CoreXY',
+    status: 'offline',
+    hashrate: 0,
+    temperature: 25,
+    power: 0,
+    fanSpeed: 0,
+    isFanOn: false,
+    fixedSpeed: 350, // Vitesse fixe définie individuellement
+  },
+];
 
 const AsicContext = createContext<AsicContextType | undefined>(undefined);
 
 export const AsicProvider = ({ children }: { children: ReactNode }) => {
-  const [asics, setAsics] = useState<ASIC[]>(MOCK_ASICS);
+  const [asics, setAsics] = useState<ASIC[]>(initialAsics);
 
   return (
     <AsicContext.Provider value={{ asics, setAsics }}>
