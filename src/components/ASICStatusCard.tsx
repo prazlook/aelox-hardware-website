@@ -136,11 +136,16 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
     prevStatusRef.current = asic.status;
   }, [asic]);
 
+  // On fixe le statut à 'online' pour l'affichage visuel
+  const displayStatus: ASICStatus = 'online';
+
+  // Utilisation du statut réel de l'ASIC pour la logique fonctionnelle
   const isOverheating = asic.status === 'overheat';
   const isWarning = asic.temperature > maxTemp - 10 && !isOverheating;
   const tempColor = isOverheating ? 'text-red-500' : isWarning ? 'text-orange-400' : 'text-white';
   
-  const isOnline = asic.status === 'online' || asic.status === 'overclocked';
+  // Utilisation de displayStatus pour forcer l'état visuel "actif"
+  const isOnline = displayStatus === 'online' || (displayStatus as string) === 'overclocked';
   const isOffline = asic.status === 'offline';
   const isTransitioning = asic.status === 'booting up' || asic.status === 'shutting down';
   const isShuttingDown = asic.status === 'shutting down';
@@ -204,7 +209,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
       >
         <div className="absolute inset-0 z-10 pointer-events-none">
           <StatusBorderAnimation
-            status={asic.status}
+            status={displayStatus}
             isWarning={isWarning}
             isOverheating={isOverheating}
             triggerStartupAnimation={triggerStartupAnimation}
@@ -316,7 +321,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
                 style={getInternalStartupDelay(1.1)}
               >
                 <StatusBadge 
-                  status={asic.status} 
+                  status={displayStatus} 
                   triggerShutdownAnimation={triggerShutdownAnimation} 
                   shutdownDelay={cardBaseShutdownDelay + 1.9}
                   triggerStartupAnimation={triggerStartupAnimation}
