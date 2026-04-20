@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
+import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedSpeedIcon } from "./AnimatedSpeedIcon";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
@@ -40,7 +40,7 @@ interface StatusBadgeProps {
 
 const StatusBadge = ({ status, triggerShutdownAnimation, shutdownDelay, triggerStartupAnimation, startupDelay }: StatusBadgeProps) => {
   const statusConfig = {
-    online: { label: "En Ligne", className: "bg-green-500/10 text-green-400 border-green-500/20", icon: <Activity size={12} /> },
+    online: { label: "Disponible", className: "bg-green-500/10 text-green-400 border-green-500/20", icon: <Check size={12} /> },
     offline: { label: "Hors Ligne", className: "bg-gray-500/10 text-gray-400 border-gray-500/20", icon: <Minus size={12} /> },
     'booting up': { label: "Démarrage", className: "bg-blue-500/10 text-blue-400 border-blue-500/20", icon: <ArrowUp size={12} className="animate-bounce" /> },
     'shutting down': { label: "Arrêt", className: "bg-orange-500/10 text-yellow-400 border-yellow-500/20", icon: <ArrowDown size={12} className="animate-bounce" /> },
