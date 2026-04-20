@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
@@ -332,7 +334,11 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             )} 
             style={getInternalStartupDelay(0.2)}
           >
-            {/* Image d'activité supprimée */}
+            <img 
+              src="/printer-status.png" 
+              alt="Statut d'activité" 
+              className="w-full h-full object-cover opacity-80"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
