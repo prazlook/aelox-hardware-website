@@ -326,13 +326,17 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
           <div 
             className={cn(
-              "text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl py-1.5 h-9 flex items-center justify-center overflow-hidden whitespace-nowrap", 
+              "relative text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl overflow-hidden h-24 flex items-center justify-center bg-black/20", 
               contentAnimationClass, 
               triggerStartupAnimation && "animate-startup-fade-in-scale"
             )} 
             style={getInternalStartupDelay(0.2)}
           >
-            <span className="typewriter-cursor">{typedComment}</span>
+            <img 
+              src="https://files.dyad.ai/pasted-image-2026-04-20T05-52-09-598Z.png" 
+              alt="Activité d'impression" 
+              className="w-full h-full object-cover opacity-80"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
