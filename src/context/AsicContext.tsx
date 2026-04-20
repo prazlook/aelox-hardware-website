@@ -1,7 +1,23 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ASIC } from '@/components/ASICStatusCard';
+
+export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
+
+export interface ASIC {
+  id: string;
+  name: string;
+  model: string;
+  status: ASICStatus;
+  hashrate: number;
+  temperature: number;
+  power: number;
+  fanSpeed: number;
+  isFanOn: boolean;
+  comment?: string;
+  isForceStopping?: boolean;
+  fixedSpeed?: number;
+}
 
 interface AsicContextType {
   asics: ASIC[];
@@ -19,7 +35,7 @@ const initialAsics: ASIC[] = [
     power: 350,
     fanSpeed: 80,
     isFanOn: true,
-    fixedSpeed: 500, // Vitesse fixe définie individuellement
+    fixedSpeed: 500,
   },
   {
     id: '2',
@@ -31,7 +47,7 @@ const initialAsics: ASIC[] = [
     power: 100,
     fanSpeed: 0,
     isFanOn: false,
-    fixedSpeed: 200, // Vitesse fixe définie individuellement
+    fixedSpeed: 200,
   },
   {
     id: '3',
@@ -43,7 +59,7 @@ const initialAsics: ASIC[] = [
     power: 0,
     fanSpeed: 0,
     isFanOn: false,
-    fixedSpeed: 350, // Vitesse fixe définie individuellement
+    fixedSpeed: 350,
   },
 ];
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { ASIC } from './ASICStatusCard';
+import { type ASIC } from '@/context/AsicContext';
 import { ASIC_STATUS_COLORS } from '@/config/status-colors';
 import { cn } from '@/lib/utils';
-import { useAppStatus } from '@/context/AppStatusContext'; // Import useAppStatus
+import { useAppStatus } from '@/context/AppStatusContext';
 
 export type StatusLevel = 'optimal' | 'eleve' | 'surcharge' | 'error' | 'offline';
 
@@ -16,11 +16,11 @@ interface GlobalStatusIndicatorProps {
 }
 
 const statusConfig = {
-  optimal: { color: '#39FF14' }, // Neon Green
-  eleve: { color: '#FFD700' }, // Gold/Yellow
-  surcharge: { color: '#FF0000' }, // Red
-  error: { color: '#FF0000' }, // Red
-  offline: { color: '#9ca3af' }, // Gray
+  optimal: { color: '#39FF14' },
+  eleve: { color: '#FFD700' },
+  surcharge: { color: '#FF0000' },
+  error: { color: '#FF0000' },
+  offline: { color: '#9ca3af' },
 };
 
 const BAR_COUNT = 100;
@@ -123,11 +123,11 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         }
         
         let path = `M -200 ${CIRCLE_CY}`;
-        const ecgBaseAmplitude = 5 + 25 * intensity; // Base amplitude for non-flat modes
-        const segmentMinLength = 80; // Minimum length of a segment
-        const segmentMaxLength = 250; // Maximum length of a segment
+        const ecgBaseAmplitude = 5 + 25 * intensity;
+        const segmentMinLength = 80;
+        const segmentMaxLength = 250;
         let currentX = -200;
-        let lastY = CIRCLE_CY; // To ensure smooth transitions between segments
+        let lastY = CIRCLE_CY;
 
         while (currentX < VIEWBOX_WIDTH + 200) {
           const segmentLength = segmentMinLength + Math.random() * (segmentMaxLength - segmentMinLength);
@@ -135,28 +135,26 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
 
           const rand = Math.random();
           let segmentMode: 'flat' | 'low' | 'high';
-          if (rand < 0.3) segmentMode = 'flat'; // 30% flat
-          else if (rand < 0.8) segmentMode = 'low'; // 50% low
-          else segmentMode = 'high'; // 20% high
+          if (rand < 0.3) segmentMode = 'flat';
+          else if (rand < 0.8) segmentMode = 'low';
+          else segmentMode = 'high';
 
-          // Start the segment from the last point to ensure continuity
           path += ` L ${currentX} ${lastY.toFixed(2)}`;
 
-          // Generate points for the current segment
-          for (let x = currentX + 2; x <= segmentEndX; x += 2) { // Decreased step for smoother line
+          for (let x = currentX + 2; x <= segmentEndX; x += 2) {
             let yVariation = 0;
             switch (segmentMode) {
               case 'flat':
-                yVariation = (Math.random() - 0.5) * 1; // Very small noise for flat
+                yVariation = (Math.random() - 0.5) * 1;
                 break;
               case 'low':
-                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.3; // Base small fluctuations
-                if (Math.random() > 0.9) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 0.7; // Occasional moderate spike/trough
+                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.3;
+                if (Math.random() > 0.9) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 0.7;
                 break;
               case 'high':
-                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.8; // Base larger fluctuations
-                if (Math.random() > 0.7) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 1.2; // More frequent large spike/trough
-                if (Math.random() > 0.95) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 2.0; // Very rare extreme spike/trough
+                yVariation = (Math.random() - 0.5) * ecgBaseAmplitude * 0.8;
+                if (Math.random() > 0.7) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 1.2;
+                if (Math.random() > 0.95) yVariation += (Math.random() > 0.5 ? -1 : 1) * Math.random() * ecgBaseAmplitude * 2.0;
                 break;
             }
             lastY = CIRCLE_CY + yVariation;
@@ -211,7 +209,7 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           if (isOverclockedMajority) {
             barColor = `hsl(${(angleDegrees + Date.now() / 20) % 360}, 100%, ${70 + 20 * proximity}%)`;
           } else {
-            barColor = color; // Use the main status color for highlighting
+            barColor = color;
           }
         }
       }
@@ -267,7 +265,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
         opacity={status === 'offline' ? 0.5 : 1}
         filter={mousePosition ? 'brightness(1.3)' : 'brightness(1)'}
       >
-        {/* Particles - appear first */}
         <g className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")} style={triggerStartupAnimation ? { animationDelay: '0.1s' } : {}}>
           {status !== 'offline' && dynamicValues.particles.map((p, i) => (
             <rect
@@ -288,7 +285,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           ))}
         </g>
 
-        {/* Orb - appears second */}
         <circle
           cx={CIRCLE_CX}
           cy={CIRCLE_CY}
@@ -299,7 +295,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           className={cn(triggerStartupAnimation && "animate-global-indicator-fade-in")}
         />
 
-        {/* Waveforms (ronds internes à externes) - appear third */}
         {dynamicValues.waveformPointsArray.map((points, i) => (
             <path
                 key={i}
@@ -314,7 +309,6 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
             />
         ))}
         
-        {/* Spokes (traits externes qui se développent en cercle) - appear fourth */}
         <g style={{ transition: 'transform 0.1s linear' }}>
           {Array.from({ length: SPOKE_COUNT }).map((_, i) => (
             <line
@@ -335,17 +329,15 @@ export const GlobalStatusIndicator = ({ status, hashrate, asics, isOverclockedMa
           ))}
         </g>
 
-        {/* Bars (petits traits externes) - appear fifth */}
-        <g opacity="0.6">{bars}</g> {/* Bars already have their own animation class */}
+        <g opacity="0.6">{bars}</g>
 
-        {/* ECG Path (ligne horizontale) - appears last */}
         <path
           d={dynamicValues.ecgPath}
           fill="none"
           stroke={strokeColor}
           strokeWidth="2"
           filter="url(#glow)"
-          style={{ animationDelay: triggerStartupAnimation ? '2.0s' : '0s' }} // Removed transition for smoother dynamic updates
+          style={{ animationDelay: triggerStartupAnimation ? '2.0s' : '0s' }}
           className={cn(status === 'offline' ? 'ecg-line ecg-line-off' : 'ecg-line ecg-line-on', triggerStartupAnimation && "animate-global-indicator-ecg-center-expand")}
         />
       </g>

@@ -11,23 +11,7 @@ import { StatusBorderAnimation } from './StatusBorderAnimation';
 import { getLocalAIComment } from '@/lib/localAiComments';
 import { useTypewriter } from '@/hooks/useTypewriter';
 import { useAppStatus } from '@/context/AppStatusContext';
-
-export type ASICStatus = 'online' | 'offline' | 'booting up' | 'shutting down' | 'overclocked' | 'overheat' | 'error' | 'idle' | 'standby';
-
-export interface ASIC {
-  id: string;
-  name: string;
-  model: string;
-  status: ASICStatus;
-  hashrate: number;
-  temperature: number;
-  power: number;
-  fanSpeed: number;
-  isFanOn: boolean;
-  comment?: string;
-  isForceStopping?: boolean;
-  fixedSpeed?: number; // Nouvelle propriété pour la vitesse fixe
-}
+import { type ASIC, type ASICStatus } from '@/context/AsicContext';
 
 interface ASICStatusCardProps {
   asic: ASIC;
@@ -200,7 +184,6 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
   const isIdleOrStandby = asic.status === 'idle' || asic.status === 'standby';
   const delayOffset = isIdleOrStandby ? 100 : 0;
 
-  // Utiliser la vitesse fixe si définie, sinon une valeur par défaut basée sur le hashrate actuel
   const displaySpeed = asic.fixedSpeed !== undefined 
     ? (isOnline ? asic.fixedSpeed : 0) 
     : asic.hashrate;

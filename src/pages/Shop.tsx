@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
+import { ASICStatusCard } from '@/components/ASICStatusCard';
+import { type ASIC } from '@/context/AsicContext';
 import { Button } from '@/components/ui/button';
 import { Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';

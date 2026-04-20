@@ -1,4 +1,4 @@
-import type { ASIC } from "@/components/ASICStatusCard";
+import type { ASIC } from "@/context/AsicContext";
 
 const pickRandom = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 

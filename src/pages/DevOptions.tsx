@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsics } from "@/context/AsicContext";
-import { ASIC, ASICStatus } from "@/components/ASICStatusCard";
+import { type ASIC, type ASICStatus } from "@/context/AsicContext";
 import { useDevOptions } from "@/context/DevOptionsContext";
 
 const DevOptionsPage = () => {

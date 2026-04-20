@@ -1,4 +1,4 @@
-import { ASICStatus } from "@/components/ASICStatusCard";
+import { type ASICStatus } from "@/context/AsicContext";
 
 export const ASIC_STATUS_COLORS: Record<ASICStatus | 'warning', string> = {
   online: '#39FF14',       // Neon Green

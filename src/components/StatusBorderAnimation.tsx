@@ -1,15 +1,15 @@
-import { ASICStatus } from './ASICStatusCard';
-import { cn } from '@/lib/utils'; // Import cn
+import { type ASICStatus } from '@/context/AsicContext';
+import { cn } from '@/lib/utils';
 
 interface StatusBorderAnimationProps {
   status: ASICStatus;
   isWarning: boolean;
   isOverheating: boolean;
-  triggerStartupAnimation: boolean; // New prop
-  startupDelay: number; // New prop
+  triggerStartupAnimation: boolean;
+  startupDelay: number;
 }
 
-const CARD_RX = 14; // Slightly less than the card's rounding to fit inside
+const CARD_RX = 14;
 
 export const StatusBorderAnimation = ({ status, isWarning, isOverheating, triggerStartupAnimation, startupDelay }: StatusBorderAnimationProps) => {
   if (status === 'offline') return null;
@@ -42,8 +42,8 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
         stroke={`url(#${gradientId})`}
         strokeWidth="3"
         filter="url(#dyad-glow)"
-        className={borderAnimationClasses} // Apply here
-        style={borderAnimationStyle as React.CSSProperties} // Apply here, removed transformOrigin
+        className={borderAnimationClasses}
+        style={borderAnimationStyle as React.CSSProperties}
       />
     </>
   );
@@ -88,25 +88,21 @@ export const StatusBorderAnimation = ({ status, isWarning, isOverheating, trigge
           <stop offset="60%" stopColor="#ef4444" />
           <stop offset="80%" stopColor="#f97316" />
           <stop offset="100%" stopColor="#f59e0b" />
-          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-online-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={onlineColor} stopOpacity="0" />
           <stop offset="50%" stopColor={onlineColor} stopOpacity="1" />
           <stop offset="100%" stopColor={onlineColor} stopOpacity="0" />
-          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-warning-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={warningColor} stopOpacity="0" />
           <stop offset="50%" stopColor={warningColor} stopOpacity="1" />
           <stop offset="100%" stopColor={warningColor} stopOpacity="0" />
-          {/* Removed animateTransform */}
         </linearGradient>
         <linearGradient id="dyad-critical-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor={criticalColor} stopOpacity="0" />
           <stop offset="50%" stopColor={criticalColor} stopOpacity="1" />
           <stop offset="100%" stopColor={criticalColor} stopOpacity="0" />
-          {/* Removed animateTransform */}
         </linearGradient>
       </defs>
       {borderContent}
