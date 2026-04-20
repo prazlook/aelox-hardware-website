@@ -1,17 +1,14 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { ASICStatusCard, ASIC } from '@/components/ASICStatusCard';
-import { SummaryCard, TempStatusLevel } from '@/components/SummaryCard';
 import { Button } from '@/components/ui/button';
-import { Thermometer, Power, X } from 'lucide-react';
+import { Power, X } from 'lucide-react';
 import { useSound } from '@/context/SoundContext';
 import { useAsics } from '@/context/AsicContext';
-import { AnimatedHashrateIcon } from '@/components/AnimatedHashrateIcon';
-import { AnimatedZapIcon } from '@/components/AnimatedZapIcon';
-import { AnimatedServerIcon } from '@/components/AnimatedServerIcon';
 import { showError, showSuccess } from '@/utils/toast';
 import { useDevOptions } from '@/context/DevOptionsContext';
 import { useAppStatus } from '@/context/AppStatusContext';
 import { cn } from '@/lib/utils';
+import { TempStatusLevel } from '@/components/SummaryCard';
 
 const playSound = (file: File | null) => {
   if (file) {
@@ -285,22 +282,11 @@ const ShopPage = () => {
   }, [asics, maxTemp, overheatSoundFile, powerOffSoundFile, setAsics, preventOverheat, preventErrors, startupDelay, shutdownDelay]);
 
   const summary = useMemo(() => {
-    const onlineAsics = asics.filter(a => a.status === 'online' || a.status === 'overclocked');
     const totalAsicsCount = asics.length;
-    const activeAsicsCount = onlineAsics.length;
-    const totalHashrate = asics.reduce((acc, a) => acc + a.hashrate, 0);
-    const totalPower = asics.reduce((acc, a) => acc + a.power, 0);
     const avgTemp = totalAsicsCount > 0 ? asics.reduce((acc, a) => acc + a.temperature, 0) / totalAsicsCount : 0;
-    const overclockedCount = asics.filter(a => a.status === 'overclocked').length;
-    const isOverclockedMajority = totalAsicsCount > 0 && (overclockedCount / totalAsicsCount) >= 0.7;
 
     return {
-      totalHashrate,
       avgTemp,
-      totalPower,
-      activeAsics: activeAsicsCount,
-      totalAsics: totalAsicsCount,
-      isOverclockedMajority,
     };
   }, [asics]);
 
@@ -349,47 +335,6 @@ const ShopPage = () => {
             </Button>
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <SummaryCard 
-          title="Hashrate Total" 
-          value={summary.totalHashrate.toFixed(2)} 
-          unit="TH/s" 
-          icon={<AnimatedHashrateIcon className="w-8 h-8" />} 
-          iconColorClass={summary.isOverclockedMajority ? "text-purple-400 animate-aurora" : "text-orange-500"}
-          isOverclockedMajority={summary.isOverclockedMajority}
-          className={cn(triggerShutdownAnimation && "animate-staggered-fade-out")}
-          style={triggerShutdownAnimation ? { '--delay': '0.8s' } as React.CSSProperties : {}}
-        />
-        <SummaryCard 
-          title="Température Moyenne" 
-          value={summary.avgTemp.toFixed(2)} 
-          unit="°C" 
-          icon={<Thermometer className="w-8 h-8" />} 
-          iconColorClass="text-green-500"
-          tempStatus={tempStatus}
-          className={cn(triggerShutdownAnimation && "animate-staggered-fade-out")}
-          style={triggerShutdownAnimation ? { '--delay': '1.0s' } as React.CSSProperties : {}}
-        />
-        <SummaryCard 
-          title="Consommation Totale" 
-          value={summary.totalPower.toFixed(0)} 
-          unit="W" 
-          icon={<AnimatedZapIcon className="w-8 h-8" />} 
-          iconColorClass="text-cyan-400"
-          className={cn(triggerShutdownAnimation && "animate-staggered-fade-out")}
-          style={triggerShutdownAnimation ? { '--delay': '1.2s' } as React.CSSProperties : {}}
-        />
-        <SummaryCard 
-          title="ASICs Actifs" 
-          value={`${summary.activeAsics} / ${summary.totalAsics}`} 
-          unit="" 
-          icon={<AnimatedServerIcon className="w-8 h-8" />} 
-          iconColorClass="text-cyan-400"
-          className={cn(triggerShutdownAnimation && "animate-staggered-fade-out")}
-          style={triggerShutdownAnimation ? { '--delay': '1.4s' } as React.CSSProperties : {}}
-        />
       </div>
 
       <div>
