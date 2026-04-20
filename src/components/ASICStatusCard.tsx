@@ -333,7 +333,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
             style={getInternalStartupDelay(0.2)}
           >
             <img 
-              src="/Capture d'écran 2026-04-20 080619.png" 
+              src="/Capture%20d%27%C3%A9cran%202026-04-20%20080619.png" 
               alt="Activité d'impression" 
               className="w-full h-full object-cover opacity-80"
             />
