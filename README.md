@@ -1,1 +1,1 @@
-# Welcome to your Dyad app
+https://prazlook.github.io/aelox-hardware-website
