@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { Home, BarChart2, Wallet, Server, Settings, Code, ShoppingBag } from "lucide-react";
+import { Home, BarChart2, Wallet, Server, Settings, Code, ShoppingBag, AppWindow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStatus } from "@/context/AppStatusContext";
 import ImagePlaceholder from "./ImagePlaceholder";
 
 const navItems = [
   { to: "/", icon: Home, label: "Accueil" },
+  { to: "/apex", icon: AppWindow, label: "Apex" },
   { to: "/dashboard", icon: ShoppingBag, label: "Magasin" },
   { to: "/statistics", icon: BarChart2, label: "Statistiques" },
   { to: "/wallet", icon: Wallet, label: "Portefeuille" },
