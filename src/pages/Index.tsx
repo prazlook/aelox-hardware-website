@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   return (
-    <div className="min-h-[calc(100vh-120px)] flex flex-col items-center justify-center text-center p-4 sm:p-8">
+    <div className="min-h-[calc(100vh-120px)] flex flex-col items-center justify-center text-center p-4 sm:p-8 pt-32">
       <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-white mb-6">
         Aelox <span className="text-white">Hardware</span>
       </h1>
