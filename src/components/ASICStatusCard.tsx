@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Zap, Thermometer, Fan, Power, PowerOff, Eye, Activity, Cpu, AlertTriangle, Flame, Minus, ArrowUp, ArrowDown, ShieldAlert, Hourglass, Moon, RefreshCw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedSpeedIcon } from "./AnimatedSpeedIcon";
+import { AnimatedPowerIcon } from "./AnimatedPowerIcon";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { ForceStopMenuItem } from "./ForceStopMenuItem";
 import { useAnimation } from '@/context/AnimationContext';
@@ -365,7 +366,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
               startupDelay={internalElementsBaseStartupDelay + 0.4}
             />
             <StatItem 
-              icon={<Zap size={20} />} 
+              icon={<AnimatedPowerIcon size={20} isOnline={isOnline} />} 
               label="Puissance" 
               value={asic.power.toFixed(0)} 
               unit="W" 
