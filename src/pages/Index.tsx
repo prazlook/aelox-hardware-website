@@ -12,8 +12,7 @@ const HomePage = () => {
         Aelox <span className="text-white">Hardware</span>
       </h1>
       <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10">
-        Votre partenaire de confiance pour des solutions matérielles innovantes et performantes.
-        Découvrez notre expertise en minage de cryptomonnaies et bien plus encore.
+        Ne planez plus, courbez l'avenir.
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
         <Button asChild className="bg-theme-cyan text-black hover:bg-theme-cyan/90 px-8 py-6 text-lg rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">
