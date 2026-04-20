@@ -328,7 +328,7 @@ export const ASICStatusCard = ({ asic, maxTemp, onTogglePower, onToggleFan, onTo
 
           <div 
             className={cn(
-              "relative text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl overflow-hidden h-24 flex items-center justify-center bg-black/20", 
+              "relative text-center text-sm text-theme-accent border border-theme-accent/30 rounded-xl overflow-hidden h-32 flex items-center justify-center bg-black/20", 
               contentAnimationClass, 
               triggerStartupAnimation && "animate-startup-fade-in-scale"
             )} 
