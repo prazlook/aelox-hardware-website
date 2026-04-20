@@ -23,7 +23,7 @@ const HomePage = () => {
 
         <Button asChild variant="outline" className="border-gray-600 text-white hover:bg-gray-800 px-8 py-6 text-lg rounded-xl shadow-lg">
           <Link to="/about">
-            En savoir plus
+            Explorer le projet
           </Link>
         </Button>
       </div>
