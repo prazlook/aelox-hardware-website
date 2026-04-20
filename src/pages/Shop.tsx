@@ -317,7 +317,7 @@ const ShopPage = () => {
     <div className="space-y-8">
       <div className="relative h-24 -mx-6 -mt-6 mb-4 flex items-center px-6">
         <div className="relative z-10 flex justify-between items-center w-full">
-          <h1 className="text-3xl font-bold">Centre de Contrôle</h1>
+          <h1 className="text-3xl font-bold">Magasin</h1>
           <div className="flex space-x-3">
             <Button 
               onClick={handleStartAll} 
