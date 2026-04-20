@@ -14,8 +14,8 @@ export const AnimatedSpeedIcon = ({ className, size = 20, isOnline = false }: An
     <div className={cn("relative flex items-center justify-center", className)}>
       <style>{`
         @keyframes needle-swing {
-          0%, 100% { transform: rotate(-5deg); }
-          50% { transform: rotate(20deg); }
+          0%, 100% { transform: rotate(-15deg); }
+          50% { transform: rotate(45deg); }
         }
         .animate-needle-swing {
           transform-origin: 12px 14px;
@@ -40,7 +40,7 @@ export const AnimatedSpeedIcon = ({ className, size = 20, isOnline = false }: An
         {/* Le contour de la jauge */}
         <path d="M3.34 19a10 10 0 1 1 17.32 0" />
         
-        {/* La petite aiguille avec animation d'oscillation */}
+        {/* La petite aiguille avec animation d'oscillation amplifiée */}
         <path 
           d="m12 14 4-4" 
           className={cn(isOnline && "animate-needle-swing")}
