@@ -31,27 +31,12 @@ const initialAsics: ASIC[] = [
     model: 'X1-Carbon',
     status: 'online',
     hashrate: 500,
-    temperature: 55,
+    temperature: 260,
     power: 350,
     fanSpeed: 80,
     isFanOn: true,
     fixedSpeed: 500,
   },
-  /* 
-    Template pour ajouter de nouvelles cartes à l'avenir :
-    {
-      id: '2',
-      name: 'Nom de la machine',
-      model: 'Modèle',
-      status: 'offline',
-      hashrate: 0,
-      temperature: 25,
-      power: 0,
-      fanSpeed: 0,
-      isFanOn: false,
-      fixedSpeed: 300,
-    },
-  */
 ];
 
 const AsicContext = createContext<AsicContextType | undefined>(undefined);
