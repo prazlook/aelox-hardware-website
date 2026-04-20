@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { MadeWithDyad } from '@/components/made-with-dyad';
@@ -7,7 +9,7 @@ const HomePage = () => {
   return (
     <div className="min-h-[calc(100vh-120px)] flex flex-col items-center justify-center text-center p-4 sm:p-8">
       <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-white mb-6">
-        Aelox <span className="text-theme-cyan">Hardware</span>
+        Aelox <span className="text-white">Hardware</span>
       </h1>
       <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mb-10">
         Votre partenaire de confiance pour des solutions matérielles innovantes et performantes.
