@@ -7,11 +7,11 @@ const Layout = () => {
     <div className="flex min-h-screen bg-theme-dark text-theme-text-primary">
       <Sidebar />
       <div className="flex flex-col flex-1">
-        <main className="flex-1 p-6 pb-16 pl-20"> {/* Ajout de pl-20 pour décaler le contenu du sidebar */}
+        <main className="flex-1 p-6 pt-32 pb-16 pl-20"> {/* Augmenté pt-32 pour décaler tout le contenu vers le bas */}
           <Outlet />
         </main>
       </div>
-      <Header /> {/* Le Header est maintenant un sibling direct et est fixe */}
+      <Header />
     </div>
   );
 };
