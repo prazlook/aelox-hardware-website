@@ -1,12 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { Home, BarChart2, Wallet, Server, Settings, Code, Cpu } from "lucide-react";
+import { Home, BarChart2, Wallet, Server, Settings, Code, AppWindow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStatus } from "@/context/AppStatusContext";
 import ImagePlaceholder from "./ImagePlaceholder";
 
 const navItems = [
   { to: "/", icon: Home, label: "Accueil" },
-  { to: "/dashboard", icon: Cpu, label: "Apex" },
+  { to: "/dashboard", icon: AppWindow, label: "Apex" },
   { to: "/statistics", icon: BarChart2, label: "Statistiques" },
   { to: "/wallet", icon: Wallet, label: "Portefeuille" },
   { to: "/asic-management", icon: Server, label: "Gestion ASICs" },
