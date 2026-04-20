@@ -37,30 +37,21 @@ const initialAsics: ASIC[] = [
     isFanOn: true,
     fixedSpeed: 500,
   },
-  {
-    id: '2',
-    name: 'Prusa MK4',
-    model: 'Original MK4',
-    status: 'idle',
-    hashrate: 200,
-    temperature: 30,
-    power: 100,
-    fanSpeed: 0,
-    isFanOn: false,
-    fixedSpeed: 200,
-  },
-  {
-    id: '3',
-    name: 'Voron 2.4',
-    model: 'Custom CoreXY',
-    status: 'offline',
-    hashrate: 0,
-    temperature: 25,
-    power: 0,
-    fanSpeed: 0,
-    isFanOn: false,
-    fixedSpeed: 350,
-  },
+  /* 
+    Template pour ajouter de nouvelles cartes à l'avenir :
+    {
+      id: '2',
+      name: 'Nom de la machine',
+      model: 'Modèle',
+      status: 'offline',
+      hashrate: 0,
+      temperature: 25,
+      power: 0,
+      fanSpeed: 0,
+      isFanOn: false,
+      fixedSpeed: 300,
+    },
+  */
 ];
 
 const AsicContext = createContext<AsicContextType | undefined>(undefined);
